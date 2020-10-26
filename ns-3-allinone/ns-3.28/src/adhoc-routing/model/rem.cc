@@ -45,7 +45,6 @@ void REM::initializeRssModel(IP_ADDR pairIp)
 
     model.ownerIp = m_parentIp; 
     model.pairIp = pairIp;
-    model.dataCount = 0;
     model.HOP_COUNT = this->HOP_COUNT;
 
     model.initialize();
@@ -140,6 +139,7 @@ void REM::handleMonitoringPacketBuffer(char* packet, int length, IP_ADDR source,
 
             // add the model to the list of network models 
             netBatteryModels[params.ownerId] = batteryModel;
+
             } 
             break;
 
@@ -269,7 +269,7 @@ void REM::sendUpdatedModel(PredictionModel* model, IP_ADDR dest)
 
         routing->sendPacket(this->getPortId(), buffer, size, getIpFromString(BROADCAST_STR), MONITOR_PORT);
 
-        delete buffer;
+        free(buffer);
     }
 }
 
