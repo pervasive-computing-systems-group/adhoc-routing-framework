@@ -51,10 +51,10 @@ public:
 
 	// get the cost to send packets to this node 
 	int getCostOfDest(const IP_ADDR dest);
-	int getCostOfRREQ(const rreqPacket rreq);
-	int getCostOfRREP(const rrepPacket rrep);
+	int getCostOfRREQ(const rreqPacket& rreq);
+	int getCostOfRREP(const rrepPacket& rrep);
 
-	map<IP_ADDR, AODVInfo> getInternalAODVTable() { return m_aodvTable; }
+	const map<IP_ADDR, AODVInfo>& getInternalAODVTable() { return m_aodvTable; }
 
 private:
 	map<IP_ADDR, AODVInfo> m_aodvTable;

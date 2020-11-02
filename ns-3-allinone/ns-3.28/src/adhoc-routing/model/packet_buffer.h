@@ -25,7 +25,7 @@ public:
 	~PacketBuffer();
 
 	// Stores packets in buffer
-	void storePacket(BufferedPacket bufferedPacket);
+	void storePacket(BufferedPacket& bufferedPacket);
 	// Checks to see if there are packets waiting to be sent to dest
 	bool packetsWaiting(IP_ADDR dest);
 	// Pops off the top packet for dest

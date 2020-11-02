@@ -87,8 +87,10 @@ void PredictionModel::addDataPoint(double value, double time)
 }
 
 // calculate sigma for the given data set
-void PredictionModel::calculateDeviations(vector<double> times, vector<double> values)
+void PredictionModel::calculateDeviations(const vector<double>& times, const vector<double>& values)
 {
+	// Passing and running through vectors could be costly...
+	// cout << "[JAD] PredictionModel::calculateDeviations\n";
     // get sigma values
     double totalDeviation = 0;
     int n = times.size();
@@ -255,8 +257,11 @@ void BatteryModel::fitModel()
     needsToBeBroadcasted = true;
 }
 
-void BatteryModel::performRegression(vector<double> times, vector<double> values, vector<double> wAvgs)
+void BatteryModel::performRegression(const vector<double>& times, const vector<double>& values, const vector<double>& wAvgs)
 {
+	// This doesn't get called much
+	// cout << "[JAD] BatteryModel::performRegression\n";
+
     // perform linear regression on data and store it in model
     double x = 0;
     double y = 0;
@@ -324,8 +329,11 @@ void RssModel::fitModel()
 //    Simulator::Schedule(Seconds(0.00001), &BroadcastModel, this);
 }
 
-void RssModel::performRegression(vector<double> times, vector<double> values, vector<double> wAvgs)
+void RssModel::performRegression(const vector<double>& times, const vector<double>& values, const vector<double>& wAvgs)
 {
+	// This gets called a lot!
+	// cout << "[JAD] RssModel::performRegression\n";
+
     // perform linear regression on data and store it in model
     double x = 0;
     double y = 0;

@@ -17,7 +17,7 @@ RREQHelper::RREQHelper(IP_ADDR ip, AODVRoutingTable* table, uint32_t* seqNum)
     this->m_pSequenceNum = seqNum;
 }
 
-bool RREQHelper::shouldGenerateRREP(rreqPacket receivedRREQ)
+bool RREQHelper::shouldGenerateRREP(const rreqPacket& receivedRREQ)
 {
 	// generate RREP on 2 conditions:
 	// 1. This node is the final destination
@@ -40,7 +40,7 @@ bool RREQHelper::shouldGenerateRREP(rreqPacket receivedRREQ)
 		return false;
 }
 
-bool RREQHelper::isDuplicateRREQ(rreqPacket receivedRREQ)
+bool RREQHelper::isDuplicateRREQ(const rreqPacket& receivedRREQ)
 {
 	// if the origIP exists in the routing table AND the sequence number matches 
 	uint32_t packetSeqNum = receivedRREQ.origSeqNum;
@@ -109,7 +109,7 @@ rreqPacket RREQHelper::createRREQ(const IP_ADDR destIP, const uint32_t destSeqNu
 	return rreq;
 }
 
-rreqPacket RREQHelper::createForwardRREQ(rreqPacket receivedRREQ, IP_ADDR sourceIP)
+rreqPacket RREQHelper::createForwardRREQ(const rreqPacket& receivedRREQ, IP_ADDR sourceIP)
 {
 	// Section 6.5 rfc3561
 
@@ -126,7 +126,7 @@ rreqPacket RREQHelper::createForwardRREQ(rreqPacket receivedRREQ, IP_ADDR source
 	return forwardRREQ;
 }
 
-char* RREQHelper::createRREQBuffer(const rreqPacket rreq)
+char* RREQHelper::createRREQBuffer(const rreqPacket& rreq)
 {
 	char* buffer = (char*)(malloc(sizeof(rreq)));	
 

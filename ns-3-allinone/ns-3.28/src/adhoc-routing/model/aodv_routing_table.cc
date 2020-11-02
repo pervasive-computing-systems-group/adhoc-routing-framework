@@ -81,7 +81,8 @@ void AODVRoutingTable::setDestSequenceNumber(const IP_ADDR dest, uint32_t destSe
 	}
 	else
 	{
-		cout << "[TABLE]:[ERROR]: Error update sequence number: Unknown table entry." << endl;
+		if (TABLE_DEBUG)
+			cout << "[TABLE]:[ERROR]: Error update sequence number: Unknown table entry." << endl;
 		return;
 	}
 }
@@ -96,7 +97,8 @@ void AODVRoutingTable::setHopCount(const IP_ADDR dest, uint8_t hopCount)
 	}
 	else
 	{
-		cout << "[TABLE]:[ERROR]: Error update hop count: Unknown table entry." << endl;
+		if (TABLE_DEBUG)
+			cout << "[TABLE]:[ERROR]: Error update hop count: Unknown table entry." << endl;
 		return;
 	}
 }
@@ -111,7 +113,8 @@ void AODVRoutingTable::setLastRREQId(const IP_ADDR dest, uint32_t lastRREQId)
 	}
 	else
 	{
-		cout << "[TABLE]:[ERROR]: Error update last rreq id: Unknown table entry." << endl;
+		if (TABLE_DEBUG)
+			cout << "[TABLE]:[ERROR]: Error update last rreq id: Unknown table entry." << endl;
 		return;
 	}
 }
@@ -129,7 +132,8 @@ void AODVRoutingTable::setIsRouteActive(const IP_ADDR dest, bool active)
 	}
 	else
 	{
-		cout << "[TABLE]:[ERROR]: Error update active: Unknown table entry." << endl;
+		if (TABLE_DEBUG)
+			cout << "[TABLE]:[ERROR]: Error update active: Unknown table entry." << endl;
 		return;
 	}
 }
@@ -167,7 +171,8 @@ void AODVRoutingTable::updateAODVRoutingTableFromRREP(rrepPacket* receivedRREP, 
 		this->setHopCount(receivedRREP->destIP, receivedRREP->hopCount);
 	}
 	else
-		cout << "[TABLE]:[WARNING]: Routing table NOT updated from RREP packet." << endl;
+		if (TABLE_DEBUG)
+			cout << "[TABLE]:[WARNING]: Routing table NOT updated from RREP packet." << endl;
 }
 
 void AODVRoutingTable::updateTableEntry(const IP_ADDR dest, const IP_ADDR nextHop)
@@ -220,21 +225,24 @@ void AODVRoutingTable::removeTableEntry(const IP_ADDR dest)
 
 int AODVRoutingTable::getCostOfDest(const IP_ADDR dest)
 {	
-	printf("[TABLE]:[WARNING]: getCostOfDest is currently using hopcount\n");
+	if (TABLE_DEBUG)
+		printf("[TABLE]:[WARNING]: getCostOfDest is currently using hopcount\n");
 	// currently using hopcount...
 	return getDestHopCount(dest);
 }
 
-int AODVRoutingTable::getCostOfRREQ(const rreqPacket rreq)
+int AODVRoutingTable::getCostOfRREQ(const rreqPacket& rreq)
 {	
-	printf("[TABLE]:[WARNING]: getCostOfRREQ is currently using hopcount\n");
+	if (TABLE_DEBUG)
+		printf("[TABLE]:[WARNING]: getCostOfRREQ is currently using hopcount\n");
 	// currently using hopcount...
 	return rreq.hopCount;
 }
 
-int AODVRoutingTable::getCostOfRREP(const rrepPacket rrep)
+int AODVRoutingTable::getCostOfRREP(const rrepPacket& rrep)
 {
-	printf("[TABLE]:[WARNING]: getCostOfRREP is currently using hopcount\n");
+	if (TABLE_DEBUG)
+		printf("[TABLE]:[WARNING]: getCostOfRREP is currently using hopcount\n");
 	// currently using hopcount...
 	return rrep.hopCount;
 }

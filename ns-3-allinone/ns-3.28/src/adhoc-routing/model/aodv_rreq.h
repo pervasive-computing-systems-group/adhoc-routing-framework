@@ -31,18 +31,18 @@ public:
 	void setSequenceNumPointer(uint32_t* seqNum) { this->m_pSequenceNum = seqNum; }
 
 	// check if a rrep should be generated
-	bool shouldGenerateRREP(rreqPacket receivedRREQ);
+	bool shouldGenerateRREP(const rreqPacket& receivedRREQ);
 
 	// initiating RREQ enters state of waiting for RREP
 	rreqPacket createRREQ(const IP_ADDR destIP, const uint32_t destSeqNum=0);
 	// forward RREQ enters state of maybe receiving RREP
-	rreqPacket createForwardRREQ(rreqPacket receivedRREQ, IP_ADDR sourceIP);
+	rreqPacket createForwardRREQ(const rreqPacket& receivedRREQ, IP_ADDR sourceIP);
 	// convert rreq message to a char* buffer
-	static char* createRREQBuffer(const rreqPacket rreq);
+	static char* createRREQBuffer(const rreqPacket& rreq);
 	// read a received rreq buffer
 	static rreqPacket readRREQBuffer(char* buffer);
 	// return true if this is a duplicate rreq
-	bool isDuplicateRREQ(rreqPacket receivedRREQ);
+	bool isDuplicateRREQ(const rreqPacket& receivedRREQ);
 
 private:
 	AODVRoutingTable* m_pTable;

@@ -232,12 +232,12 @@ void REM::updateLocalRSSModel(IP_ADDR pairIp, double rss)
     }
 }
 
-void REM::updateNetworkBatteryModel(IP_ADDR ownerIp, BatteryModel model)
+void REM::updateNetworkBatteryModel(IP_ADDR ownerIp, const BatteryModel& model)
 {
     netBatteryModels[ownerIp] = model;
 }
 
-void REM::updateNetworkRSSModel(IP_ADDR ownerIp, IP_ADDR pairIp, RssModel model)
+void REM::updateNetworkRSSModel(IP_ADDR ownerIp, IP_ADDR pairIp, const RssModel& model)
 {
     netRssModels[ownerIp][pairIp] = model;
 }
@@ -273,7 +273,7 @@ void REM::sendUpdatedModel(PredictionModel* model, IP_ADDR dest)
     }
 }
 
-void REM::updatePairData(pair_data pairData)
+void REM::updatePairData(const pair_data& pairData)
 {
     if (REM_DEBUG)
         cout << "[DEBUG]: Updating pair data for REM model" << endl;

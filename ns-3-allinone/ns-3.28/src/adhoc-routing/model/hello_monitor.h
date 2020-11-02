@@ -31,7 +31,7 @@ public:
     // Initiate sending hello messages
     void sendHellos(uint64_t duration_ms);
 
-    bool isActive() { helloMux.lock(); return m_active; helloMux.unlock(); }
+    bool isActive();
 
     // receive a hello message from a specific node 
     void receiveHelloMessage(IP_ADDR nodeIp);

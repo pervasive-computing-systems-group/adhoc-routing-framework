@@ -62,7 +62,7 @@ bool NetworkMonitor::isNodeOneHopNeighbor(IP_ADDR nodeIp)
     return false;
 }
 
-local_data NetworkMonitor::getLocalDataForNode(IP_ADDR nodeIp)
+const local_data& NetworkMonitor::getLocalDataForNode(IP_ADDR nodeIp)
 {
     return localMonitoringData[nodeIp];
 }

@@ -197,8 +197,8 @@ bool AODV::attemptLocalRepair(IP_ADDR brokenLink, IP_ADDR finalDest) {
         cout << "[AODV]:[DEBUG]: Attempting local repair from broken link "
              << getStringFromIp(brokenLink) << " to destination "
              << getStringFromIp(finalDest) << endl;
-    printf("[AODV]:[WARNING]: attemptLocalRepair is not implemented\n");
     // TODO: Use network monitoring to attempt local repair
+    printf("[AODV]:[WARNING]: attemptLocalRepair is not implemented\n");
     return false;
 }
 
@@ -264,7 +264,7 @@ long AODV::getPacketBufferAvailableBytes()
 /******************************
  * Protected Functions
  ******************************/
-void AODV::_broadcastRREQBuffer(rreqPacket rreq) {
+void AODV::_broadcastRREQBuffer(const rreqPacket& rreq) {
     if (AODV_DEBUG)
         cout << "[AODV]:[DEBUG]: Broadcasting Route Request from node "
              << getStringFromIp(getIp()) << endl;

@@ -61,7 +61,7 @@ rrepPacket RREPHelper::createRREPFromRREQ(rreqPacket rreq, IP_ADDR source)
     return rrep;
 }
 
-rrepPacket RREPHelper::createForwardRREP(rrepPacket receivedRREP, IP_ADDR source)
+rrepPacket RREPHelper::createForwardRREP(const rrepPacket& receivedRREP, IP_ADDR source)
 {
     // TODO: Longest prefix matching? We are in the same subnet...
     rrepPacket forwardRREP = receivedRREP;
@@ -82,7 +82,7 @@ rrepPacket RREPHelper::createForwardRREP(rrepPacket receivedRREP, IP_ADDR source
     return forwardRREP;
 }
 
-char* RREPHelper::createRREPBuffer(const rrepPacket rrep)
+char* RREPHelper::createRREPBuffer(const rrepPacket& rrep)
 {
 	char* buffer = (char*)(malloc(sizeof(rrep)));	
 

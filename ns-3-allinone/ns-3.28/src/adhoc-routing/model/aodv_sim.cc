@@ -1,6 +1,6 @@
 #include "aodv_sim.h"
 
-void SimAODV::handleSimPackets(SimPacket packet)
+void SimAODV::handleSimPackets(const SimPacket& packet)
 {
     // IMPORTANT: We are not updating pair data because it is not accurate
     // enough for link breakage determination. We are using hello messages

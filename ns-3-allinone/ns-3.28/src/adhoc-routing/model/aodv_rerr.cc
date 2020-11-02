@@ -43,12 +43,12 @@ rerrPacket RERRHelper::createRERR(const IP_ADDR destIP, const IP_ADDR origIP)
 	return rerr;
 }
 
-void RERRHelper::forwardRERR(const rerrPacket receivedRERR)
+void RERRHelper::forwardRERR(const rerrPacket& receivedRERR)
 {
     fprintf(stderr, "[RERR]:[WARNING]: forwardRRER not implemented\n");
 }
 
-char* RERRHelper::createRERRBuffer(const rerrPacket rerr)
+char* RERRHelper::createRERRBuffer(const rerrPacket& rerr)
 {
     char* buffer = (char*)(malloc(sizeof(rerr)));
 

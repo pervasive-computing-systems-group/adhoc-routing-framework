@@ -32,7 +32,7 @@ using namespace std;
 class Port;
 
 // get a 32 bit ip address from a string
-IP_ADDR getIpFromString(string ipStr);
+IP_ADDR getIpFromString(const string& ipStr);
 string getStringFromIp(IP_ADDR ip);
 
 /* Routing Table row class 
@@ -64,7 +64,8 @@ public:
 	virtual void updateTableEntry(const IP_ADDR dest, const IP_ADDR nextHop);
 
 	// get the map 
-	map<IP_ADDR, TableInfo> getInternalTable() { return this->table; }
+	// JAD: This doesn't seem very safe... or efficient
+	// map<IP_ADDR, TableInfo> getInternalTable() { return this->table; }
 
 protected:
 	// internal routing table maps destination to next hop 
@@ -192,7 +193,7 @@ protected:
 	virtual void _buildPort(Port*) = 0;
     virtual void _destroyPort(Port*) = 0;
 
-	vector<IP_ADDR> getCopyOfNeighbors();
+	const vector<IP_ADDR>& getCopyOfNeighbors();
 };
 
 #endif
