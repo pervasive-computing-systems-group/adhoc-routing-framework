@@ -34,7 +34,7 @@ public:
      */
     void handlePacket(char* data, int length, IP_ADDR source) { handleMonitoringPacketBuffer(data, length, source, MONITOR_PORT); }
 
-    virtual void updatePairData(pair_data pairData) = 0;
+    virtual void updatePairData(const pair_data& pairData) = 0;
 
     // various initialize functions for creating new models 
     virtual void initialize(IP_ADDR parentIp) = 0;
@@ -59,7 +59,7 @@ public:
     bool isNodeOneHopNeighbor(IP_ADDR nodeIp);
 
     // get a local data prediction for a node 
-    local_data getLocalDataForNode(IP_ADDR nodeIp);
+    const local_data& getLocalDataForNode(IP_ADDR nodeIp);
     // the default otherNodeId is this node
     pair_data getPairDataBetweenNodes(IP_ADDR nodeIp, IP_ADDR ownerIp);
 

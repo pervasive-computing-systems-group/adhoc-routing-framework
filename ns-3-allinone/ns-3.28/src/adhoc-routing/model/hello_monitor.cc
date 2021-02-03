@@ -29,6 +29,16 @@ void HelloMonitor::sendHellos(uint64_t duration_ms)
     _updateNeighbors(duration_ms);
 }
 
+bool HelloMonitor::isActive()
+{
+    bool retVal = false;
+    helloMux.lock();
+    retVal =  m_active;
+    helloMux.unlock();
+
+    return retVal;
+}
+
 void HelloMonitor::_updateNeighbors(uint64_t remaining_time_ms)
 {
     // 0. Should we continue? 

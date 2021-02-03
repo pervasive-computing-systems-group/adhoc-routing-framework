@@ -46,9 +46,9 @@ public:
     // create a rerr packet 
 	rerrPacket createRERR(const IP_ADDR destIP, const IP_ADDR origIP);
 	// forward RERR enters state of maybe receiving RREP
-	void forwardRERR(const rerrPacket receivedRERR);
+	void forwardRERR(const rerrPacket& receivedRERR);
 	// convert rerr message to a char* buffer
-	static char* createRERRBuffer(const rerrPacket rerr);
+	static char* createRERRBuffer(const rerrPacket& rerr);
 	// read a received rrep buffer
 	static rerrPacket readRERRBuffer(char* buffer);
 

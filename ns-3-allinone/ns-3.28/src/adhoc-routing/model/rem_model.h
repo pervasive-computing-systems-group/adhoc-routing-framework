@@ -50,7 +50,7 @@ public:
 
     /**** MODEL FUNCTIONS ****/
     void addDataPoint(double value, double time); // add a data point to the current model and call fit model
-    void calculateDeviations(vector<double> times, vector<double> values); // calculate sigma for the given data set
+    void calculateDeviations(const vector<double>& times, const vector<double>& values); // calculate sigma for the given data set
     bool withinExpectedValueRange(double time, double value); // check if the calculated value is a valid prediction
     bool compareToPreviousModel();
     void adaptModel(); // adapt the current model for the latest measured data in window
@@ -59,7 +59,7 @@ public:
     // ABSTRACT
     virtual double getDataPoint(double time) = 0; // abstract function for getting predicted data point
     virtual void fitModel() = 0; // fit the current model to data points
-    virtual void performRegression(vector<double> times, vector<double> values, vector<double> wAvgs) = 0; // perform a regression on the data provided
+    virtual void performRegression(const vector<double>& times, const vector<double>& values, const vector<double>& wAvgs) = 0; // perform a regression on the data provided
     /*************************/
 
     int getDataCount() { return mvData.size(); }
@@ -131,7 +131,7 @@ private:
     double alphaTimeout;
 
     void fitModel();
-    void performRegression(vector<double> times, vector<double> values, vector<double> wAvgs); // perform a regression on the data provided
+    void performRegression(const vector<double>& times, const vector<double>& values, const vector<double>& wAvgs); // perform a regression on the data provided
 };
 
 /*
@@ -149,7 +149,7 @@ public:
 private:
 
     void fitModel();
-    void performRegression(vector<double> times, vector<double> values, vector<double> wAvgs); // perform a regression on the data provided
+    void performRegression(const vector<double>& times, const vector<double>& values, const vector<double>& wAvgs); // perform a regression on the data provided
 };
 
 #endif

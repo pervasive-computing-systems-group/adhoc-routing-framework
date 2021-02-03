@@ -25,7 +25,7 @@ PacketBuffer::~PacketBuffer()
  * Public Functions
  ******************************/
 
-void PacketBuffer::storePacket(BufferedPacket bufferedPacket)
+void PacketBuffer::storePacket(BufferedPacket& bufferedPacket)
 {
 	// Check if there is a queue for this address
 	if(!(m_oRREQPacketBuffer.count(bufferedPacket.dest) > 0))

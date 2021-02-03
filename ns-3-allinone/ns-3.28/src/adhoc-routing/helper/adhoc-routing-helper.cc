@@ -286,6 +286,8 @@ Ptr<Node> AdHocRoutingHelper::getNode()
 
 void dumbySleep(int DURATION_MS)
 {
+    if(TIMER_DEBUG)
+        std::cout << "[TIMER_DEBUG][dumbySleep]: Called _sleep() with DURATION_MS: " << DURATION_MS << std::endl;
 }
 
 AdHocRoutingHelper::AdHocRoutingHelper(Ptr<Node> node, IP_ADDR nodeIp) : SimAODV(nodeIp)

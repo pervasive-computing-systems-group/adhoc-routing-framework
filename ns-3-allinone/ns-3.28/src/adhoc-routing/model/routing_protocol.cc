@@ -6,7 +6,7 @@
 
 using namespace std;
 
-IP_ADDR getIpFromString(string ipStr)
+IP_ADDR getIpFromString(const string& ipStr)
 {
 	IP_ADDR ip;
 
@@ -180,11 +180,7 @@ void AdhocRoutingProtocol::addLink(IP_ADDR node)
 }
 
 
-vector<IP_ADDR> AdhocRoutingProtocol::getCopyOfNeighbors()
+const vector<IP_ADDR>& AdhocRoutingProtocol::getCopyOfNeighbors()
 {
-	globalMux.lock();
-	vector<IP_ADDR> retNeighbors(m_neighbors);
-	globalMux.unlock();
-
-	return retNeighbors;
+	return m_neighbors;
 }

@@ -2,6 +2,7 @@
 #define DEFINES_H
 
 #define DEBUG 0
+#define TIMER_DEBUG 0
 #define RPI 0
 
 #include <stdint.h>

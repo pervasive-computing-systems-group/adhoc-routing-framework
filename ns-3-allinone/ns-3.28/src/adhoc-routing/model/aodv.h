@@ -84,7 +84,7 @@ protected:
 	// Packet buffer for packets waiting to be sent
 	PacketBuffer m_oPacketBuffer;
 	// broadcast rreq to all neighbors
-	void _broadcastRREQBuffer(rreqPacket rreq);
+	void _broadcastRREQBuffer(const rreqPacket& rreq);
 	// make a decision on a received rreq packet using the rreq helper 
 	void _handleRREQ(char* buffer, int length, IP_ADDR source);
 

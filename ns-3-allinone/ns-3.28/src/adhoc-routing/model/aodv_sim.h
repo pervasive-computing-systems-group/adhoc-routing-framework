@@ -46,7 +46,7 @@ public:
      * Note: This probably isn't needed.. we could call _handlePacket directly
      *
      */
-    void handleSimPackets(SimPacket packet);
+    void handleSimPackets(const SimPacket& packet);
 
     // queue for storing packets
     // JAD: NOT USED! This queue was only ever holding one packet at a time...

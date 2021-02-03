@@ -39,7 +39,7 @@ public:
     double getBatteryLevel(IP_ADDR ownerIp = -1);
     double getRSSBetweenNodes(IP_ADDR pairIp, IP_ADDR ownerIp);
 
-    void updatePairData(pair_data pairData) override;
+    void updatePairData(const pair_data& pairData) override;
 
     // update local models with new data points 
     void updateLocalBatteryModel(double batteryLevel);
@@ -49,8 +49,8 @@ public:
     void sendUpdatedModel(PredictionModel* model, IP_ADDR dest);
 
     // update network models
-    void updateNetworkBatteryModel(IP_ADDR ownerIp, BatteryModel model);
-    void updateNetworkRSSModel(IP_ADDR ownerIp, IP_ADDR pairIp, RssModel model);
+    void updateNetworkBatteryModel(IP_ADDR ownerIp, const BatteryModel& model);
+    void updateNetworkRSSModel(IP_ADDR ownerIp, IP_ADDR pairIp, const RssModel& model);
 
     // abstract function for getting current battery level
     virtual double getCurrentBatteryLevel() = 0;
