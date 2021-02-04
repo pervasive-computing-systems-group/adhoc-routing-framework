@@ -52,11 +52,12 @@ bool NetworkMonitor::isNodeOneHopNeighbor(IP_ADDR nodeIp)
 
     for (pair_data data : localPairData)
     {
-        if (MONITOR_DEBUG)
+        if (data.pairIp == nodeIp){
+            if (MONITOR_DEBUG)
             cout << "[MONITOR]:[DEBUG]: Node " << data.pairIp << " is a neighbor" << endl;
-
-        if (data.pairIp == nodeIp)
             return true;
+        }
+            
     }
 
     return false;
