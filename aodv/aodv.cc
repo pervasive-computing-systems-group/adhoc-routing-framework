@@ -39,12 +39,13 @@ AODV::AODV(IP_ADDR ip) {
 }
 
 AODV::~AODV() {
-    if(AODV_WARNING)
-        cout << "[AODV]:[WARNING]: TABLE MEMORY NOT BEING CLEARED" << endl;
+    // Clear the routing table
+    delete this->m_pRoutingTable;
 
+    // Clear the packet buffer
     for (auto it = rreqPacketBuffer.begin(); it != rreqPacketBuffer.end(); ++it) {
         // remove all packets from this queue
-        while (it->second->empty()) {
+        while (!it->second->empty()) {
             BufferedPacket package;
             it->second->pop(package);
             free(package.buffer);

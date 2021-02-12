@@ -192,7 +192,7 @@ void test_aodv_rreq_buffer()
 	aodv.addPort(printPort);
 
 	rreqPacket rreq = aodv.getRREQHelper()->createRREQ(dest);
-	char* buffer = (char*)(malloc(sizeof(rreq))); 
+	char* buffer;
 	buffer = aodv.getRREQHelper()->createRREQBuffer(rreq);
 
 	rreqPacket receivedRREQ;
@@ -206,7 +206,8 @@ void test_aodv_rreq_buffer()
 	// "Find route"
 	cout << "[TESTS]: Test aodv rreq buffer complete." << endl;
 
-	delete buffer;
+	free(buffer);
+	delete printPort;
 }
 
 void test_aodv_rreq_to_rrep()
@@ -243,14 +244,15 @@ void test_aodv_rreq_to_rrep()
 
 	node0.sendPacket(printPort->getPortId(), buffer, length, node3.getIp());	
 
-	delete buffer;
-
 	node0.logRoutingTable();
 	node1.logRoutingTable();
 	node2.logRoutingTable();
 	node3.logRoutingTable();
 
 	test(true, "Test aodv rreq to rrep complete");
+
+	free(buffer);
+	delete printPort;
 }
 
 void test_aodv_loop_prevention()
@@ -304,7 +306,8 @@ void test_aodv_loop_prevention()
 
 	test(true, "Test aodv loop prevention passed");
 
-	delete buffer;
+	free(buffer);
+	delete printPort;
 }
 
 void test_aodv_rreq_no_route()
@@ -334,7 +337,7 @@ void test_aodv_rreq_no_route()
 	// TODO: Add this test 
 	// TODO: Is this a buffer problem?
 
-	delete buffer;
+	free(buffer);
 	delete printPort;
 }
 
@@ -393,7 +396,6 @@ void test_aodv_link_break()
 	node0.sendPacket(printPort->getPortId(), buffer, length, node4.getIp());
 
 	node0.sendPacket(printPort->getPortId(), buffer, length, node4.getIp());
-	delete buffer;
 
 	test(AODVTest::lastReceive == node4.getIp(), "Last received packet was by node 4");
 
@@ -417,5 +419,8 @@ void test_aodv_link_break()
 	node2.logRoutingTable();
 	node3.logRoutingTable();
 	node4.logRoutingTable();
+
+	free(buffer);
+	delete printPort;
 
 }

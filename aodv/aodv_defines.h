@@ -10,7 +10,7 @@
 
 #define HEADER_SIZE         9
 
-#define GLOBAL_AODV_DEBUG   1
+#define GLOBAL_AODV_DEBUG   0
 
 #define AODV_PRINT_PACKET   1 && GLOBAL_AODV_DEBUG
 #define AODV_LOG_OUTPUT	    1 && GLOBAL_AODV_DEBUG
