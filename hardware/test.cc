@@ -57,9 +57,9 @@ bool testHardwareAodv(){
     PrintPort* printPort = new PrintPort(DATA_PORT);
     haodv->addPort(printPort);
 
-    char *msg = (char *)(malloc(17));
+    char *msg = (char *)(malloc(13));
     string message = "Hello World!";
-    memcpy(msg, message.c_str(), 17);
+    memcpy(msg, message.c_str(), 13);
 
     bool send = true;
     send = send && haodv->sendPacket(printPort->getPortId(), msg, 16, getIpFromString("127.0.0.1"));
@@ -82,6 +82,9 @@ bool testHardwareAodv(){
     haodv->removePort(printPort);
     pass &= test(0 == haodv->handlePackets(), "Messages aren't sent mutiple times");
 
+    delete haodv;
+    delete printPort;
+    free(msg);
     return pass;
 }
 
@@ -96,7 +99,11 @@ bool testHardwareHello(){
     uint64_t end = hello->getCurrentTimeMS();
 
     uint64_t elapsed = end-start;
-    return test((elapsed > 98 && elapsed < 102), std::string("Hardware hello waits properly"));
+
+    delete hello;
+    delete basicRoutingProt;
+
+    return test((elapsed > 90 && elapsed < 110), std::string("Hardware hello waits properly"));
 }
 
 bool testHardwareRSSI(){
@@ -135,5 +142,6 @@ bool testSelective(){
 
 
     delete hRSSI;
+    delete mac;
     return allPass;
 }

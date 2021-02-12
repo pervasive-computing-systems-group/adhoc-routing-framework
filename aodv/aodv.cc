@@ -105,7 +105,7 @@ bool AODV::sendPacket(int portId, char* packet, int length, IP_ADDR dest, IP_ADD
                 // finding a route
                 // TODO: send a RERR
 
-    //            return;
+                //            return;
             }
 
             if (AODV_DEBUG)
