@@ -59,5 +59,5 @@ int main(){
     // Clean memory up
     delete printPort;
     delete haodv;
-    delete msg;
+    free(msg);
 }
