@@ -14,7 +14,7 @@
 #define BROADCAST_STR       "255.255.255.255"
 #endif
 
-#define MY_IP_ADDR          "192.168.1.1"
+#define MY_IP_ADDR          "192.168.1.1" 
 #define INTERFACE_NAME      "wlan0"
 
 #define ROUTING_PORT        5969

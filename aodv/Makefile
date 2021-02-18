@@ -21,12 +21,12 @@ LIBFLAGS = -cvq
 #
 TARGET = test
 LIB_NAME = libaodv.a
-OBJ_FILES = aodv.o aodv_rreq.o aodv_rrep.o aodv_rerr.o aodv_routing_table.o aodv_test.o
+OBJ_FILES = aodv.o aodv_rreq.o aodv_rrep.o aodv_rerr.o aodv_routing_table.o aodv_test.o buffered_packet.o
 OBJ_LIB_FILES = ${OBJ_FILES} ../adhoc/*.o
 OBJ_INCLUDE_FILES = ${TARGET}.o ${OBJ_LIB_FILES}
 OBJ_BUILD_FILES = ${TARGET}.o ${OBJ_FILES}
 
-INC_FILES = ${TARGET}.h aodv.h aodv_rreq.h aodv_rrep.h aodv_rerr.h aodv_routing_table.h aodv_test.h aodv_params.h defines.h network_monitor.h monitor_info.h
+INC_FILES = ${TARGET}.h aodv.h aodv_rreq.h aodv_rrep.h aodv_rerr.h aodv_routing_table.h aodv_test.h aodv_params.h defines.h network_monitor.h monitor_info.h buffered_packet.h
 
 SUBDIRS = ../adhoc 
 

@@ -13,9 +13,10 @@ Abstract implementation of the Ad-hoc On demand Distance Vector routing protocol
 Modeled after RFC 3561: https://www.ietf.org/rfc/rfc3561.txt
 
 ## To-Do
-1. Add ttl for sent packets and remove packets after time  
-2. Create function for sending all buffered packets for a destination IP 
-3. Create a function for creating new bufferedPacket in map 
+1. Created BufferedPacket class which cleans up its own memory upon deconstruction to remove memory leak with circular buffer
+2. Add ttl for sent packets and remove packets after time  
+3. Create function for sending all buffered packets for a destination IP 
+4. Create a function for creating new bufferedPacket in map 
 
 ## Latest Features
 - Changed sequence number for duplicate RREQ to check set of past received sequences
