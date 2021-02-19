@@ -46,9 +46,7 @@ AODV::~AODV() {
     for (auto it = rreqPacketBuffer.begin(); it != rreqPacketBuffer.end(); ++it) {
         // remove all packets from this queue
         while (!it->second->empty()) {
-            BufferedPacket package;
-            it->second->pop(package);
-            free(package.buffer);
+            it->second->pop();
         }
         delete it->second;
     }
@@ -85,11 +83,7 @@ bool AODV::sendPacket(int portId, char* packet, int length, IP_ADDR dest, IP_ADD
         }
 
         if (false == getTable()->getIsRouteActive(dest)) {
-            BufferedPacket bufferedPacket;
-            bufferedPacket.buffer = (char *)(malloc(length));
-            memcpy(bufferedPacket.buffer, packet, length);
-            bufferedPacket.length = length;
-            bufferedPacket.portId = portId;
+            BufferedPacket bufferedPacket(portId, packet, length);
 
             // Put this packet in a buffer to be sent when a route opens up
             if (this->rreqPacketBuffer.count(dest)) {
@@ -360,8 +354,9 @@ void AODV::_handleRREP(char *buffer, int length, IP_ADDR source) {
             while (!this->rreqPacketBuffer[rrep.destIP]->empty()) {
                 BufferedPacket packet;
                 this->rreqPacketBuffer[rrep.destIP]->pop(packet);
-                sendPacket(packet.portId, packet.buffer, packet.length, rrep.destIP);
-                free(packet.buffer);
+                char* buffer = packet.getBuffer();
+                sendPacket(packet.getPortId(), buffer, packet.getLength(), rrep.destIP);
+                free(buffer);
             }
             delete this->rreqPacketBuffer[rrep.destIP];
         }
@@ -421,6 +416,8 @@ void AODV::_handleRERR(char *buffer, int length, IP_ADDR source) {
         IP_ADDR nextHop = getTable()->getNextHop(rerr.origIP);
         _socketSendPacket(ROUTING_PORT, packet, sizeof(rerr), nextHop);
     }
+
+    free(packet);
 }
 
 void AODV::_handlePacket(int port, char *packet, int length, IP_ADDR source) {

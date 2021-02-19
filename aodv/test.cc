@@ -1,5 +1,6 @@
 #include "test.h"
 #include "send_packet.h"
+#include "buffered_packet.h"
 
 // AODV TESTING
 
@@ -31,6 +32,7 @@ void test_aodv_rreq_buffer();
 void test_aodv_rreq_forwarding();
 void test_aodv_no_route();
 void test_aodv_rreq_to_rrep();
+void test_buffered_packet(); 
 
 int main (int argc, char *argv[]) 
 {	

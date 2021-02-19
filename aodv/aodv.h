@@ -18,17 +18,11 @@
 #include "aodv_params.h"
 
 #include "routing_protocol.h"
-
+#include "buffered_packet.h"
 #include "safe_circular_queue.h"
 
 #include <vector>
 #include <functional>
-
-struct BufferedPacket{
-	int portId;
-	char* buffer;
-	int length;
-};
 
 class AODV : public RoutingProtocol
 {
