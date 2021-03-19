@@ -7,7 +7,12 @@
 class Message{
 public:
     Message(){};
-    Message(Endpoint end, char* data, int length, int rssi=-1);
+    Message(Endpoint end, char* data, int length);
+    Message(const Message &other);
+
+    ~Message();
+
+    Message& operator=(const Message& other);
 
     /*!
      * @brief Returns the IP address of the message sender
@@ -35,7 +40,7 @@ public:
      * 
      * @return char* 
      */
-    char* getData(void);
+    char* getData(void) const;
 
     /*!
      * @brief Get the Port object
@@ -51,18 +56,10 @@ public:
      */
     Endpoint& getEndpoint(void);
 
-    /*!
-     * @brief Get the received signal strength when this packet was received
-     * 
-     * @return int rssi (dBm), -1 if data does not exist
-     */
-    int getRssi(void) const;
-
 private:
     Endpoint end;
     char* data;
     int length;
-    int rssi;
 };
 
 #endif

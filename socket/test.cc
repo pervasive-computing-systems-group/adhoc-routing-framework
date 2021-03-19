@@ -49,7 +49,7 @@ void sendMessageToThreadedServerTest(UDPSocket *server, UDPSocket &sender,
     const int MAX_ATTEMPTS = 2;
     do {
         count++;
-        sender.sendTo(serverEnd, &data[0], data.length());
+        sender.sendTo(serverEnd, &data[0], data.length()+1);
         sleep(1);
     } while ((!server->getMessage(message) && count < MAX_ATTEMPTS));
     // Check if test was successful
@@ -76,7 +76,7 @@ void sendMessageBetweenThreadedSockets(UDPSocket *socket1, UDPSocket *socket2,
     const int MAX_ATTEMPTS = 2;
     do {
         count++;
-        socket1->sendTo(socket2End, &data1[0], data1.length());
+        socket1->sendTo(socket2End, &data1[0], data1.length()+1);
         sleep(1);
     } while ((!socket2->getMessage(message1to2) && count < MAX_ATTEMPTS));
     // Check if test was successful
@@ -94,7 +94,7 @@ void sendMessageBetweenThreadedSockets(UDPSocket *socket1, UDPSocket *socket2,
     count = 0;
     do {
         count++;
-        socket2->sendTo(message1to2.getEndpoint(), &data2[0], data2.length());
+        socket2->sendTo(message1to2.getEndpoint(), &data2[0], data2.length()+1);
         sleep(1);
     } while ((!socket1->getMessage(message2to1) && count < MAX_ATTEMPTS));
     printf("received %s from %s (%s)\n", message2to1.getData(), message2to1.getEndpoint().getAddressC(), message2to1.getAddressC());
@@ -127,7 +127,7 @@ void broadcastMessage(UDPSocket *broadcastingSocket, Endpoint end,
     const int MAX_ATTEMPTS = 4;
     do {
         count++;
-        broadcastingSocket->sendTo(end, &sendData[0], sendData.length());
+        broadcastingSocket->sendTo(end, &sendData[0], sendData.length()+1);
         sleep(1);
     } while (!broadcastingSocket->getMessage(messageReceive) &&
              count < MAX_ATTEMPTS);
