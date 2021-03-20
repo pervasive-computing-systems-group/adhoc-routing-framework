@@ -6,8 +6,8 @@
 
 class Message{
 public:
-    Message(){};
-    Message(Endpoint end, char* data, int length);
+    Message();
+    Message(Endpoint end, const char* data, int length);
     Message(const Message &other);
 
     ~Message();

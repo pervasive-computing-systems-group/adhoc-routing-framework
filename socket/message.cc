@@ -1,6 +1,11 @@
 #include "message.h"
 
-Message::Message(Endpoint end, char* data, int length){
+Message::Message(){
+    this->data = nullptr;
+    this->length = 0;
+}
+
+Message::Message(Endpoint end, const char* data, int length){
     this->end = end;
     this->data = (char *) malloc(length);
     memcpy(this->data, data, length);
