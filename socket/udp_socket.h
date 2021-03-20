@@ -110,6 +110,13 @@ public:
   int receiveFrom(Endpoint &remote, char *buffer, int length);
 
   /**
+   * @brief Receives a single message from the port placing messages onto the socket's 
+   * message queue
+   * 
+   */
+  void receiveFromPort();
+
+  /**
    * @brief Continuously reads data from the port, placing messages onto the
    *  socket's message queue.
    */
@@ -121,6 +128,8 @@ public:
    * @param run an atomic boolean to stop the thread loop
    */
   void receiveFromPortThreadStoppable(std::atomic<bool>& run);
+
+  
 
   /*!
    * @brief Get one message from the socket
