@@ -23,9 +23,11 @@ int HardwareLedAODV::handlePackets() {
   Message message;
   // Handle aodv packets
   while (aodvSocket->getMessage(message)) {
-    _handleAODVPacket(message.getData(), message.getLength(),
+    char* messageData = message.getData();
+    _handleAODVPacket(messageData, message.getLength(),
                       message.getAddressI());
     helloMonitor->receiveHelloMessage(message.getAddressI());
+    free(messageData);
     count++;
     
     // Light up the led if not a message from ourselves
@@ -42,9 +44,11 @@ int HardwareLedAODV::handlePackets() {
   // Handle packets on the ports
   for (auto socketPair : portSockets) {
     while (socketPair.second->getMessage(message)) {
-      this->_handlePacket(socketPair.first, message.getData(),
+      char* messageData = message.getData();
+      this->_handlePacket(socketPair.first, messageData,
                           message.getLength(), message.getAddressI());
       helloMonitor->receiveHelloMessage(message.getAddressI());
+      free(messageData);
       count++;
 
       // Light hello led if hello

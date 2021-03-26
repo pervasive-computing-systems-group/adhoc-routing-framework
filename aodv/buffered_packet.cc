@@ -27,6 +27,7 @@ BufferedPacket::~BufferedPacket(){
 
 BufferedPacket& BufferedPacket::operator=(const BufferedPacket& bufferedPacket){
     this->portId = bufferedPacket.portId;
+    free(this->buffer);
     this->buffer = bufferedPacket.getBuffer();
     this->length = bufferedPacket.length;
     return *this;

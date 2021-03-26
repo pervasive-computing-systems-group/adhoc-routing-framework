@@ -24,6 +24,7 @@ Message::~Message(){
 
 Message& Message::operator=(const Message& other){
     this->end = other.end;
+    free(this->data);
     this->data = other.getData();
     this->length = other.length;
     return *this;

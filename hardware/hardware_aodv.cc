@@ -59,13 +59,17 @@ int HardwareAODV::handlePackets(){
     Message message;
     // Handle aodv packets
     while(aodvSocket->getMessage(message)){
-        _handleAODVPacket(message.getData(), message.getLength(), message.getAddressI());
+        char* messageData = message.getData();
+        _handleAODVPacket(messageData, message.getLength(), message.getAddressI());
+        free(messageData);
         count ++;
     }
     // Handle packets on the ports
     for(auto socketPair : portSockets){
         while(socketPair.second->getMessage(message)){
-            this->_handlePacket(socketPair.first, message.getData(), message.getLength(), message.getAddressI());
+            char* messageData = message.getData();
+            this->_handlePacket(socketPair.first, messageData, message.getLength(), message.getAddressI());
+            free(messageData);
             count++;
         }
     }
