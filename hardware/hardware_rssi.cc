@@ -6,9 +6,9 @@
  */
 HardwareRSSI::HardwareRSSI(bool _collectAll) : collectAll(_collectAll), count(0) {
   // Set up libpcap
-  handle = pcap_open_live(INTERFACE_NAME, BUFSIZ, 1, 100, errbuf);
+  handle = pcap_open_live(MONITORING_INTERFACE_NAME, BUFSIZ, 1, 100, errbuf);
   if (handle == NULL) {
-    fprintf(stderr, "[RSSI]:[ERROR]: Couldn't open device %s: %s\n", INTERFACE_NAME, errbuf);
+    fprintf(stderr, "[RSSI]:[ERROR]: Couldn't open device %s: %s\n", MONITORING_INTERFACE_NAME, errbuf);
     exit(2);
   }
   /* Compile and apply the filter */

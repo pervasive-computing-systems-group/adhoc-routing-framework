@@ -15,7 +15,8 @@
 #endif
 
 #define MY_IP_ADDR          "192.168.1.1" 
-#define INTERFACE_NAME      "wlan0"
+#define WIRELESS_INTERFACE_NAME        "wlan0"
+#define MONITORING_INTERFACE_NAME      "wlan1"
 
 #define ROUTING_PORT        5969
 #define DATA_PORT           5432
