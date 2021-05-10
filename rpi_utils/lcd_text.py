@@ -57,8 +57,8 @@ draw.rectangle((0, 0, width, height), outline=0, fill=0)
 
 # Write four lines of text.
 vert_location = 0
-for i in sys.argv[1:]
-    draw.text((x, top + 0), , font=font, fill=255)
+for i in sys.argv[1:]:
+    draw.text((x, top + vert_location), i, font=font, fill=255)
     vert_location += 8
 
 # Display image.
