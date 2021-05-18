@@ -12,6 +12,12 @@ Joshua Rands | joshrands1@gmail.com
 
 Classes designed for physical implementation as well as simulated implementation of an ad-hoc network on a single decentralized subnet.
 
+## Dependencies
+
+### Install the pcap library
+
+Run 'sudo apt-get install libpcap-dev' in terminal to install the library.
+
 ## Running the code
 
 This codebase is organized into several 'modules'. Modules are code grouped in a subdirectory of the main directory. Each module has been developed with a built in test framework and is compiled into a static library (.a) file for linking capabilities. 
@@ -26,31 +32,6 @@ Each module has a 'test.cc' file used for testing. Use the following tests to te
 4. Type './test'
 
 The tests for this module should run. PASS indicates the test passed and FAIL indicates that the test failed. 
-
-### Using NS3
-
-NS3 is a network simulator.
-
-Prior to running these commands, ensure that you have the prerequisites for running NS3 completed. Instructions on this process are summarized in the Ad-hoc Communication document (2.2 Getting NS3 to work) in the group’s shared smallsat folder. Alternatively, you can follow NS3's [installation instructions](https://www.nsnam.org/wiki/Installation). This project was built using NS3.28.
-
-A bash script has been created to aid in the installation of ns3 for the adhoc-routing-framework. NOTE: If you decide to not use this script and instead use a different version of ns3, you will have to manually install the CSM patch and adhoc-routing module located in the ns-3-allinone/ns-3.28 directory of this repository. 
-
-```bash
-cd ns-3-allinone
-bash install-ns3-csm.sh
-cd ns-3.28
-./waf configure --build-profile=optimized
-./waf
-sudo ./waf install
-```
-
-The CSM custom adhoc-routing module should now be successfully built and installed on your system. To test this, run the following example from inside the ns-3.28 directory. You should see a window pop up with a bunch of nodes communicating using the CSM adhoc-routing module. 
-
-```bash
-./waf --run adhoc-example --vis
-```
-
-#### IMPORTANT: If any changes are made to modules in this repository that you would like to see reflected in ns3 you must run the update-ns3.sh bash script. This script copies this repository's modules into the correct folder in the ns3 adhoc-routing module. Similarly, if you create a NEW module in this repository, you will have to update the update-ns3.sh bash script to copy your module into the ns3 adhoc-routing module. 
 
 ## Modules Overview
 

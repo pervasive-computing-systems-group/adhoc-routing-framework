@@ -1,5 +1,5 @@
-#ifndef HARDWAREAODV_H
-#define HARDWAREAODV_H
+#ifndef HARDWARE_SINGLE_HOP_H
+#define HARDWARE_SINGLE_HOP_H
 
 #include <iostream>
 #include <stdio.h>
@@ -8,35 +8,33 @@
 #include <thread>
 #include <utility>
 #include "endpoint.h"
-#include "udp_socket.h"
-#include "aodv.h"
+#include "tcp_socket.h"
+#include "single_hop.h"
 #include "hardware_defines.h"
 
-class HardwareAODV : public AODV{
+class HardwareSingleHop : public SingleHop {
 private:
-    void _hardwareAODV();
-    
+    void _hardwareSH();
+
 protected:
     unordered_map<int, thread> portThreads;
-    unordered_map<int, UDPSocket*> portSockets;
-    UDPSocket* aodvSocket;
-    thread aodving;
+    unordered_map<int, TCPSocket*> portSockets;
 
 public:
     // Constructors
 
-    HardwareAODV();
+    HardwareSingleHop();
 
     /*!
      * @brief Construct a new HardwareAODV object
-     * 
+     *
      * @param ip the ip address of the current device
      */
-    HardwareAODV(uint32_t ip);
-    HardwareAODV(const char* ip);
+    HardwareSingleHop(uint32_t ip);
+    HardwareSingleHop(const char* ip);
 
     // Destructors
-    ~HardwareAODV();
+    ~HardwareSingleHop();
 
     virtual int handlePackets() override;
 
@@ -45,6 +43,15 @@ protected:
 	void _buildPort(Port*) override;
     void _destroyPort(Port*) override;
 };
+
+/*!
+ * @brief prints the data of a packet to the specified filed
+ *
+ * @param file  where to print the packet
+ * @param buffer the packet to print
+ * @param length the length of the packet
+ */
+//void printPacket(FILE* file, char * buffer, int length);
 
 
 #endif

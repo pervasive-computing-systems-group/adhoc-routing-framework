@@ -96,7 +96,7 @@ bool HardwareAODV::_socketSendPacket(int portId, char *buffer, int length, IP_AD
     }
     fprintf(stderr, "[HARDWARE]:[ERROR]: Tried to send packet '");
     printPacket(stderr, buffer, length);
-    fprintf(stderr, "' through non-existant port %d\n", portId);
+    fprintf(stderr, "' through non-existent port %d\n", portId);
     return false;
 }
 
@@ -140,12 +140,5 @@ void HardwareAODV::_destroyPort(Port* p){
         UDPSocket* portSocket = portSockets[p->getPortId()];
         portSockets.erase(p->getPortId());
         delete portSocket;
-    }
-}
-
-
-void printPacket(FILE* file, char * buffer, int length){
-    for(int i = 0; i < length; i++){
-        fprintf(file, "%c", buffer[i]);
     }
 }

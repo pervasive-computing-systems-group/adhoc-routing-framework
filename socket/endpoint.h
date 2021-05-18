@@ -35,12 +35,14 @@
 #include <unistd.h>
 
 class UDPSocket;
+class TCPSocket;
 
 /**
 IP Endpoint (address, port)
 */
 class Endpoint {
   friend class UDPSocket;
+  friend class TCPSocket;
 
 public:
   Endpoint(void);

@@ -32,7 +32,7 @@ int main(){
             }
             printf("[DO ADHOC]:[DEBUG]: Sent ");
             printPacket(stdout, msg, message.length());
-            printf(" to %s\n",ip);
+            printf(" to %s\n", ip.c_str());
         }
         // Handle packets
         int handleCount = haodv->handlePackets();
