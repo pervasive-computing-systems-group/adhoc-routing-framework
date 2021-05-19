@@ -11,7 +11,7 @@
 CXX = g++
 LD = g++
 LIB = ar
-INC_DIRS = -I../aodv -I../socket -I../adhoc -I../hello_monitor -I../ -I../data_structures/ -I../hardware/rssi/ -I../hardware/
+INC_DIRS = -I../aodv -I../socket -I../adhoc -I../single_hop -I../hello_monitor -I../ -I../data_structures/ -I../hardware/rssi/ -I../hardware/
 
 CXXFLAGS = -g -fPIC -pthread -std=c++17 -DBOOST_LOG_DYN_LINK -O2 -g -Wall -Wundef -Wno-trigraphs -fno-strict-aliasing -fno-common ${INC_DIRS}
 LDFLAGS = -g -pthread -Wall -O2 -g -Wall -Wundef -Wno-trigraphs -fno-strict-aliasing -fno-common ${INC_DIRS}
@@ -22,13 +22,13 @@ LIBFLAGS = -cvq
 #
 TARGET = main
 OBJ_FILES = hardware_led_aodv.o led_helper.o
-OBJ_LIB_FILES = ${OBJ_FILES} ../aodv/*.o ../socket/*.o ../adhoc/*.o ../hello_monitor/*.o ../hardware/*.o ../hardware/rssi/*.o
+OBJ_LIB_FILES = ${OBJ_FILES} ../aodv/*.o ../socket/*.o ../adhoc/*.o ../single_hop/*.o ../hello_monitor/*.o ../hardware/*.o ../hardware/rssi/*.o
 OBJ_INCLUDE_FILES = ${TARGET}.o ${OBJ_LIB_FILES}
 OBJ_BUILD_FILES = ${TARGET}.o ${OBJ_FILES}
 
 INC_FILES = hardware_led_aodv.h led_helper.h
 
-SUBDIRS = ../aodv ../socket ../adhoc ../hello_monitor ../hardware
+SUBDIRS = ../aodv ../socket ../adhoc ../single_hop ../hello_monitor ../hardware
 
 #
 # Any libraries we might need.

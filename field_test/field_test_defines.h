@@ -1,5 +1,11 @@
 #include "defines.h"
 
+// Implemented routing protocols
+#define USE_SINGLE_HOP		0
+#define USE_AODV			1
+// The routing protocol to use in field test (select from above)
+#define RT_PROTOCOL			USE_AODV
+
 #define LED_AODV_DEBUG 1 && DEBUG
 
 // If we actually flash that LED

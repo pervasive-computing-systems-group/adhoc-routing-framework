@@ -73,11 +73,11 @@ void HardwareSingleHop::_buildPort(Port* p) {
 		fprintf(stderr, "[HARDWARE]:[ERROR]: Could not initialize the tcp port socket\n");
 		exit(-1);
 	}
-		if(!portSocket->setOption(SOL_SOCKET, SO_REUSEPORT, &REUSE_VAL, sizeof(REUSE_VAL))){
+	if(!portSocket->setOption(SOL_SOCKET, SO_REUSEPORT, &REUSE_VAL, sizeof(REUSE_VAL))){
 		fprintf(stderr, "[HARDWARE]:[ERROR]: Could not set the tcp port socket to reuse ports\n");
 		exit(-1);
 	}
-		if (!portSocket->bindToPort(p->getPortId())) {
+	if (!portSocket->bindToPort(p->getPortId())) {
 		fprintf(stderr, "[HARDWARE]:[ERROR]: Could not bind the tcp port socket to port:%d\n", p->getPortId());
 		exit(-1);
 	}
