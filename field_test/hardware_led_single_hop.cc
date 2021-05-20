@@ -35,10 +35,10 @@ int HardwareLedSingleHop::handlePackets() {
 	}
 
 	// Flash the LEDS
-	if(AODV_LED_ON && dataCount)
-		lightLed(AODV_LED_PIN, LIGHT_MS, dataCount);
-	if(OTHER_LED_ON && otherCount)
-		lightLed(OTHER_LED_PIN, LIGHT_MS, otherCount);
+	if(dataCount)
+		lightLed(BLUE_LED_PIN, LED_BLINK, dataCount);
+	if(otherCount)
+		lightLed(YELLOW_LED_PIN, LED_BLINK, otherCount);
 
 	return count;
 }
