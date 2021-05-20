@@ -21,12 +21,12 @@ LIBFLAGS = -cvq
 # You should be able to add object files here without changing anything else
 #
 TARGET = main
-OBJ_FILES = hardware_led_aodv.o led_helper.o
+OBJ_FILES = hardware_led_aodv.o hardware_led_single_hop.o led_helper.o
 OBJ_LIB_FILES = ${OBJ_FILES} ../aodv/*.o ../socket/*.o ../adhoc/*.o ../single_hop/*.o ../hello_monitor/*.o ../hardware/*.o ../hardware/rssi/*.o
 OBJ_INCLUDE_FILES = ${TARGET}.o ${OBJ_LIB_FILES}
 OBJ_BUILD_FILES = ${TARGET}.o ${OBJ_FILES}
 
-INC_FILES = hardware_led_aodv.h led_helper.h
+INC_FILES = hardware_led_aodv.h hardware_led_single_hop.h led_helper.h
 
 SUBDIRS = ../aodv ../socket ../adhoc ../single_hop ../hello_monitor ../hardware
 

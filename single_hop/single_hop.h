@@ -17,8 +17,6 @@
 class SingleHop : public RoutingProtocol
 {
 public:
-	// default constructor 
-	SingleHop();
 	SingleHop(const char* ip);
 	SingleHop(IP_ADDR ip);
 	~SingleHop();

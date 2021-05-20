@@ -18,10 +18,6 @@ private:
 	void _hardwareLedAODV();
 
 public:
-	// Constructors
-
-	HardwareLedSingleHop();
-
 	/*!
 	 * @brief Construct a new HardwareLedAODV object
 	 *
@@ -29,17 +25,6 @@ public:
 	 */
 	HardwareLedSingleHop(uint32_t ip);
 	HardwareLedSingleHop(const char* ip);
-
-	/**
-	 * @brief Construct a new HardwareLedAODV object
-	 *
-	 * @param ip the ip address of the current device
-	 * @param helloDurationMS the desired time to send out hello messages (program run time)
-	 */
-	HardwareLedSingleHop(uint32_t ip,  uint64_t helloDurationMS);
-	HardwareLedSingleHop(const char* ip, uint64_t helloDurationMS);
-
-	// Destructors
 	~HardwareLedSingleHop();
 
 	virtual int handlePackets() override;

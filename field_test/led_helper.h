@@ -1,5 +1,8 @@
+#pragma once
+
 #include <sstream>
 #include <string>
+#include "field_test_defines.h"
 
 /**
  * @brief Turns the led on for a specified duration and then off

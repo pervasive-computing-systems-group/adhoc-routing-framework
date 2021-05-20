@@ -82,7 +82,7 @@ public:
     // Destructor
     virtual ~RoutingProtocol();
 
-	    // Functions
+    // Functions
     /**
      * @brief adds a port to the routing protocol and sets the ports adhocRouting member
      * 

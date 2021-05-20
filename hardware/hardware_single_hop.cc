@@ -2,13 +2,9 @@
 #include <stdlib.h>
 #include <iostream>
 
-// Helpers
-void HardwareSingleHop::_hardwareSH() { }
-
-// Constructors
-HardwareSingleHop::HardwareSingleHop() : SingleHop(){
-	_hardwareSH();
-}
+/******************************
+ * Constructors + Destructors
+ ******************************/
 
 HardwareSingleHop::HardwareSingleHop(uint32_t ip) : SingleHop(ip) {
 	_hardwareSH();
@@ -18,20 +14,22 @@ HardwareSingleHop::HardwareSingleHop(const char* ip) : SingleHop(ip) {
 	_hardwareSH();
 }
 
-// Destructors
-HardwareSingleHop::~HardwareSingleHop(){
-    if(HARDWARE_DEBUG){
-        printf("[HARDWARE]:[DEBUG]: Destructing hardware aodv\n");
-    }
+HardwareSingleHop::~HardwareSingleHop() {
+	if(HARDWARE_DEBUG) {
+		printf("[HARDWARE]:[DEBUG]: Destructing hardware aodv\n");
+	}
 
-    int n = portSockets.size();
-    while(n-- > 0){
-        delete portSockets.begin()->second;
-        portSockets.erase(portSockets.begin());
-    }
+	// Free sockets
+	for(auto& it: portSockets) {
+		delete it.second;
+	}
 }
 
-// Public functions
+
+/******************************
+ * Public Functions
+ ******************************/
+
 int HardwareSingleHop::handlePackets() {
 	int count = 0;
 	Message message;
@@ -49,20 +47,31 @@ int HardwareSingleHop::handlePackets() {
 	return count;
 }
 
-// Private Functions
-bool HardwareSingleHop::_socketSendPacket(int portId, char *buffer, int length, IP_ADDR dest){
-    if(ports.count(portId)){
-        if(HARDWARE_DEBUG){
-            printf("[HARDWARE]:[DEBUG]: sending packet '");
-//            printPacket(stdout, buffer, length);
-            printf("' through port %d\n", portId);
-        }
-        return portSockets[portId]->sendTo(buffer, length, dest, portId) > 0;
-    }
-    fprintf(stderr, "[HARDWARE]:[ERROR]: Tried to send packet '");
-//    printPacket(stderr, buffer, length);
-    fprintf(stderr, "' through non-existent port %d\n", portId);
-    return false;
+
+/******************************
+ * Private Functions
+ ******************************/
+
+bool HardwareSingleHop::_socketSendPacket(int portId, char *buffer, int length, IP_ADDR dest) {
+	bool ret_val = false;
+
+	// If port exists, send packet
+	if(ports.count(portId)) {
+		if(HARDWARE_DEBUG){
+			printf("[HARDWARE]:[DEBUG]: sending packet '");
+			printPacket(stdout, buffer, length);
+			printf("' through port %d\n", portId);
+		}
+
+		ret_val = (portSockets[portId]->sendTo(buffer, length, dest, portId) > 0);
+	}
+	else {
+		fprintf(stderr, "[HARDWARE]:[ERROR]: Tried to send packet '");
+		printPacket(stderr, buffer, length);
+		fprintf(stderr, "' through non-existent port %d\n", portId);
+	}
+
+	return ret_val;
 }
 
 void HardwareSingleHop::_buildPort(Port* p) {
@@ -98,12 +107,20 @@ void HardwareSingleHop::_buildPort(Port* p) {
 }
 
 void HardwareSingleHop::_destroyPort(Port* p){
-    if(TCP_DEBUG){
-        printf("[HARDWARE]:[DEBUG]: Destroying port %d\n", p->getPortId());
-    }
-    if(portSockets.count(p->getPortId())){
-    	TCPSocket* portSocket = portSockets[p->getPortId()];
-        portSockets.erase(p->getPortId());
-        delete portSocket;
-    }
+	if(TCP_DEBUG){
+		printf("[HARDWARE]:[DEBUG]: Destroying port %d\n", p->getPortId());
+	}
+	if(portSockets.count(p->getPortId())){
+		TCPSocket* portSocket = portSockets[p->getPortId()];
+		portSockets.erase(p->getPortId());
+		delete portSocket;
+	}
 }
+
+
+
+/******************************
+ * Helper Functions
+ ******************************/
+
+void HardwareSingleHop::_hardwareSH() { }
