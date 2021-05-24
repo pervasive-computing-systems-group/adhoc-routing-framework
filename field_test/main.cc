@@ -53,11 +53,11 @@ int main(){
 				uint32_t dest = getIpFromString(ip);
 				if(!routingPrtcl->sendPacket(printPort->getPortId(), msg, message.length()+1, dest)){
 					fprintf(stderr, "[TEST ADHOC]:[ERROR]: Unable to send packet\n");
-					exit(1);
-				}
-				if(RT_PROTOCOL == USE_SINGLE_HOP) {
-					// Signal that we attempted to send a packet
 					lightLed(RED_LED_PIN, LED_BLINK);
+				}
+				else if(RT_PROTOCOL == USE_SINGLE_HOP) {
+					// Signal that we attempted to send a packet
+					lightLed(BLUE_LED_PIN, LED_BLINK);
 				}
 				printf("[TEST ADHOC]:[DEBUG]: Sent ");
 				printPacket(stdout, msg, message.length()+1);

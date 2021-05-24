@@ -156,18 +156,16 @@ void TCPSocket::receiveFromPort(){
 	Endpoint sender;
 	int n = receiveFrom(sender, buffer, MAXLINE);
 
-	if (n < 0) {
-		fprintf(stderr, "[TCP SOCKET]:[ERROR]: Receiving data on port failed\n");
-		if(TCP_DEBUG){
-			fprintf(stderr, "[TCP SOCKET]:[ERROR]: %s\n", strerror(errno));
-		}
-		exit(-1);
-	}
-	else if (n > 0) {
+	if (n > 0) {
 		buffer[n] = '\0';
 
 		// Add message to ring-buffer
 		messages.push(Message(sender, buffer, n));
+	}
+	else if (n < 0) {
+		if(TCP_DEBUG){
+			fprintf(stderr, "[TCP SOCKET]:[ERROR]: Receiving data on port failed\n");
+		}
 	}
 }
 

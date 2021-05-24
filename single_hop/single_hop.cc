@@ -24,6 +24,7 @@ SingleHop::~SingleHop() { }
  * Public Functions
  ******************************/
 bool SingleHop::sendPacket(int portId, char* packet, int length, IP_ADDR dest, IP_ADDR origIP) {
+	bool ret_val = false;
 	if (SINGLE_HOP_DEBUG) {
 		cout << "[SINGLE HOP]:[DEBUG]: Attempting to send packet from "
 				<< getStringFromIp(getIp()) << " to "
@@ -31,6 +32,7 @@ bool SingleHop::sendPacket(int portId, char* packet, int length, IP_ADDR dest, I
 	}
 
 	// Add header to buffer
+	// TODO: remove dynamic memory allocation, it isn't needed
 	char *buffer = (char *)(malloc(HEADER_SIZE + length));
 	// Configure header
 	uint8_t zero = 0x00;
@@ -41,13 +43,13 @@ bool SingleHop::sendPacket(int portId, char* packet, int length, IP_ADDR dest, I
 	memcpy((buffer + HEADER_SIZE), packet, length);
 
 	// Attempt to send packet
-	_socketSendPacket(portId, buffer, length + HEADER_SIZE, dest);
+	ret_val = _socketSendPacket(portId, buffer, length + HEADER_SIZE, dest);
 
 	// TODO: Determine how we will handle packets that failed to send!
 
 	free(buffer);
 
-    return true;
+	return ret_val;
 }
 
 
