@@ -25,8 +25,19 @@
 #include "tcp_socket.h"
 using std::memset;
 
+// SIGPIPE error handler. sendTO() will throw a SIGPIPE error when the socket is disconnected,
+void sigpipe_handler() {
+	if(TCP_DEBUG) {
+		printf("[TCP SOCKET]: Received SIGPIPE error\n");
+	}
+}
+
 
 TCPSocket::TCPSocket() : Socket(), messages(TCP_QUEUE_SIZE) {
+	// Configure SIGPIPE error handler
+	memset(&sigpipe_act, '\0', sizeof(sigpipe_act));
+	sigpipe_act.sa_restorer = &sigpipe_handler;
+	sigaction(SIGPIPE, &sigpipe_act, NULL);
 }
 
 TCPSocket::~TCPSocket(){

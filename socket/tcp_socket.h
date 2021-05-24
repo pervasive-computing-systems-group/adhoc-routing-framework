@@ -35,6 +35,7 @@
 #include <cstring>
 #include <errno.h>
 #include <atomic>
+#include <signal.h>
 
 using namespace std;
 
@@ -44,118 +45,121 @@ UDP Socket
 class TCPSocket : public Socket {
 
 public:
-  /*! 
-   * @brief Instantiate an UDP Socket
-   */
+	/*!
+	* @brief Instantiate an UDP Socket
+	*/
 	TCPSocket();
 
-  ~TCPSocket();
+	~TCPSocket();
 
-  /*! 
-   *  @brief Init the UDP Client Socket without binding it to any specific por
-   * 
-   *  @return true on success, false on failure
-   */
-  bool init(void);
+	/*!
+	*  @brief Init the UDP Client Socket without binding it to any specific por
+	*
+	*  @return true on success, false on failure
+	*/
+	bool init(void);
 
-  /*! 
-   * @brief Bind a UDP Server Socket to a specific port
-   *  
-   * @param port The port to listen for incoming connections on
-   * @return true on success, false on failure
-   */
-  bool bindToPort(int port);
+	/*!
+	* @brief Bind a UDP Server Socket to a specific port
+	*
+	* @param port The port to listen for incoming connections on
+	* @return true on success, false on failure
+	*/
+	bool bindToPort(int port);
 
-  /*! 
-   * @brief Join the multicast group at the given address
-   *  
-   * @param address The address of the multicast group
-   * @return true on success, false on failure
-   */
-  bool joinMulticastGroup(const char *address);
+	/*!
+	* @brief Join the multicast group at the given address
+	*
+	* @param address The address of the multicast group
+	* @return true on success, false on failure
+	*/
+	bool joinMulticastGroup(const char *address);
 
-  /*! 
-   * @brief Set the socket in broadcasting mode
-   *  
-   * @return true on success, false on failure
-   */
-  bool setBroadcasting(bool broadcast = false);
+	/*!
+	* @brief Set the socket in broadcasting mode
+	*
+	* @return true on success, false on failure
+	*/
+	bool setBroadcasting(bool broadcast = false);
 
-  /*! Send a packet to a remote endpoint
-   *  @param remote The remote endpoint
-   *  @param packet The packet to be sent
-   *  @param length The length of the packet to be sent
-   *  @return the number of written bytes on success (>=0) or -1 on failure
-   */
-  int sendTo(Endpoint &remote, const char *packet, int length);
+	/*! Send a packet to a remote endpoint
+	*  @param remote The remote endpoint
+	*  @param packet The packet to be sent
+	*  @param length The length of the packet to be sent
+	*  @return the number of written bytes on success (>=0) or -1 on failure
+	*/
+	int sendTo(Endpoint &remote, const char *packet, int length);
 
-  /*!
-   * @brief Send a packet to an IP address and port
-   * 
-   * @param buffer 
-   * @param length 
-   * @param dest 
-   * @return int 
-   */
-  int sendTo(char* buffer, int length, uint32_t dest, int port);
+	/*!
+	* @brief Send a packet to an IP address and port
+	*
+	* @param buffer
+	* @param length
+	* @param dest
+	* @return int
+	*/
+	int sendTo(char* buffer, int length, uint32_t dest, int port);
 
-  /**
-   *  @brief Receive a packet from a remote endpoint
-   *  @param remote The remote endpoint
-   *  @param buffer The buffer for storing the incoming packet data. If a packet
-   *                is too long to fit in the supplied buffer, excess bytes are discarded
-   *  @param length The length of the buffer
-   *  @return the number of received bytes on success (>=0) or -1 on failure
-   */
-  int receiveFrom(Endpoint &remote, char *buffer, int length);
+	/**
+	*  @brief Receive a packet from a remote endpoint
+	*  @param remote The remote endpoint
+	*  @param buffer The buffer for storing the incoming packet data. If a packet
+	*                is too long to fit in the supplied buffer, excess bytes are discarded
+	*  @param length The length of the buffer
+	*  @return the number of received bytes on success (>=0) or -1 on failure
+	*/
+	int receiveFrom(Endpoint &remote, char *buffer, int length);
 
-  /**
-   * @brief Receives a single message from the port placing messages onto the socket's 
-   * message queue
-   * 
-   */
-  void receiveFromPort();
+	/**
+	* @brief Receives a single message from the port placing messages onto the socket's
+	* message queue
+	*
+	*/
+	void receiveFromPort();
 
-  /**
-   * @brief Continuously reads data from the port, placing messages onto the
-   *  socket's message queue.
-   */
-  void receiveFromPortThread();
+	/**
+	* @brief Continuously reads data from the port, placing messages onto the
+	*  socket's message queue.
+	*/
+	void receiveFromPortThread();
 
-  /**
-   * @brief Continuously reads data from the port, placing messages onto the
-   *  socket's message queue.
-   * @param run an atomic boolean to stop the thread loop
-   */
-  void receiveFromPortThreadStoppable(std::atomic<bool>& run);
+	/**
+	* @brief Continuously reads data from the port, placing messages onto the
+	*  socket's message queue.
+	* @param run an atomic boolean to stop the thread loop
+	*/
+	void receiveFromPortThreadStoppable(std::atomic<bool>& run);
 
-  
 
-  /*!
-   * @brief Get one message from the socket
-   * 
-   * @param message will get set to the first message on the queue
-   * @return true a message was received
-   * @return false no messages
-   */
-  bool getMessage(Message &message);
 
-  /*!
-   * @brief Check if there are any messages without attempting to get the packet
-   * 
-   */
-  bool areThereMessages();
+	/*!
+	* @brief Get one message from the socket
+	*
+	* @param message will get set to the first message on the queue
+	* @return true a message was received
+	* @return false no messages
+	*/
+	bool getMessage(Message &message);
 
-  /*!
-   * @brief Get the sockfd object
-   * 
-   * @return int 
-   */
-  int getSockfd() const;
+	/*!
+	* @brief Check if there are any messages without attempting to get the packet
+	*
+	*/
+	bool areThereMessages();
+
+	/*!
+	* @brief Get the sockfd object
+	*
+	* @return int
+	*/
+	int getSockfd() const;
 
 private:
-  // To hold threaded messages
-  SafeCircularQueue<Message> messages;
+	// To hold threaded messages
+	SafeCircularQueue<Message> messages;
+
+	// sigaction struct to handle SIGPIPE error (tried to write while socket was not connected)
+	struct sigaction sigpipe_act;
 };
 
 #endif
