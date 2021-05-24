@@ -57,7 +57,7 @@ int main(){
 				}
 				if(RT_PROTOCOL == USE_SINGLE_HOP) {
 					// Signal that we attempted to send a packet
-					lightLed(RED_LED_PIN, LED_HOLD);
+					lightLed(RED_LED_PIN, LED_BLINK);
 				}
 				printf("[TEST ADHOC]:[DEBUG]: Sent ");
 				printPacket(stdout, msg, message.length()+1);

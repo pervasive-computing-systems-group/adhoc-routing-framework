@@ -1,8 +1,8 @@
 #ifndef DEFINES_H
 #define DEFINES_H
 
-#define DEBUG 1
-#define RPI 0
+#define DEBUG 0
+#define RPI 1
 
 #include <stdint.h>
 
@@ -14,7 +14,7 @@
 #define BROADCAST_STR       "255.255.255.255"
 #endif
 
-#define MY_IP_ADDR          "192.168.1.1" 
+#define MY_IP_ADDR          "192.168.1.1"
 #define WIRELESS_INTERFACE_NAME        "wlan0"
 #define MONITORING_INTERFACE_NAME      "wlan1"
 

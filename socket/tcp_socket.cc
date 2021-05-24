@@ -127,6 +127,7 @@ int TCPSocket::sendTo(char *buffer, int length, uint32_t dest, int port) {
 }
 
 int TCPSocket::receiveFrom(Endpoint &sender, char *buffer, int length) {
+	int ret_val = -1;
 	// -1 if unsuccessful, else number of bytes received
 	if (sockfd < 0) {
 		fprintf(stderr, "[TCP SOCKET]:[ERROR]: TCP socketfd is in error state while trying to receive packets\n");
@@ -134,17 +135,24 @@ int TCPSocket::receiveFrom(Endpoint &sender, char *buffer, int length) {
 			fprintf(stderr, "[TCP SOCKET]:[ERROR]: %s\n", strerror(errno));
 		}
 
-		return -1;
+		ret_val = -1;
+	}
+	else {
+		sender.resetAddress();
+		socklen_t remoteHostLen = sizeof(sender.remoteHost);
+		ret_val = recvfrom(sockfd, buffer, length, 0, (struct sockaddr*) &sender.remoteHost, &remoteHostLen);
+
+		if(TCP_DEBUG) {
+			printf("[TCP SOCKET]:[DEBUG]: recvfrom() returned %d\n", ret_val);
+		}
 	}
 
-	sender.resetAddress();
-	socklen_t remoteHostLen = sizeof(sender.remoteHost);
-	return recvfrom(sockfd, buffer, length, 0, (struct sockaddr*) &sender.remoteHost, &remoteHostLen);
+	return ret_val;
 }
 
 
 void TCPSocket::receiveFromPort(){
-	char *buffer = (char *)malloc(MAXLINE * sizeof(char));
+	char buffer[MAXLINE];
 	Endpoint sender;
 	int n = receiveFrom(sender, buffer, MAXLINE);
 
@@ -153,7 +161,6 @@ void TCPSocket::receiveFromPort(){
 		if(TCP_DEBUG){
 			fprintf(stderr, "[TCP SOCKET]:[ERROR]: %s\n", strerror(errno));
 		}
-		free(buffer);
 		exit(-1);
 	}
 	else if (n > 0) {
@@ -162,8 +169,6 @@ void TCPSocket::receiveFromPort(){
 		// Add message to ring-buffer
 		messages.push(Message(sender, buffer, n));
 	}
-
-	free(buffer);
 }
 
 void TCPSocket::receiveFromPortThread() {
