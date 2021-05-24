@@ -26,24 +26,12 @@
 using std::memset;
 
 // SIGPIPE error handler. sendTO() will throw a SIGPIPE error when the socket is disconnected,
-//void sigpipe_handler() {
-//	if(TCP_DEBUG) {
-//		printf("[TCP SOCKET]: Received SIGPIPE error\n");
-//	}
-//}
-
-/* Catch Signal Handler function */
 void signal_callback_handler(int signum) {
 	printf("Caught signal SIGPIPE %d\n",signum);
 }
 
 
 TCPSocket::TCPSocket() : Socket(), messages(TCP_QUEUE_SIZE) {
-	// Configure SIGPIPE error handler
-//	memset(&sigpipe_act, '\0', sizeof(sigpipe_act));
-//	sigpipe_act.sa_restorer = &sigpipe_handler;
-//	sigaction(SIGPIPE, &sigpipe_act, NULL);
-
 	// Catch Signal Handler SIGPIPE
 	signal(SIGPIPE, signal_callback_handler);
 
@@ -51,14 +39,14 @@ TCPSocket::TCPSocket() : Socket(), messages(TCP_QUEUE_SIZE) {
 
 TCPSocket::~TCPSocket(){
 	if(TCP_DEBUG){
-		printf("[TCP SOCKET]:[DEBUG]: deconstructing udp socket\n");
+		printf("[TCP SOCKET]:[DEBUG]: deconstructing TCP socket\n");
 	}
 	close(sockfd);
 }
 
 bool TCPSocket::init(void) {
 	if(TCP_DEBUG) {
-		printf("[TCP SOCKET]:[DEBUG]: Initializing udp socket\n");
+		printf("[TCP SOCKET]:[DEBUG]: Initializing TCP socket\n");
 	}
 
 	return initSocket(SOCK_STREAM);
@@ -67,7 +55,7 @@ bool TCPSocket::init(void) {
 // Server initialization
 bool TCPSocket::bindToPort(int port) {
 	if(TCP_DEBUG){
-		printf("[TCP SOCKET]:[DEBUG]: Binding udp socket to port %d\n", port);
+		printf("[TCP SOCKET]:[DEBUG]: Binding TCP socket to port %d\n", port);
 	}
 
 	if(sockfd < 0) {

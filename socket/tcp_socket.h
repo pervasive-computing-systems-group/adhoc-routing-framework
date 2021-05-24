@@ -157,9 +157,6 @@ public:
 private:
 	// To hold threaded messages
 	SafeCircularQueue<Message> messages;
-
-	// sigaction struct to handle SIGPIPE error (tried to write while socket was not connected)
-//	struct sigaction sigpipe_act;
 };
 
 #endif
