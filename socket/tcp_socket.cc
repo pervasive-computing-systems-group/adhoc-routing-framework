@@ -26,18 +26,27 @@
 using std::memset;
 
 // SIGPIPE error handler. sendTO() will throw a SIGPIPE error when the socket is disconnected,
-void sigpipe_handler() {
-	if(TCP_DEBUG) {
-		printf("[TCP SOCKET]: Received SIGPIPE error\n");
-	}
+//void sigpipe_handler() {
+//	if(TCP_DEBUG) {
+//		printf("[TCP SOCKET]: Received SIGPIPE error\n");
+//	}
+//}
+
+/* Catch Signal Handler function */
+void signal_callback_handler(int signum) {
+	printf("Caught signal SIGPIPE %d\n",signum);
 }
 
 
 TCPSocket::TCPSocket() : Socket(), messages(TCP_QUEUE_SIZE) {
 	// Configure SIGPIPE error handler
-	memset(&sigpipe_act, '\0', sizeof(sigpipe_act));
-	sigpipe_act.sa_restorer = &sigpipe_handler;
-	sigaction(SIGPIPE, &sigpipe_act, NULL);
+//	memset(&sigpipe_act, '\0', sizeof(sigpipe_act));
+//	sigpipe_act.sa_restorer = &sigpipe_handler;
+//	sigaction(SIGPIPE, &sigpipe_act, NULL);
+
+	// Catch Signal Handler SIGPIPE
+	signal(SIGPIPE, signal_callback_handler);
+
 }
 
 TCPSocket::~TCPSocket(){
