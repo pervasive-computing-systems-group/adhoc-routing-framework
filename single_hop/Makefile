@@ -10,7 +10,7 @@
 CXX = g++
 LD = g++
 LIB = ar
-INC_DIRS = -I../ -I../adhoc -I../data_structures
+INC_DIRS = -I../ -I../adhoc -I../data_structures -I../socket
 
 CXXFLAGS = -g -fPIC -pthread -std=c++17 -DBOOST_LOG_DYN_LINK ${INC_DIRS}
 LDFLAGS = -g -pthread ${INC_DIRS}
@@ -22,13 +22,13 @@ LIBFLAGS = -cvq
 TARGET = test
 LIB_NAME = libsingle_hop.a
 OBJ_FILES = single_hop.o
-OBJ_LIB_FILES = ${OBJ_FILES} ../adhoc/*.o
+OBJ_LIB_FILES = ${OBJ_FILES} ../adhoc/*.o ../socket/*.o
 OBJ_INCLUDE_FILES = ${TARGET}.o ${OBJ_LIB_FILES}
 OBJ_BUILD_FILES = ${TARGET}.o ${OBJ_FILES}
 
 INC_FILES = ${TARGET}.h defines.h network_monitor.h monitor_info.h
 
-SUBDIRS = ../adhoc 
+SUBDIRS = ../adhoc ../socket
 
 ${TARGET} : ${OBJ_BUILD_FILES}
 	for dir in $(SUBDIRS); do \

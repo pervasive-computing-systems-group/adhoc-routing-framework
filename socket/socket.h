@@ -21,8 +21,8 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-#ifndef SOCKET_H
-#define SOCKET_H
+
+#pragma once
 
 #include <arpa/inet.h>
 #include <netinet/in.h>
@@ -41,6 +41,9 @@
 #include <utility>
 
 #include "socket_defines.h"
+#include "AppPacketHandler.h"
+#include "message.h"
+#include "../data_structures/safe_circular_queue.h"
 
 using namespace std;
 // TimeInterval class prototype
@@ -48,7 +51,10 @@ class TimeInterval;
 
 class Socket {
 public:
+  // Constructor is deprecated!! At a fundamental level, a socket has an IP address and a port number,
+  // we should be adding the port number is a pre-req to instantiating a socket.
   Socket();
+  Socket(uint32_t nPortNum, uint32_t nMsgBffrSize);
 
   ~Socket();
 
@@ -90,11 +96,48 @@ public:
    */
   bool setTransmissionPower(int txPwr);
 
+  /*!
+   * @brief Run the application packet handler (if one was given to this socket)
+   */
+  void runAppPacketHandler(Message* pMsg);
+
+  /*!
+   * @brief Set an application specific packet handler for this socket. DO
+   * NOT pass in dynamically allocated memory! There is nothing that frees
+   * old AppPacketHanlders.
+   */
+  void setAppPacketHandler(AppPacketHandler *pAppPacketHandler);
+
+  /*!
+   * @brief Get one message from the socket
+   *
+   * @param message will get set to the first message on the queue
+   * @return true a message was received
+   * @return false no messages
+   */
+  bool getMessage(Message &message);
+
+	/*!
+	* @brief Check if there are any messages without attempting to get the packet
+	*
+	*/
+	bool areThereMessages();
+
+	  /*!
+	   * @brief Get the sockfd object
+	   *
+	   * @return int
+	   */
+	  int getSockfd() const;
+
 protected:
   int sockfd;
+  // Port number for this socket
+  uint32_t m_nPortNum;
   bool initSocket(int type);
+  // To hold threaded messages
+  SafeCircularQueue<Message> messages;
+
+private:
+  AppPacketHandler *m_pAppPacketHandler;
 };
-
-
-
-#endif

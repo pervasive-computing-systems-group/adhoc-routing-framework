@@ -18,6 +18,12 @@
 #define WIRELESS_INTERFACE_NAME        "wlan0"
 #define MONITORING_INTERFACE_NAME      "wlan1"
 
+// Implemented routing protocols
+#define USE_SINGLE_HOP		0
+#define USE_AODV			1
+// The routing protocol to use in field test (select from above)
+#define RT_PROTOCOL			USE_SINGLE_HOP
+
 #define ROUTING_PORT        5969
 #define DATA_PORT           5432
 #define MONITOR_PORT        5123

@@ -9,6 +9,8 @@
 #define UDP_QUEUE_SIZE 20
 #define TCP_QUEUE_SIZE 20
 #define MAXLINE 1024
+// Number of pending connections to queue
+#define CONNECTION_QUEUE_SIZE 10
 
 
 #endif

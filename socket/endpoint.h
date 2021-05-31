@@ -35,14 +35,12 @@
 #include <unistd.h>
 
 class UDPSocket;
-class TCPSocket;
 
 /**
 IP Endpoint (address, port)
 */
 class Endpoint {
   friend class UDPSocket;
-  friend class TCPSocket;
 
 public:
   Endpoint(void);
@@ -81,6 +79,11 @@ public:
    *  @return the port of this point
    */
   int getPort(void) const;
+
+  /*! Get the remote host address struct
+   *  @return the remote host address struct
+   */
+  sockaddr_in* getRemoteHostAddr();
 
   bool operator==(Endpoint &rhs);
   bool operator!=(Endpoint &rhs);

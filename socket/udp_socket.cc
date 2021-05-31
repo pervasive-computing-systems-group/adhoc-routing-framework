@@ -25,8 +25,8 @@
 #include "udp_socket.h"
 using std::memset;
 
+UDPSocket::UDPSocket() : Socket(0, UDP_QUEUE_SIZE) {
 
-UDPSocket::UDPSocket() : Socket(), messages(UDP_QUEUE_SIZE){
 }
 
 UDPSocket::~UDPSocket(){ 
@@ -174,16 +174,4 @@ void UDPSocket::receiveFromPortThreadStoppable(std::atomic<bool>& run) {
   while (run) {
     this->receiveFromPort();
   }
-}
-
-
-bool UDPSocket::getMessage(Message &message) { return messages.pop(message); }
-
-bool UDPSocket::areThereMessages(){ 
-  Message temp;
-  return messages.peek(temp);
-} 
-
-int UDPSocket::getSockfd() const{
-  return sockfd;
 }

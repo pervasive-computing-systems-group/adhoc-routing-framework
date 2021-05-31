@@ -22,12 +22,12 @@ LIBFLAGS = -cvq
 #
 TARGET = test
 LIB_NAME = libhardware.a
-OBJ_FILES = hardware_defines.o hardware_aodv.o hardware_hello.o hardware_hello_aodv.o hardware_rssi.o hardware_single_hop.o
+OBJ_FILES = hardware_defines.o hardware_aodv.o hardware_hello.o hardware_hello_aodv.o hardware_rssi.o hardware_sh_ap.o
 OBJ_LIB_FILES = ${OBJ_FILES} ../aodv/*.o ../socket/*.o ../adhoc/*.o ../hello_monitor/*.o ./rssi/radiotap_capture.o ./rssi/radiotap.o ../single_hop/*.o
 OBJ_INCLUDE_FILES = ${TARGET}.o ${OBJ_LIB_FILES}
 OBJ_BUILD_FILES = ${TARGET}.o ${OBJ_FILES}
 
-INC_FILES = hardware_aodv.h hardware_defines.h hardware_hello.h hardware_hello_aodv.h hardware_rssi.h
+INC_FILES = hardware_aodv.h hardware_sh_ap.h hardware_defines.h hardware_hello.h hardware_hello_aodv.h hardware_rssi.h
 
 SUBDIRS = ../aodv ../socket ../adhoc ../hello_monitor ./rssi ../single_hop
 

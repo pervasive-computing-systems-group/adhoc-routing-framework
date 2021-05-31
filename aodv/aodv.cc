@@ -17,11 +17,10 @@ AODV::AODV() {
 
 AODV::AODV(const char* ip) : AODV(getIpFromString(ip)){}
 
-AODV::AODV(IP_ADDR ip) {
+AODV::AODV(IP_ADDR ip) : RoutingProtocol(ip) {
     if (AODV_DEBUG)
         cout << "[AODV]:[DEBUG]: Created new aodv routing protocol." << endl;
 
-    this->ipAddress = ip;
     this->sequenceNum = 0;
     this->m_pRoutingTable = (RoutingTable*) new AODVRoutingTable();
 
@@ -449,6 +448,11 @@ void AODV::_handlePacket(int port, char *packet, int length, IP_ADDR source) {
             packet -= HEADER_SIZE;
         }
     }
+}
+
+// Handle the packet AODV routing
+void AODV::protocolHandlePacket(uint32_t nPortNum, Message* pMsg) {
+	// TODO: Implement this logic to handle different types of AODV packets!!
 }
 
 void AODV::_handlePacket(Port* p, char *buffer, int length, IP_ADDR source){

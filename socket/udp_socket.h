@@ -25,8 +25,6 @@
 
 #include "endpoint.h"
 #include "socket.h"
-#include "message.h"
-#include "safe_circular_queue.h"
 #include "socket_defines.h"
 #include <iostream>
 #include <utility>
@@ -129,33 +127,7 @@ public:
    */
   void receiveFromPortThreadStoppable(std::atomic<bool>& run);
 
-  
-
-  /*!
-   * @brief Get one message from the socket
-   * 
-   * @param message will get set to the first message on the queue
-   * @return true a message was received
-   * @return false no messages
-   */
-  bool getMessage(Message &message);
-
-  /*!
-   * @brief Check if there are any messages without attempting to get the packet
-   * 
-   */
-  bool areThereMessages();
-
-  /*!
-   * @brief Get the sockfd object
-   * 
-   * @return int 
-   */
-  int getSockfd() const;
-
 private:
-  // To hold threaded messages
-  SafeCircularQueue<Message> messages;
 };
 
 #endif

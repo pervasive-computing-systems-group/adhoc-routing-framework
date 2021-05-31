@@ -10,7 +10,7 @@
 CXX = g++
 LD = g++
 LIB = ar
-INC_DIRS = -I../ -I../adhoc -I../data_structures
+INC_DIRS = -I../ -I../adhoc -I../data_structures -I../socket
 
 CXXFLAGS = -g -fPIC -pthread -std=c++17 -DBOOST_LOG_DYN_LINK ${INC_DIRS}
 LDFLAGS = -g -pthread ${INC_DIRS}
@@ -22,13 +22,13 @@ LIBFLAGS = -cvq
 TARGET = test
 LIB_NAME = libaodv.a
 OBJ_FILES = aodv.o aodv_rreq.o aodv_rrep.o aodv_rerr.o aodv_routing_table.o aodv_test.o buffered_packet.o
-OBJ_LIB_FILES = ${OBJ_FILES} ../adhoc/*.o
+OBJ_LIB_FILES = ${OBJ_FILES} ../adhoc/*.o ../socket/*.o
 OBJ_INCLUDE_FILES = ${TARGET}.o ${OBJ_LIB_FILES}
 OBJ_BUILD_FILES = ${TARGET}.o ${OBJ_FILES}
 
 INC_FILES = ${TARGET}.h aodv.h aodv_rreq.h aodv_rrep.h aodv_rerr.h aodv_routing_table.h aodv_test.h aodv_params.h defines.h network_monitor.h monitor_info.h buffered_packet.h
 
-SUBDIRS = ../adhoc 
+SUBDIRS = ../adhoc ../socket
 
 ${TARGET} : ${OBJ_BUILD_FILES}
 	for dir in $(SUBDIRS); do \

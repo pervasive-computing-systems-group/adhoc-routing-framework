@@ -97,6 +97,10 @@ protected:
 	 * @param source the ip address the packet was received from
 	 */
 	virtual void _handlePacket(int portId, char *buffer, int length, IP_ADDR source);
+
+	// Handle the packet for AODV routing
+	virtual void protocolHandlePacket(uint32_t nPortNum, Message* pMsg) override;
+
 	/**
 	 * @brief Takes in a packet and routes it in the network or to the desired port
 	 * 

@@ -9,13 +9,12 @@
  * Constructors + Destructors
  ******************************/
 
-SingleHop::SingleHop(const char* ip) : SingleHop(getIpFromString(ip)){}
-
-SingleHop::SingleHop(IP_ADDR ip) {
+SingleHop::SingleHop(IP_ADDR ip, uint32_t nDataPort)
+		: RoutingProtocol(ip),
+		  m_nDataPort(nDataPort)
+{
     if(SINGLE_HOP_DEBUG)
         cout << "[SH]:[DEBUG]: Created new single-hop routing protocol." << endl;
-
-    this->ipAddress = ip;
 }
 
 SingleHop::~SingleHop() { }
@@ -81,6 +80,11 @@ void SingleHop::_handlePacket(int port, char *packet, int length, IP_ADDR source
 	}
 }
 
+// Handle the packet for single-hop
+void SingleHop::protocolHandlePacket(uint32_t nPortNum, Message* pMsg) {
+
+}
+
 void SingleHop::_handlePacket(Port* p, char *buffer, int length, IP_ADDR source){
 	_handlePacket(p->getPortId(), buffer, length, source);
 }
@@ -89,6 +93,12 @@ void SingleHop::_handlePacket(Port* p, char *buffer, int length, IP_ADDR source)
 bool SingleHop::_socketSendPacket(Port* p, char *buffer, int length, IP_ADDR dest){
     return _socketSendPacket(p->getPortId(), buffer, length, dest);
 }
+
+// Deprecated function
+void SingleHop::_buildPort(Port*) { }
+
+// Deprecated function
+void SingleHop::_destroyPort(Port*) { }
 
 /******************************
  * Helper Functions

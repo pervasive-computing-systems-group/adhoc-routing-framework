@@ -6,27 +6,18 @@
 #include <fstream>
 
 #include "hardware_led_aodv.h"
-#include "hardware_led_single_hop.h"
 #include "aodv_test.h"
+#include "hardware_sh_ap.h"
+#include "LED_APH_SHData.h"
 
 using namespace std;
 
 int main(){
-	/// Setup
+	/// Networking Settings
+	string message = "Hello World!";
+	char* msg = strdup(message.c_str());
+	vector<string> ips = { "192.168.1.2" };
 	RoutingProtocol* routingPrtcl;
-	switch(RT_PROTOCOL) {
-	case USE_SINGLE_HOP:
-		printf("[TEST ADHOC]: Using SINGLE-HOP\n");
-		routingPrtcl = new HardwareLedSingleHop(MY_IP_ADDR);
-		break;
-
-	case USE_AODV:
-		printf("[TEST ADHOC]: Using AODV\n");
-		routingPrtcl = new HardwareLedAODV(MY_IP_ADDR);
-		break;
-	}
-	Port* printPort = new PrintPort(DATA_PORT);
-	routingPrtcl->addPort(printPort);
 
 	// Light up all LEDs to avoid random lighting
 	printf("[TEST ADHOC]:[DEBUG]: Cleaning LED pins...\n");
@@ -35,45 +26,75 @@ int main(){
 	lightLed(RED_LED_PIN, LED_HOLD);
 	printf("[TEST ADHOC]:[DEBUG]: Cleaning LED pins...done\n");
 
-	/// Networking Settings
-	string message = "Hello World!";
-	char* msg = strdup(message.c_str());
 
-	vector<string> ips = { "192.168.1.2" };
+	if(RT_PROTOCOL == USE_SINGLE_HOP) {
+		printf("[TEST ADHOC]: Using SINGLE-HOP\n");
 
-	// Network
-	std::chrono::milliseconds last_send_time = std::chrono::duration_cast< std::chrono::milliseconds >(std::chrono::system_clock::now().time_since_epoch());
-	while(true) {
-		// Send packets to all ips every second
-		std::chrono::milliseconds current_time = std::chrono::duration_cast< std::chrono::milliseconds >(std::chrono::system_clock::now().time_since_epoch());
+		/// Setup routing protocol
+		// Create data port packet handler
+		LED_APH_SHData ledDataAPH;
+		// Create routing protocol using LED_APH_SHData app
+		routingPrtcl = new HardwareSHAP(MY_IP_ADDR, DATA_PORT, &ledDataAPH);
 
-		if((current_time - last_send_time).count() > 1000){
-			last_send_time = current_time;
-			for(auto ip : ips){
-				uint32_t dest = getIpFromString(ip);
-				if(!routingPrtcl->sendPacket(printPort->getPortId(), msg, message.length()+1, dest)){
-					fprintf(stderr, "[TEST ADHOC]:[ERROR]: Unable to send packet\n");
-					lightLed(RED_LED_PIN, LED_BLINK);
+		/// main loop to read/send packets
+		std::chrono::milliseconds last_send_time = std::chrono::duration_cast< std::chrono::milliseconds >(std::chrono::system_clock::now().time_since_epoch());
+		while(true) {
+			// Send a packet every second
+			std::chrono::milliseconds current_time = std::chrono::duration_cast< std::chrono::milliseconds >(std::chrono::system_clock::now().time_since_epoch());
+
+			// TODO: update this when we create a single-hop station
+			if((false) && ((current_time - last_send_time).count() > 1000)) {
+				last_send_time = current_time;
+				for(auto ip : ips){
+//					uint32_t dest = getIpFromString(ip);
+//					if(!routingPrtcl->sendPacket()){
+//						fprintf(stderr, "[TEST ADHOC]:[ERROR]: Unable to send packet\n");
+//						lightLed(RED_LED_PIN, LED_BLINK);
+//					}
 				}
-				else if(RT_PROTOCOL == USE_SINGLE_HOP) {
-					// Signal that we attempted to send a packet
-					lightLed(BLUE_LED_PIN, LED_BLINK);
+			}
+
+			routingPrtcl->handlePackets();
+		}
+	}
+	else if(RT_PROTOCOL == USE_AODV) {
+		/// Setup
+		printf("[TEST ADHOC]: Using AODV\n");
+		routingPrtcl = new HardwareLedAODV(MY_IP_ADDR);
+		Port* printPort = new PrintPort(DATA_PORT);
+		routingPrtcl->addPort(printPort);
+
+		// Network
+		std::chrono::milliseconds last_send_time = std::chrono::duration_cast< std::chrono::milliseconds >(std::chrono::system_clock::now().time_since_epoch());
+		while(true) {
+			// Send packets to all ips every second
+			std::chrono::milliseconds current_time = std::chrono::duration_cast< std::chrono::milliseconds >(std::chrono::system_clock::now().time_since_epoch());
+
+			if((current_time - last_send_time).count() > 1000){
+				last_send_time = current_time;
+				for(auto ip : ips){
+					uint32_t dest = getIpFromString(ip);
+					if(!routingPrtcl->sendPacket(printPort->getPortId(), msg, message.length()+1, dest)){
+						fprintf(stderr, "[TEST ADHOC]:[ERROR]: Unable to send packet\n");
+						lightLed(RED_LED_PIN, LED_BLINK);
+					}
+					printf("[TEST ADHOC]:[DEBUG]: Sent ");
+					printPacket(stdout, msg, message.length()+1);
+					printf(" to %s\n", ip.c_str());
 				}
-				printf("[TEST ADHOC]:[DEBUG]: Sent ");
-				printPacket(stdout, msg, message.length()+1);
-				printf(" to %s\n", ip.c_str());
+			}
+
+			// Handle packets
+			int handleCount = routingPrtcl->handlePackets();
+			if(handleCount > 0){
+				printf("[TEST ADHOC]:[DEBUG]: Handled %d packets\n", handleCount);
 			}
 		}
 
-		// Handle packets
-		int handleCount = routingPrtcl->handlePackets();
-		if(handleCount > 0){
-			printf("[TEST ADHOC]:[DEBUG]: Handled %d packets\n", handleCount);
-		}
+		// Clean memory up
+		delete printPort;
 	}
 
-	// Clean memory up
-	delete printPort;
-	delete routingPrtcl;
 	free(msg);
+	delete routingPrtcl;
 }

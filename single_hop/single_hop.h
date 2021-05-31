@@ -1,6 +1,3 @@
-#ifndef SINGLE_HOP_H
-#define SINGLE_HOP_H
-
 /*********************************
  * single_hop.h
  *
@@ -10,6 +7,8 @@
  * Date: 5/10/21
  ********************************/
 
+#pragma once
+
 #include "routing_protocol.h"
 #include "single_hop_defines.h"
 #include "safe_circular_queue.h"
@@ -17,8 +16,13 @@
 class SingleHop : public RoutingProtocol
 {
 public:
-	SingleHop(const char* ip);
-	SingleHop(IP_ADDR ip);
+	/**
+     * @brief SingleHop constructor
+     *
+     * @param nIP: the IP address of this device
+     * @param nDataPort: the data port number
+     */
+	SingleHop(IP_ADDR nIP, uint32_t nDataPort);
 	~SingleHop();
 
 	/**
@@ -33,7 +37,7 @@ public:
     virtual bool sendPacket(int portId, char* packet, int length, IP_ADDR dest, IP_ADDR origIP = -1) override;
 
 protected:
-	// Functions
+	/// Functions
 	/**
 	 * @brief Takes in a packet and routes it in the network or to the desired port
 	 * 
@@ -43,6 +47,10 @@ protected:
 	 * @param source the ip address the packet was received from
 	 */
 	virtual void _handlePacket(int portId, char *buffer, int length, IP_ADDR source);
+
+	// Handle the packet for single-hop
+	virtual void protocolHandlePacket(uint32_t nPortNum, Message* pMsg) override;
+
 	/**
 	 * @brief Takes in a packet and routes it in the network or to the desired port
 	 * 
@@ -58,6 +66,14 @@ protected:
 
 	// Virtual Functions
 	virtual bool _socketSendPacket(int portId, char *buffer, int length, IP_ADDR dest) = 0;
-};
 
-#endif
+	// Deprecated function
+	void _buildPort(Port*) override;
+	// Deprecated function
+	void _destroyPort(Port*) override;
+
+	/// Member variables
+	// The data port number. All data (and foreseeable communication) occurs over just one
+	// port in the single-hop approach.
+	const uint32_t m_nDataPort;
+};

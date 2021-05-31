@@ -10,7 +10,7 @@
 CXX = g++
 LD = g++
 LIB = ar
-INC_DIRS = -I../ -I../adhoc -I../aodv -I../data_structures
+INC_DIRS = -I../ -I../adhoc -I../aodv -I../data_structures -I../socket
 
 CXXFLAGS = -g -fPIC -pthread -std=c++17 -DBOOST_LOG_DYN_LINK ${INC_DIRS}
 LDFLAGS = -g -std=c++17 -pthread ${INC_DIRS}
@@ -21,12 +21,12 @@ LIBFLAGS = -cvq
 #
 TARGET = test
 LIB_NAME = libhello.a
-OBJ_LIB_FILES = hello_monitor.o ../adhoc/*.o ../aodv/*.o
+OBJ_LIB_FILES = hello_monitor.o ../adhoc/*.o ../aodv/*.o ../socket/*.o
 
 OBJ_FILES = ${TARGET}.o ${OBJ_LIB_FILES} 
 INC_FILES = ${TARGET}.h hello_monitor.h
 
-SUBDIRS = ../adhoc ../aodv
+SUBDIRS = ../adhoc ../aodv ../socket
 
 all: ${TARGET}
 

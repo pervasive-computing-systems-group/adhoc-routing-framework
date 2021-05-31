@@ -86,11 +86,14 @@ void RoutingTable::updateTableEntry(const IP_ADDR dest, const IP_ADDR nextHop)
 
 RoutingProtocol::RoutingProtocol(){
 }
+
+RoutingProtocol::RoutingProtocol(IP_ADDR nIP) : ipAddress(nIP) { }
+
 RoutingProtocol::~RoutingProtocol(){
 }
 
-void RoutingProtocol::addPort(Port* p){
-	if(ports.count(p->getPortId()) == 0){
+void RoutingProtocol::addPort(Port* p) {
+	if(ports.count(p->getPortId()) == 0) {
 		if(ROUTING_DEBUG){
 			printf("[ROUTING]:[DEBUG]: Adding port %d\n",p->getPortId());
 		}
@@ -111,6 +114,23 @@ void RoutingProtocol::removePort(Port* p){
 
 bool RoutingProtocol::sendPacket(Port* p, char* data, int length, IP_ADDR dest, IP_ADDR origIP){
 	return sendPacket(p->getPortId(), data, length, dest, origIP);
+}
+
+// Handles the receiving or processing of all packets when implementing this should query each of the
+// sockets corresponding to each port and then "give" the data to each port
+int RoutingProtocol::handlePackets() {
+	Message message;
+	int count = 0;
+
+	for(pair<const uint32_t, Socket*>& socPair : m_mSockets) {
+		while(socPair.second->getMessage(message)) {
+			protocolHandlePacket(socPair.first, &message);
+			socPair.second->runAppPacketHandler(&message);
+			count++;
+		}
+	}
+
+	return count;
 }
 
 bool RoutingProtocol::linkExists(IP_ADDR dest) {

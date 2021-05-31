@@ -31,10 +31,11 @@ void signal_callback_handler(int signum) {
 }
 
 
-TCPSocket::TCPSocket() : Socket(), messages(TCP_QUEUE_SIZE) {
+TCPSocket::TCPSocket(int portId)
+		: Socket(portId, TCP_QUEUE_SIZE)
+{
 	// Catch Signal Handler SIGPIPE
 	signal(SIGPIPE, signal_callback_handler);
-
 }
 
 TCPSocket::~TCPSocket(){
@@ -42,14 +43,6 @@ TCPSocket::~TCPSocket(){
 		printf("[TCP SOCKET]:[DEBUG]: deconstructing TCP socket\n");
 	}
 	close(sockfd);
-}
-
-bool TCPSocket::init(void) {
-	if(TCP_DEBUG) {
-		printf("[TCP SOCKET]:[DEBUG]: Initializing TCP socket\n");
-	}
-
-	return initSocket(SOCK_STREAM);
 }
 
 // Server initialization
@@ -73,7 +66,7 @@ bool TCPSocket::bindToPort(int port) {
 	if(bind(sockfd, (const struct sockaddr*) &localHost, sizeof(localHost)) < 0) {
 		close(sockfd);
 
-		if(TCP_DEBUG){
+		if(TCP_DEBUG) {
 			printf("[TCP SOCKET]:[DEBUG]: Unsuccessful binding of tcp socket to port %d\n", port);
 		}
 		return false;
@@ -105,36 +98,8 @@ bool TCPSocket::setBroadcasting(bool broadcast) {
 	return setOption(SOL_SOCKET, SO_BROADCAST, &option, sizeof(option));
 }
 
-// -1 if unsuccessful, else number of bytes written
-int TCPSocket::sendTo(Endpoint &remote, const char *packet, int length) {
-  if(TCP_DEBUG){
-    printf("[TCP SOCKET]:[DEBUG]: Sending %s to %s via TCP\n", packet, remote.getAddressC());
-  }
-  if (sockfd < 0) {
-    fprintf(stderr, "[TCP SOCKET]:[ERROR]: sockfd is in error state\n");
-    if(TCP_DEBUG){
-      fprintf(stderr, "[TCP SOCKET]:[ERROR]: %s\n", strerror(errno));
-    }
-    return -1;
-  }
-
-  int returnVal = sendto(sockfd, packet, length, MSG_CONFIRM,
-                (const struct sockaddr *)&remote.remoteHost,
-                sizeof(remote.remoteHost));
-  if(returnVal < 0){
-    fprintf(stderr, "[TCP SOCKET]:[ERROR] Could not send packet %s to %s\n", packet, remote.getAddressC());
-    fprintf(stderr, "[TCP SOCKET]:[ERROR]: %s\n", strerror(errno));
-  }
-  return returnVal;
-}
-
-int TCPSocket::sendTo(char *buffer, int length, uint32_t dest, int port) {
-  Endpoint remote;
-  remote.setAddress(dest, port);
-  return sendTo(remote, buffer, length);
-}
-
 int TCPSocket::receiveFrom(Endpoint &sender, char *buffer, int length) {
+	/*
 	int ret_val = -1;
 	// -1 if unsuccessful, else number of bytes received
 	if (sockfd < 0) {
@@ -156,6 +121,8 @@ int TCPSocket::receiveFrom(Endpoint &sender, char *buffer, int length) {
 	}
 
 	return ret_val;
+	*/
+	return 0;
 }
 
 
@@ -192,14 +159,6 @@ void TCPSocket::receiveFromPortThreadStoppable(std::atomic<bool>& run) {
 		this->receiveFromPort();
 	}
 }
-
-
-bool TCPSocket::getMessage(Message &message) { return messages.pop(message); }
-
-bool TCPSocket::areThereMessages(){
-  Message temp;
-  return messages.peek(temp);
-} 
 
 int TCPSocket::getSockfd() const{
   return sockfd;

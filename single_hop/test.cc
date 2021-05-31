@@ -3,17 +3,6 @@
 // Very cheap testing framework
 using namespace std;
 
-int main (int argc, char *argv[]) 
-{	
-	cout << "[TESTS][SINGLE-HOP]: Running tests..." << endl;
-
-	test_test();
-
-	cout << "[TESTS][SINGLE-HOP]: TESTS COMPLETE." << endl;
-
-	return 0;
-}
-
 void test(bool condition, string desc)
 {
 	if (condition)
@@ -25,4 +14,15 @@ void test(bool condition, string desc)
 void test_test()
 {
 	test(true == true, "true == true");
+}
+
+int main (int argc, char *argv[])
+{
+	cout << "[TESTS][SINGLE-HOP]: Running tests..." << endl;
+
+	test_test();
+
+	cout << "[TESTS][SINGLE-HOP]: TESTS COMPLETE." << endl;
+
+	return 0;
 }

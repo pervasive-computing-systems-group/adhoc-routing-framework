@@ -11,10 +11,10 @@
 CXX = g++
 LD = g++
 LIB = ar
-INC_DIRS = -I../adhoc -I../
+INC_DIRS = -I../adhoc -I../ -I../socket
 
 CXXFLAGS = -g -fPIC -pthread -std=c++17 -DBOOST_LOG_DYN_LINK -Wall ${INC_DIRS}
-LIBFLAGS = ru
+LIBFLAGS = r
 
 #
 # You should be able to add object files here without changing anything else
@@ -25,6 +25,7 @@ OBJ_FILES = ${OBJ_LIB_FILES}
 
 INC_FILES = port.h routing_protocol.h send_packet.h network_monitor.h adhoc_defines.h
 
+SUBDIRS = ../socket
 
 #
 # Any libraries we might need.
@@ -32,10 +33,13 @@ INC_FILES = port.h routing_protocol.h send_packet.h network_monitor.h adhoc_defi
 LIBRARYS = -lpthread
 
 ${LIB_NAME} : ${OBJ_FILES}
+	for dir in $(SUBDIRS); do \
+		$(MAKE) -C $$dir; \
+	done
 	${LIB} ${LIBFLAGS} ${LIB_NAME} ${OBJ_LIB_FILES}
 	rm -f "*.o"
 
-%.o : %.cc ${INC_FILES}
+%.o : %.cc ${INC_FILES} ${INC_DIRS}
 	${CXX} -c ${CXXFLAGS}  -o $@ $< 
 
 #
