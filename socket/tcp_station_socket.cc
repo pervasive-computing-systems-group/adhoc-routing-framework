@@ -38,22 +38,81 @@ TCPStationSocket::~TCPStationSocket(){
 // -1 if unsuccessful, else number of bytes written
 int TCPStationSocket::typeSendTo(Endpoint &remote, const char *packet, int length) {
 	if(TCP_DEBUG){
-		printf("[TCP SOCKET]:[DEBUG]: Sending %s to %s via UDP\n", packet, remote.getAddressC());
-	}
-	if (sockfd < 0) {
-		fprintf(stderr, "[TCP SOCKET]:[ERROR]: sockfd is in error state\n");
-		return -1;
+		printf("[TCP SOCKET]:[DEBUG]: Sending %s to %s via TCP connection\n", packet, remote.getAddressC());
 	}
 
-	// TODO: Open socket
-	// TODO: Send packet
+	int returnVal = 0;
+	struct addrinfo tConfigAddr, *tAddrSet, *tAddrInfo;
 
-	int returnVal = 0; //sendto(sockfd, packet, length, MSG_CONFIRM, (const struct sockaddr *)&remote.remoteHost, sizeof(remote.remoteHost));
+	// Configure the socket type that we want
+	memset(&tConfigAddr, 0, sizeof tConfigAddr);
+	tConfigAddr.ai_family = AF_INET;		// Use IPv4
+	tConfigAddr.ai_socktype = SOCK_STREAM;	// TCP
+	tConfigAddr.ai_flags = AI_PASSIVE;		// Use local machine IP
 
-	if(returnVal < 0){
-		fprintf(stderr, "[TCP SOCKET]:[ERROR] Could not send packet %s to %s\n", packet, remote.getAddressC());
-		fprintf(stderr, "[TCP SOCKET]:[ERROR]: %s\n", strerror(errno));
+	// Convert port number to c-string
+    char str[5];
+    sprintf(str, "%d", remote.getPort());
+
+	// Get a set of socket addresses
+	int nRVal = getaddrinfo(remote.getAddressC(), str, &tConfigAddr, &tAddrSet);
+	if(nRVal != 0) {
+		fprintf(stderr,"ERROR: getaddrinfo() failed: %s\n", gai_strerror(nRVal));
+		returnVal = -1;
 	}
+	else {
+		tAddrInfo = tAddrSet;
+
+		// Loop through addresses and try to connect
+		while(tAddrInfo != NULL) {
+			// Create socket
+			sockfd = socket(tAddrInfo->ai_family, tAddrInfo->ai_socktype, tAddrInfo->ai_protocol);
+			if(sockfd == -1) {
+				if(TCP_DEBUG){
+					printf("[TCP SOCKET]:[DEBUG]: Trying to connect to socket\n");
+				}
+				tAddrInfo = tAddrInfo->ai_next;
+
+				continue;
+			}
+
+			// Attempt to connect to server socket
+			if(connect(sockfd, tAddrInfo->ai_addr, tAddrInfo->ai_addrlen) == -1) {
+				// Failed to connect
+				close(sockfd);
+				if(TCP_DEBUG){
+					printf("[TCP SOCKET]:[DEBUG]: Failed to connect to socket\n");
+				}
+				tAddrInfo = tAddrInfo->ai_next;
+
+				continue;
+			}
+			else {
+				break;
+			}
+		}
+
+		// Free list
+		freeaddrinfo(tAddrSet);
+
+		if(tAddrInfo == NULL) {
+			fprintf(stderr,"ERROR: failed to connect\n");
+			returnVal = -1;
+		}
+		else {
+//			sendto(sockfd, packet, length, MSG_CONFIRM, (const struct sockaddr *)&remote.remoteHost, sizeof(remote.remoteHost));
+			returnVal = send(sockfd, packet, length, 0);
+
+			if(returnVal < 0){
+				fprintf(stderr, "[TCP SOCKET]:[ERROR] Could not send packet %s to %s\n", packet, remote.getAddressC());
+				fprintf(stderr, "[TCP SOCKET]:[ERROR]: %s\n", strerror(errno));
+			}
+
+			// Close the socket
+			close(sockfd);
+		}
+	}
+
 	return returnVal;
 }
 

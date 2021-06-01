@@ -48,7 +48,22 @@ bool HardwareSHStation::_socketSendPacket(int portId, char *buffer, int length, 
 	// Call send packet on data socket
 	auto soc = m_mSockets.find(portId);
 	if(soc != m_mSockets.end()) {
+		int bytesSent = soc->second->sendTo(buffer, length, dest, portId);
 		// TODO: Continue here!!
+		if(bytesSent < 0) {
+			if(HARDWARE_DEBUG) {
+				printf("[HARDWARE]:[HardwareSHStation]:[DEBUG]: Failed to send packet\n");
+			}
+
+			ret_val = false;
+		}
+		else {
+			if(HARDWARE_DEBUG) {
+				printf("[HARDWARE]:[HardwareSHStation]:[DEBUG]: Sent %d bytes\n", bytesSent);
+			}
+
+			ret_val = true;
+		}
 	}
 	else {
 		if(HARDWARE_DEBUG) {
