@@ -110,7 +110,6 @@ TCPAPSocket::~TCPAPSocket(){
 	close(sockfd);
 }
 
-// TODO: keep!
 // Function used to listen to incoming calls to the access point
 void TCPAPSocket::checkListeningPort() {
 	struct sockaddr_storage tClientAddr;
@@ -148,6 +147,15 @@ void TCPAPSocket::checkListeningPort() {
 			close(nClientSocketID);
 		}
 	}
+}
+
+int TCPAPSocket::typeSendTo(Endpoint &remote, const char *packet, int length) {
+	// The access point does not send packets
+	if(TCP_DEBUG){
+		fprintf(stderr, "[TCP SOCKET]:[ERROR]: Attempting to send packets from access point!\n");
+	}
+
+	return -1;
 }
 
 int TCPAPSocket::getSockfd() const{

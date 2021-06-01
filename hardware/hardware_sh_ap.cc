@@ -23,8 +23,6 @@ HardwareSHAP::~HardwareSHAP() {
 		printf("[HARDWARE]:[DEBUG]: Destructing hardware aodv\n");
 	}
 
-	// TODO: close the socket
-
 	// Delete listening socket
 	auto listSoc = m_mSockets.find(this->m_nDataPort);
 	if(listSoc != m_mSockets.end()) {

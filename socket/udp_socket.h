@@ -23,7 +23,6 @@
 #ifndef UDPSOCKET_H
 #define UDPSOCKET_H
 
-#include "endpoint.h"
 #include "socket.h"
 #include "socket_defines.h"
 #include <iostream>
@@ -85,17 +84,7 @@ public:
    *  @param length The length of the packet to be sent
    *  @return the number of written bytes on success (>=0) or -1 on failure
    */
-  int sendTo(Endpoint &remote, const char *packet, int length);
-
-  /*!
-   * @brief Send a packet to an IP address and port
-   * 
-   * @param buffer 
-   * @param length 
-   * @param dest 
-   * @return int 
-   */
-  int sendTo(char* buffer, int length, uint32_t dest, int port);
+  int typeSendTo(Endpoint &remote, const char *packet, int length) override;
 
   /**
    *  @brief Receive a packet from a remote endpoint

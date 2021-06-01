@@ -24,6 +24,12 @@
 // The routing protocol to use in field test (select from above)
 #define RT_PROTOCOL			USE_SINGLE_HOP
 
+// Single-hop node type
+#define AP_NODE				0
+#define STATION_NODE		1
+// This node's single-hop type
+#define SH_NODE_TYPE		STATION_NODE
+
 #define ROUTING_PORT        5969
 #define DATA_PORT           5432
 #define MONITOR_PORT        5123

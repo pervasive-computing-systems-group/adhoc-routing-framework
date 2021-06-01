@@ -40,6 +40,7 @@
 #include <errno.h>
 #include <utility>
 
+#include "endpoint.h"
 #include "socket_defines.h"
 #include "AppPacketHandler.h"
 #include "message.h"
@@ -56,7 +57,7 @@ public:
   Socket();
   Socket(uint32_t nPortNum, uint32_t nMsgBffrSize);
 
-  ~Socket();
+  virtual ~Socket();
 
   /*! Set socket options
    *  @param level stack level
@@ -96,6 +97,24 @@ public:
    */
   bool setTransmissionPower(int txPwr);
 
+  /*! Send a packet to a remote endpoint
+   *  @param remote The remote endpoint
+   *  @param packet The packet to be sent
+   *  @param length The length of the packet to be sent
+   *  @return the number of written bytes on success (>=0) or -1 on failure
+   */
+  int sendTo(Endpoint &remote, const char *packet, int length);
+
+  /*!
+   * @brief Send a packet to an IP address and port
+   *
+   * @param buffer
+   * @param length
+   * @param dest
+   * @return int
+   */
+  int sendTo(char* buffer, int length, uint32_t dest, int port);
+
   /*!
    * @brief Run the application packet handler (if one was given to this socket)
    */
@@ -131,12 +150,20 @@ public:
 	  int getSockfd() const;
 
 protected:
+  bool initSocket(int type);
+  /*! Send a packet to a remote endpoint for a specific socket type
+   *  @param remote The remote endpoint
+   *  @param packet The packet to be sent
+   *  @param length The length of the packet to be sent
+   *  @return the number of written bytes on success (>=0) or -1 on failure
+   */
+  virtual int typeSendTo(Endpoint &remote, const char *packet, int length) = 0;
+
+  // To hold threaded messages
+  SafeCircularQueue<Message> messages;
   int sockfd;
   // Port number for this socket
   uint32_t m_nPortNum;
-  bool initSocket(int type);
-  // To hold threaded messages
-  SafeCircularQueue<Message> messages;
 
 private:
   AppPacketHandler *m_pAppPacketHandler;

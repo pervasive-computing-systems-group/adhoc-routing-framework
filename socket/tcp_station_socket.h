@@ -19,11 +19,12 @@
  * DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
+// https://www.beej.us/guide/bgnet/html/
 
 #pragma once
 
 #include "endpoint.h"
-#include "socket.h"
+#include "tcp_socket.h"
 #include "message.h"
 #include "safe_circular_queue.h"
 #include "socket_defines.h"
@@ -44,72 +45,24 @@
 using namespace std;
 
 /*!
-TCP Socket
+ TCP Access Point Socket
 */
-class TCPSocket : public Socket {
-
+class TCPStationSocket : public TCPSocket {
 public:
 	/*!
 	* @brief Instantiate an TCP Socket
 	*/
-	TCPSocket(int portId);
+	TCPStationSocket(int portId);
 
-	~TCPSocket();
+	~TCPStationSocket();
 
-	// TODO: Clean-up unused functions in here!!
-
-	/*!
-	* @brief Bind a UDP Server Socket to a specific port
-	*
-	* @param port The port to listen for incoming connections on
-	* @return true on success, false on failure
-	*/
-	bool bindToPort(int port);
-
-	/*!
-	* @brief Join the multicast group at the given address
-	*
-	* @param address The address of the multicast group
-	* @return true on success, false on failure
-	*/
-	bool joinMulticastGroup(const char *address);
-
-	/*!
-	* @brief Set the socket in broadcasting mode
-	*
-	* @return true on success, false on failure
-	*/
-	bool setBroadcasting(bool broadcast = false);
-
-	/**
-	*  @brief Receive a packet from a remote endpoint
+	/*! Send a packet to a remote endpoint
 	*  @param remote The remote endpoint
-	*  @param buffer The buffer for storing the incoming packet data. If a packet
-	*                is too long to fit in the supplied buffer, excess bytes are discarded
-	*  @param length The length of the buffer
-	*  @return the number of received bytes on success (>=0) or -1 on failure
+	*  @param packet The packet to be sent
+	*  @param length The length of the packet to be sent
+	*  @return the number of written bytes on success (>=0) or -1 on failure
 	*/
-	int receiveFrom(Endpoint &remote, char *buffer, int length);
-
-	/**
-	* @brief Receives a single message from the port placing messages onto the socket's
-	* message queue
-	*
-	*/
-	void receiveFromPort();
-
-	/**
-	* @brief Continuously reads data from the port, placing messages onto the
-	*  socket's message queue.
-	*/
-	void receiveFromPortThread();
-
-	/**
-	* @brief Continuously reads data from the port, placing messages onto the
-	*  socket's message queue.
-	* @param run an atomic boolean to stop the thread loop
-	*/
-	void receiveFromPortThreadStoppable(std::atomic<bool>& run);
+	int typeSendTo(Endpoint &remote, const char *packet, int length) override;
 
 	/*!
 	* @brief Get the sockfd object
@@ -118,8 +71,5 @@ public:
 	*/
 	int getSockfd() const;
 
-protected:
-
 private:
-
 };

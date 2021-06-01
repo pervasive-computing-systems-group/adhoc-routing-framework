@@ -31,7 +31,6 @@ bool SingleHop::sendPacket(int portId, char* packet, int length, IP_ADDR dest, I
 	}
 
 	// Add header to buffer
-	// TODO: remove dynamic memory allocation, it isn't needed
 	char *buffer = (char *)(malloc(HEADER_SIZE + length));
 	// Configure header
 	uint8_t zero = 0x00;
@@ -89,7 +88,6 @@ void SingleHop::_handlePacket(Port* p, char *buffer, int length, IP_ADDR source)
 	_handlePacket(p->getPortId(), buffer, length, source);
 }
 
-// TODO: Quem tá usando isso?
 bool SingleHop::_socketSendPacket(Port* p, char *buffer, int length, IP_ADDR dest){
     return _socketSendPacket(p->getPortId(), buffer, length, dest);
 }

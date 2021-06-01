@@ -84,7 +84,7 @@ bool HardwareAODV::_socketSendPacket(int portId, char *buffer, int length, IP_AD
             printPacket(stdout, buffer, length);
             printf("' through AODV\n");
         }
-        return aodvSocket->sendTo(buffer, length, dest, portId) > 0;
+        return ((Socket*)aodvSocket)->sendTo(buffer, length, dest, portId) > 0;
     }
     if(ports.count(portId)){
         if(HARDWARE_DEBUG){

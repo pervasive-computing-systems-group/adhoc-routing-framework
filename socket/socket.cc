@@ -103,6 +103,17 @@ bool Socket::setTransmissionPower(int txPwr){
   return getTransmissionPower() == txPwr;
 }
 
+// Send a packet to a remote endpoint
+int Socket::sendTo(Endpoint &remote, const char *packet, int length) {
+	return typeSendTo(remote, packet, length);
+}
+
+int Socket::sendTo(char *buffer, int length, uint32_t dest, int port) {
+  Endpoint remote;
+  remote.setAddress(dest, port);
+  return sendTo(remote, buffer, length);
+}
+
 // Run the application packet handler (if one was given to this socket)
 void Socket::runAppPacketHandler(Message* pMsg) {
 	if(m_pAppPacketHandler != NULL) {

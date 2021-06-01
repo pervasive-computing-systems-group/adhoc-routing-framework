@@ -61,6 +61,14 @@ public:
 	*/
 	void checkListeningPort();
 
+	/*! Send a packet to a remote endpoint
+	 *  @param remote The remote endpoint
+	 *  @param packet The packet to be sent
+	 *  @param length The length of the packet to be sent
+	 *  @return the number of written bytes on success (>=0) or -1 on failure
+	 */
+	int typeSendTo(Endpoint &remote, const char *packet, int length) override;
+
 	/*!
 	* @brief Get the sockfd object
 	*
