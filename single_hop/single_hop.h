@@ -25,17 +25,6 @@ public:
 	SingleHop(IP_ADDR nIP, uint32_t nDataPort);
 	~SingleHop();
 
-	/**
-     * @brief Send a packet to a given ip address using a specified port
-     * 
-     * @param portId the port number to use
-     * @param packet the packet to send
-     * @param length the length of the packet
-     * @param dest the destination ip address
-     * @param origIP IP address where the packet was from
-     */
-    virtual bool sendPacket(int portId, char* packet, int length, IP_ADDR dest, IP_ADDR origIP = -1) override;
-
 protected:
 	/// Functions
 	/**
@@ -47,6 +36,17 @@ protected:
 	 * @param source the ip address the packet was received from
 	 */
 	virtual void _handlePacket(int portId, char *buffer, int length, IP_ADDR source);
+
+	/**
+     * @brief Send a packet to a given ip address using a specified port
+     *
+     * @param portId the port number to use
+     * @param packet the packet to send
+     * @param length the length of the packet
+     * @param dest the destination ip address
+     * @param origIP IP address where the packet was from
+     */
+    virtual int protocolSendPacket(int portId, char* packet, int length, IP_ADDR dest, IP_ADDR origIP = -1) override;
 
 	// Handle the packet for single-hop
 	virtual void protocolHandlePacket(uint32_t nPortNum, Message* pMsg) override;
@@ -62,10 +62,10 @@ protected:
 	void _handlePacket(Port* p, char *buffer, int length, IP_ADDR source);
 
 	// Send the data over a socket
-	bool _socketSendPacket(Port* port, char *buffer, int length, IP_ADDR dest);
+	int _socketSendPacket(Port* port, char *buffer, int length, IP_ADDR dest);
 
 	// Virtual Functions
-	virtual bool _socketSendPacket(int portId, char *buffer, int length, IP_ADDR dest) = 0;
+	virtual int _socketSendPacket(int portId, char *buffer, int length, IP_ADDR dest) = 0;
 
 	// Deprecated function
 	void _buildPort(Port*) override;

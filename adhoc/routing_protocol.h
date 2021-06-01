@@ -111,19 +111,20 @@ public:
      */
     bool sendPacket(Port* p, char* data, int length, IP_ADDR dest, IP_ADDR origIP = -1);
 
-    // Virtual Functions
 	/**
      * @brief Send a packet to a given ip address using a specified port
-     * 
+     *
      * @param p the port to use
      * @param data the data to send
      * @param length the length of the data
-     * @param dest 
-     * @param origIP 
-     * 
+     * @param dest
+     * @param origIP
+     *
      * @returns Whether or not the packet was sent
      */
-    virtual bool sendPacket(int portId, char* data, int length, IP_ADDR dest, IP_ADDR origIP = -1) = 0;
+    bool sendPacket(int portId, char* data, int length, IP_ADDR dest, IP_ADDR origIP = -1);
+
+    // Virtual Functions
 
     /**
      * @brief Handles the receiving or processing of all packets
@@ -195,6 +196,19 @@ protected:
 
 	// Handle the packet for specific routing protocols
 	virtual void protocolHandlePacket(uint32_t nPortNum, Message* pMsg) = 0;
+
+	/**
+     * @brief Send a packet to a given ip address using a specified port
+     *
+     * @param p the port to use
+     * @param data the data to send
+     * @param length the length of the data
+     * @param dest
+     * @param origIP
+     *
+     * @returns The number of bytes sent
+     */
+    virtual int protocolSendPacket(int portId, char* data, int length, IP_ADDR dest, IP_ADDR origIP = -1) = 0;
 };
 
 #endif

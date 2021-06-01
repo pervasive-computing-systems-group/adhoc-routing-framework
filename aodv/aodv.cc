@@ -54,9 +54,10 @@ AODV::~AODV() {
 /******************************
  * Public Functions
  ******************************/
-bool AODV::sendPacket(int portId, char* packet, int length, IP_ADDR dest, IP_ADDR origIP) {
+int AODV::protocolSendPacket(int portId, char* packet, int length, IP_ADDR dest, IP_ADDR origIP) {
     // by default the next hop is the final destination in case this is a broadcast 
     IP_ADDR nextHop = dest;
+    int bytesSent = -1;
 
     if (getStringFromIp(dest) != BROADCAST_STR)
     {
@@ -114,7 +115,8 @@ bool AODV::sendPacket(int portId, char* packet, int length, IP_ADDR dest, IP_ADD
             }
             _broadcastRREQBuffer(rreq);
 
-            return true;
+            // TODO: determine if we should return something more here (# bytes sent?)
+            return 1;
         }
         else if (AODV_DEBUG)
         {
@@ -143,14 +145,14 @@ bool AODV::sendPacket(int portId, char* packet, int length, IP_ADDR dest, IP_ADD
     buffer -= HEADER_SIZE;
 
     if (linkExists(nextHop)) {
-        _socketSendPacket(portId, buffer, length + HEADER_SIZE, nextHop);
+        bytesSent = _socketSendPacket(portId, buffer, length + HEADER_SIZE, nextHop);
     } else {
         repairLink(portId, nextHop, dest, buffer, length, origIP);
     }
 
     free(buffer);
 
-    return true;
+    return bytesSent;
 }
 
 void AODV::repairLink(int port, IP_ADDR brokenLink, IP_ADDR finalDest, char *buffer,
@@ -487,7 +489,7 @@ void AODV::_handleAODVPacket(char *buffer, int length, IP_ADDR source){
     }
 }
 
-bool AODV::_socketSendPacket(Port* p, char *buffer, int length, IP_ADDR dest){
+int AODV::_socketSendPacket(Port* p, char *buffer, int length, IP_ADDR dest){
     return _socketSendPacket(p->getPortId(), buffer, length, dest);
 }
 

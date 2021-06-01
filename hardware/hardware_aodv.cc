@@ -77,7 +77,7 @@ int HardwareAODV::handlePackets(){
 }
 
 // Private Functions
-bool HardwareAODV::_socketSendPacket(int portId, char *buffer, int length, IP_ADDR dest){
+int HardwareAODV::_socketSendPacket(int portId, char *buffer, int length, IP_ADDR dest){
     if(portId == ROUTING_PORT){
         if(HARDWARE_DEBUG){
             printf("[HARDWARE]:[DEBUG]: sending packet '");
@@ -97,7 +97,7 @@ bool HardwareAODV::_socketSendPacket(int portId, char *buffer, int length, IP_AD
     fprintf(stderr, "[HARDWARE]:[ERROR]: Tried to send packet '");
     printPacket(stderr, buffer, length);
     fprintf(stderr, "' through non-existent port %d\n", portId);
-    return false;
+    return -1;
 }
 
 void HardwareAODV::_buildPort(Port* p){

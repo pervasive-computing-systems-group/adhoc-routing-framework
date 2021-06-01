@@ -25,7 +25,7 @@ public:
 	~HardwareSHStation();
 
 protected:
-	bool _socketSendPacket(int portId, char *buffer, int length, IP_ADDR dest) override;
+	int _socketSendPacket(int portId, char *buffer, int length, IP_ADDR dest) override;
 
 	unordered_map<int, thread> portThreads;
 

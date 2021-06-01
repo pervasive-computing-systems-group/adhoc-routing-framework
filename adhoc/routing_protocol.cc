@@ -116,6 +116,22 @@ bool RoutingProtocol::sendPacket(Port* p, char* data, int length, IP_ADDR dest, 
 	return sendPacket(p->getPortId(), data, length, dest, origIP);
 }
 
+bool RoutingProtocol::sendPacket(int portId, char* data, int length, IP_ADDR dest, IP_ADDR origIP) {
+	int bytesSent = protocolSendPacket(portId, data, length, dest, origIP);
+
+	auto soc = m_mSockets.find(portId);
+	if(soc != m_mSockets.end()) {
+		soc->second->runAPHSend(bytesSent, data);
+	}
+
+	if(bytesSent >= 0) {
+		return true;
+	}
+	else {
+		return false;
+	}
+}
+
 // Handles the receiving or processing of all packets when implementing this should query each of the
 // sockets corresponding to each port and then "give" the data to each port
 int RoutingProtocol::handlePackets() {
@@ -125,7 +141,7 @@ int RoutingProtocol::handlePackets() {
 	for(pair<const uint32_t, Socket*>& socPair : m_mSockets) {
 		while(socPair.second->getMessage(message)) {
 			protocolHandlePacket(socPair.first, &message);
-			socPair.second->runAppPacketHandler(&message);
+			socPair.second->runAPHReceive(&message);
 			count++;
 		}
 	}

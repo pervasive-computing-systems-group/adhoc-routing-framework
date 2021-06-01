@@ -114,10 +114,17 @@ int Socket::sendTo(char *buffer, int length, uint32_t dest, int port) {
   return sendTo(remote, buffer, length);
 }
 
-// Run the application packet handler (if one was given to this socket)
-void Socket::runAppPacketHandler(Message* pMsg) {
+// Run the application packet received handler (if one was given to this socket)
+void Socket::runAPHReceive(Message* pMsg) {
 	if(m_pAppPacketHandler != NULL) {
-		m_pAppPacketHandler->runHandler(pMsg);
+		m_pAppPacketHandler->runReceiveHandler(pMsg);
+	}
+}
+
+// Run the application packet send handler (if one was given to this socket)
+void Socket::runAPHSend(int nBytesSent, char* pMsg) {
+	if(m_pAppPacketHandler != NULL) {
+		m_pAppPacketHandler->runSendHandler(nBytesSent, pMsg);
 	}
 }
 

@@ -42,9 +42,9 @@ HardwareSHAP::~HardwareSHAP() {
  * Protected Functions
  ******************************/
 
-bool HardwareSHAP::_socketSendPacket(int portId, char *buffer, int length, IP_ADDR dest) {
+int HardwareSHAP::_socketSendPacket(int portId, char *buffer, int length, IP_ADDR dest) {
 	// This function is not currently needed for the access point, it isn't sending packets out
-	return false;
+	return -1;
 }
 
 

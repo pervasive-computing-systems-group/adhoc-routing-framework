@@ -50,7 +50,7 @@ public:
     }
 
 protected:
-    bool _socketSendPacket(int port, char *buffer, int length, IP_ADDR dest) override;
+    int _socketSendPacket(int port, char *buffer, int length, IP_ADDR dest) override;
 	void _buildPort(Port*) override;
     void _destroyPort(Port*) override;
 
@@ -62,7 +62,7 @@ private:
 class AODVMonitorTest : public AODVTest 
 {
 protected:
-	bool _socketSendPacket(int port, char *buffer, int length, IP_ADDR dest) override;
+	int _socketSendPacket(int port, char *buffer, int length, IP_ADDR dest) override;
 
 };
 

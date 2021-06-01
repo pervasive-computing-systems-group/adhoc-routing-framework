@@ -30,13 +30,12 @@ int main(){
 
 	if(RT_PROTOCOL == USE_SINGLE_HOP) {
 		printf("[TEST ADHOC]: Using SINGLE-HOP, ");
+		/// Setup routing protocol
+		// Create data port packet handler
+		LED_APH_SHData ledDataAPH;
 
 		if(SH_NODE_TYPE == AP_NODE) {
 			printf("as access point!\n");
-
-			/// Setup routing protocol
-			// Create data port packet handler
-			LED_APH_SHData ledDataAPH;
 			// Create routing protocol using LED_APH_SHData app
 			routingPrtcl = new HardwareSHAP(MY_IP_ADDR, DATA_PORT, &ledDataAPH);
 
@@ -48,13 +47,8 @@ int main(){
 		}
 		else if(SH_NODE_TYPE == STATION_NODE) {
 			printf("as station!\n");
-
-			/// Setup routing protocol
-			// Create data port packet handler
-			// TODO: make a app-send-handler
-//			LED_APH_SHData ledDataAPH;
 			// Create routing protocol using LED_APH_SHData app
-			routingPrtcl = new HardwareSHStation(MY_IP_ADDR, DATA_PORT);
+			routingPrtcl = new HardwareSHStation(MY_IP_ADDR, DATA_PORT, &ledDataAPH);
 
 			/// main loop to read/send packets
 			std::chrono::milliseconds last_send_time = std::chrono::duration_cast< std::chrono::milliseconds >(std::chrono::system_clock::now().time_since_epoch());

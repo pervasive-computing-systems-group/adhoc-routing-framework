@@ -32,18 +32,6 @@ public:
 	AODV(const char* ip);
 	AODV(IP_ADDR ip);
 	~AODV();
-
-	/**
-     * @brief Send a packet to a given ip address using a specified port
-     * 
-     * @param portId the port number to use
-     * @param packet the packet to send
-     * @param length the length of the packet
-     * @param dest the destination ip address
-     * @param origIP IP address where the packet was from
-     */
-	//TODO: Actually make this return false on a failure, currently is a silent failure
-    virtual bool sendPacket(int portId, char* packet, int length, IP_ADDR dest, IP_ADDR origIP = -1) override;
 	
 	// Network Monitoring
 	// attempt to repair the link and then send the packet to its destination
@@ -87,6 +75,10 @@ protected:
 	// handle a received rerr message 
 	void _handleRERR(char* buffer, int length, IP_ADDR source);
 
+	// Send a packet to a given ip address using a specified port
+	//TODO: Actually make this return false on a failure, currently is a silent failure
+    virtual int protocolSendPacket(int portId, char* packet, int length, IP_ADDR dest, IP_ADDR origIP = -1) override;
+
 	// Functions
 	/**
 	 * @brief Takes in a packet and routes it in the network or to the desired port
@@ -115,10 +107,10 @@ protected:
 	void _handleAODVPacket(char *buffer, int length, IP_ADDR source);
 
 	// Send the data over a socket
-	bool _socketSendPacket(Port* port, char *buffer, int length, IP_ADDR dest);
+	int _socketSendPacket(Port* port, char *buffer, int length, IP_ADDR dest);
 
 	// Virtual Functions
-	virtual bool _socketSendPacket(int portId, char *buffer, int length, IP_ADDR dest) = 0;
+	virtual int _socketSendPacket(int portId, char *buffer, int length, IP_ADDR dest) = 0;
 };
 
 // retry the route request message if you don't receive one

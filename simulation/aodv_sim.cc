@@ -24,7 +24,7 @@ int SimAODV::handlePackets()
 
 // Private Functions
 
-bool SimAODV::_socketSendPacket(int portId, char *buffer, int length, IP_ADDR dest)
+int SimAODV::_socketSendPacket(int portId, char *buffer, int length, IP_ADDR dest)
 {
     return simSocketSendPacket(buffer, length, dest, portId, this->getIp());
 } 

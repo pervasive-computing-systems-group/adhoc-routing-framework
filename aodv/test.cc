@@ -244,7 +244,7 @@ void test_aodv_rreq_to_rrep()
 	for (int i = 0; i < length; i++)
 		buffer[i] = msg.at(i);
 
-	node0.sendPacket(printPort->getPortId(), buffer, length, node3.getIp());	
+	node0.sendPacket(printPort->getPortId(), buffer, length, node3.getIp());
 
 	node0.logRoutingTable();
 	node1.logRoutingTable();

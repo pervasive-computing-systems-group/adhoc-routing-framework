@@ -116,9 +116,14 @@ public:
   int sendTo(char* buffer, int length, uint32_t dest, int port);
 
   /*!
-   * @brief Run the application packet handler (if one was given to this socket)
+   * @brief Run the application packet received handler (if one was given to this socket)
    */
-  void runAppPacketHandler(Message* pMsg);
+  void runAPHReceive(Message* pMsg);
+
+  /*!
+   * @brief Run the application packet send handler (if one was given to this socket)
+   */
+  void runAPHSend(int nBytesSent, char* pMsg);
 
   /*!
    * @brief Set an application specific packet handler for this socket. DO

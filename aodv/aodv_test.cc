@@ -7,7 +7,7 @@ int AODVTest::globalPacketCount = 0;
 IP_ADDR AODVTest::lastNode = 0;
 IP_ADDR AODVTest::lastReceive = 0;
 
-bool AODVTest::_socketSendPacket(int port, char *buffer, int length, IP_ADDR dest) {
+int AODVTest::_socketSendPacket(int port, char *buffer, int length, IP_ADDR dest) {
     for (uint32_t i = 0; i < m_physicalNeighbors.size(); i++) {
         if ((dest == m_physicalNeighbors.at(i)->getIp() ||
              dest == getIpFromString(BROADCAST_STR)))
@@ -32,7 +32,7 @@ bool AODVTest::_socketSendPacket(int port, char *buffer, int length, IP_ADDR des
         }
     }
 
-    return true;
+    return 1;
 }
 
 void AODVTest::addNeighbor(AODVTest *node) {

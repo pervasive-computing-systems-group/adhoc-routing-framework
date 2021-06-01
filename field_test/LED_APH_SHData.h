@@ -37,5 +37,8 @@
 class LED_APH_SHData : public AppPacketHandler {
 public:
 	// Turn on the LEDs
-	virtual void runHandler(Message* pMsg) override;
+	virtual void runReceiveHandler(Message* pMsg) override;
+
+	// Turn on more LEDs...
+	virtual void runSendHandler(int nBytesSent, char* pMsg) override;
 };

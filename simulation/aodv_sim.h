@@ -49,7 +49,7 @@ public:
     function<int(char* buffer, int length, IP_ADDR dest, int port, IP_ADDR source)> simSocketSendPacket;
 
 protected:
-    bool _socketSendPacket(int portId, char *buffer, int length, IP_ADDR dest) override;
+    int _socketSendPacket(int portId, char *buffer, int length, IP_ADDR dest) override;
     void _buildPort(Port*) override;
     void _destroyPort(Port*) override;
 

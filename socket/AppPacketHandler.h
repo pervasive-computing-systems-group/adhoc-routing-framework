@@ -38,6 +38,9 @@ public:
 	AppPacketHandler() {}
 	virtual ~AppPacketHandler() {}
 
-	// The application specific function call
-	virtual void runHandler(Message* pMsg) = 0;
+	// The application specific function call for received packets
+	virtual void runReceiveHandler(Message* pMsg) = 0;
+
+	// The application specific function call for sending packets
+	virtual void runSendHandler(int nBytesSent, char* pMsg) = 0;
 };

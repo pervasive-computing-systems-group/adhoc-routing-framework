@@ -22,8 +22,8 @@ SingleHop::~SingleHop() { }
 /******************************
  * Public Functions
  ******************************/
-bool SingleHop::sendPacket(int portId, char* packet, int length, IP_ADDR dest, IP_ADDR origIP) {
-	bool ret_val = false;
+int SingleHop::protocolSendPacket(int portId, char* packet, int length, IP_ADDR dest, IP_ADDR origIP) {
+	int ret_val = -1;
 	if (SINGLE_HOP_DEBUG) {
 		cout << "[SINGLE HOP]:[DEBUG]: Attempting to send packet from "
 				<< getStringFromIp(getIp()) << " to "
@@ -88,7 +88,7 @@ void SingleHop::_handlePacket(Port* p, char *buffer, int length, IP_ADDR source)
 	_handlePacket(p->getPortId(), buffer, length, source);
 }
 
-bool SingleHop::_socketSendPacket(Port* p, char *buffer, int length, IP_ADDR dest){
+int SingleHop::_socketSendPacket(Port* p, char *buffer, int length, IP_ADDR dest){
     return _socketSendPacket(p->getPortId(), buffer, length, dest);
 }
 
