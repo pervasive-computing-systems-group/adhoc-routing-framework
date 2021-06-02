@@ -82,7 +82,7 @@ int AODV::protocolSendPacket(int portId, char* packet, int length, IP_ADDR dest,
             nextHop = m_pRoutingTable->getNextHop(dest);
         }
 
-        if (false == getTable()->getIsRouteActive(dest)) {
+        if (!getTable()->getIsRouteActive(dest)) {
             BufferedPacket bufferedPacket(portId, packet, length);
 
             // Put this packet in a buffer to be sent when a route opens up
@@ -116,7 +116,7 @@ int AODV::protocolSendPacket(int portId, char* packet, int length, IP_ADDR dest,
             _broadcastRREQBuffer(rreq);
 
             // TODO: determine if we should return something more here (# bytes sent?)
-            return 1;
+            return -1;
         }
         else if (AODV_DEBUG)
         {
@@ -356,13 +356,20 @@ void AODV::_handleRREP(char *buffer, int length, IP_ADDR source) {
                 BufferedPacket packet;
                 this->rreqPacketBuffer[rrep.destIP]->pop(packet);
                 char* buffer = packet.getBuffer();
-                sendPacket(packet.getPortId(), buffer, packet.getLength(), rrep.destIP);
+                int bytesSent = sendPacket(packet.getPortId(), buffer, packet.getLength(), rrep.destIP);
                 free(buffer);
+                if( bytesSent == -1){
+                    // connection breaks or the packet can't be sent 
+                    // then stop sending out the buffered packets otherwise this will cause inf loop
+                    break;
+                }
             }
-            delete this->rreqPacketBuffer[rrep.destIP];
-        }
-        this->rreqPacketBuffer.erase(rrep.destIP);
 
+            // Delete the buffer if it was successfully emptied
+            if(this->rreqPacketBuffer[rrep.destIP]->empty()){
+                delete this->rreqPacketBuffer[rrep.destIP]; // delete the buffer
+            }
+        }
     } else {
         // forward this packet
         rrepPacket forwardRREP =
@@ -453,7 +460,7 @@ void AODV::_handlePacket(int port, char *packet, int length, IP_ADDR source) {
 }
 
 // Handle the packet AODV routing
-void AODV::protocolHandlePacket(uint32_t nPortNum, Message* pMsg) {
+void AODV::protocolHandlePacket(Socket* pSocket, Message* pMsg) {
 	// TODO: Implement this logic to handle different types of AODV packets!!
 }
 

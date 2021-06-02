@@ -100,6 +100,25 @@ public:
      */
     void removePort(Port* p);
 
+    /**
+     * @brief Adds a data socket to the routing protocol
+     * 
+     * @param nPortNum The port for the socket
+     * @param pAppPacketHandler The sockets packet handler
+     * @return true if the socket was successfully added
+     * @return false unable to add teh socket
+     */
+    bool addSocket(uint32_t nPortNum, AppPacketHandler* pAppPacketHandler = nullptr);
+    
+    /**
+     * @brief Removes the socket from the routing protocl
+     * 
+     * @param nPortNum which port the socket to remove is on
+     * @return true if the socket was removed successfully
+     * @return false if the socket didn't exist or couldnt be removed
+     */
+    bool removeSocket(uint32_t nPortNum);
+
 	/**
      * @brief Send a packet to a given ip address using a specified port
      * 
@@ -108,8 +127,10 @@ public:
      * @param length the length of the data
      * @param dest 
      * @param origIP 
+     * 
+     * @returns The bytes sent or -1 on failure
      */
-    bool sendPacket(Port* p, char* data, int length, IP_ADDR dest, IP_ADDR origIP = -1);
+    int sendPacket(Port* p, char* data, int length, IP_ADDR dest, IP_ADDR origIP = -1);
 
 	/**
      * @brief Send a packet to a given ip address using a specified port
@@ -120,9 +141,9 @@ public:
      * @param dest
      * @param origIP
      *
-     * @returns Whether or not the packet was sent
+     * @returns The bytes sent or -1 on failure
      */
-    bool sendPacket(int portId, char* data, int length, IP_ADDR dest, IP_ADDR origIP = -1);
+    int sendPacket(int portId, char* data, int length, IP_ADDR dest, IP_ADDR origIP = -1);
 
     // Virtual Functions
 
@@ -191,11 +212,13 @@ protected:
 	unordered_map<uint32_t, Socket*> m_mSockets;
 
 	// Functions
+	virtual Socket* _protocolCreateSocket(uint32_t nPortNum, AppPacketHandler* pAppPacketHandler) = 0;
+	virtual bool _protocolDestroySocket(uint32_t nPortNum) = 0;
 	virtual void _buildPort(Port*) = 0;
-	virtual void _destroyPort(Port*) = 0;
+    virtual void _destroyPort(Port*) = 0;
 
 	// Handle the packet for specific routing protocols
-	virtual void protocolHandlePacket(uint32_t nPortNum, Message* pMsg) = 0;
+	virtual void protocolHandlePacket(Socket* pSocket, Message* pMsg) = 0;
 
 	/**
      * @brief Send a packet to a given ip address using a specified port

@@ -80,7 +80,7 @@ void SingleHop::_handlePacket(int port, char *packet, int length, IP_ADDR source
 }
 
 // Handle the packet for single-hop
-void SingleHop::protocolHandlePacket(uint32_t nPortNum, Message* pMsg) {
+void SingleHop::protocolHandlePacket(Socket* pSocket, Message* pMsg) {
 
 }
 

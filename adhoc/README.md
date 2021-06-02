@@ -41,9 +41,9 @@ The whole idea for our adhoc routing protocol framework is built on two things t
 ### Routing Protocol
 To create a custom routing protocol using this base class, five things must be implemented:
 - ```int handlePackets()```: This function is responisble for handling routing and data packets. Routing packets should be used to update the routing table and anything else required to route packets and this should also give data to ports to handle using Port::handlePacket(). Usually routing protocol related headers should be removed from the packet before giving it to the port.
-- ```bool sendPacket(int portId, char* data, int length, IP_ADDR dest, IP_ADDR origIP)```: This function should send the data to the destination IP from the origIP, which will usually be -1 so ```this->ipAddress```. It should send the data through the port specified in portId. 
+- ```int sendPacket(int portId, char* data, int length, IP_ADDR dest, IP_ADDR origIP)```: This function should send the data to the destination IP from the origIP, which will usually be -1 so ```this->ipAddress```. It should send the data through the port specified in portId. 
 - ```bool linkExists(IP_ADDR dest)```: This function should tell wether their is a link to the destination address
-- ```void _buildPort(Port*)```: is called on ```addPort()``` and should handle the creation of any port related infrastructure. Usually this would be creating a UDP socket for hardware or NS3 Socket for simulation.
+- ```void _buildSocket(Port*)```: is called on ```addPort()``` and should handle the creation of any port related infrastructure. Usually this would be creating a UDP socket for hardware or NS3 Socket for simulation.
 - ```void _destroyPort(Port*)```: is called on ```removePort()``` and should handle removing any infrastructure for the port. Usually the removal and destruction of the UDP/NS3 socket
 
 ### Port

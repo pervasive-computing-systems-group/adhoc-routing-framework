@@ -49,7 +49,7 @@ protected:
     virtual int protocolSendPacket(int portId, char* packet, int length, IP_ADDR dest, IP_ADDR origIP = -1) override;
 
 	// Handle the packet for single-hop
-	virtual void protocolHandlePacket(uint32_t nPortNum, Message* pMsg) override;
+	virtual void protocolHandlePacket(Socket* pSocket, Message* pMsg) override;
 
 	/**
 	 * @brief Takes in a packet and routes it in the network or to the desired port
@@ -71,6 +71,9 @@ protected:
 	void _buildPort(Port*) override;
 	// Deprecated function
 	void _destroyPort(Port*) override;
+	// TODO: Implement these
+	Socket* _protocolCreateSocket(uint32_t nPortNum, AppPacketHandler* pAppPacketHandler) override {return nullptr;};
+	virtual bool _protocolDestroySocket(uint32_t nPortNum) override {return false;};
 
 	/// Member variables
 	// The data port number. All data (and foreseeable communication) occurs over just one

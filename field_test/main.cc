@@ -60,7 +60,7 @@ int main(){
 					last_send_time = current_time;
 					for(auto ip : ips) {
 						uint32_t dest = getIpFromString(ip);
-						if(!routingPrtcl->sendPacket(DATA_PORT, msg, message.length() + 1, dest)){
+						if(routingPrtcl->sendPacket(DATA_PORT, msg, message.length() + 1, dest) == -1){
 							fprintf(stderr, "[TEST ADHOC]:[ERROR]: Unable to send packet\n");
 							lightLed(RED_LED_PIN, LED_BLINK);
 						}
@@ -88,9 +88,8 @@ int main(){
 				last_send_time = current_time;
 				for(auto ip : ips){
 					uint32_t dest = getIpFromString(ip);
-					if(!routingPrtcl->sendPacket(printPort->getPortId(), msg, message.length()+1, dest)){
-						fprintf(stderr, "[TEST ADHOC]:[ERROR]: Unable to send packet\n");
-						lightLed(RED_LED_PIN, LED_BLINK);
+					if(routingPrtcl->sendPacket(printPort->getPortId(), msg, message.length()+1, dest) == -1){
+						printf("[TEST ADHOC]:[DEBUG]: Unable to send packet (not connected or an error)\n");
 					}
 					printf("[TEST ADHOC]:[DEBUG]: Sent ");
 					printPacket(stdout, msg, message.length()+1);

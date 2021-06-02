@@ -42,8 +42,12 @@ public:
 
 protected:
     int _socketSendPacket(int portId, char *buffer, int length, IP_ADDR dest) override;
+    // Depreciating
 	void _buildPort(Port*) override;
     void _destroyPort(Port*) override;
+    // TODO: Implement these:
+	Socket* _protocolCreateSocket(uint32_t nPortNum, AppPacketHandler* pAppPacketHandler) override {return nullptr;};
+	virtual bool _protocolDestroySocket(uint32_t nPortNum) override {return false;};
 };
 
 
