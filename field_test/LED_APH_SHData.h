@@ -20,7 +20,7 @@
  */
 
 /*
- * AppPacketHandler.h
+ * app_packet_handler.h
  *
  * Created by: Jonathan Diller
  * Date: 05/25/2021
@@ -31,7 +31,7 @@
 
 #pragma once
 
-#include "AppPacketHandler.h"
+#include "app_packet_handler.h"
 #include "led_helper.h"
 
 class LED_APH_SHData : public AppPacketHandler {

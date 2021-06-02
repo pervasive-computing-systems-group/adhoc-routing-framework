@@ -26,7 +26,7 @@ OBJ_LIB_FILES = ${OBJ_FILES} ../aodv/*.o ../socket/*.o ../adhoc/*.o ../single_ho
 OBJ_INCLUDE_FILES = ${TARGET}.o ${OBJ_LIB_FILES}
 OBJ_BUILD_FILES = ${TARGET}.o ${OBJ_FILES}
 
-INC_FILES = hardware_led_aodv.h LED_APH_SHData.h led_helper.h ../socket/AppPacketHandler.h
+INC_FILES = hardware_led_aodv.h LED_APH_SHData.h led_helper.h ../socket/app_packet_handler.h
 
 SUBDIRS = ../aodv ../socket ../adhoc ../single_hop ../hello_monitor ../hardware
 

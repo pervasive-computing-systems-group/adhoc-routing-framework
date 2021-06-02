@@ -42,7 +42,7 @@
 
 #include "endpoint.h"
 #include "socket_defines.h"
-#include "AppPacketHandler.h"
+#include "app_packet_handler.h"
 #include "message.h"
 #include "../data_structures/safe_circular_queue.h"
 

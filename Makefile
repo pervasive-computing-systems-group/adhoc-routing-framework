@@ -25,7 +25,7 @@ STATIC_LIBRARIES = hardware/libhardware.a adhoc/libadhoc.a socket/libsocket.a
 OBJ_FILES = ${OBJ_LIB_FILES} 
 INC_FILES = 
 
-SUBDIRS = aodv socket hardware adhoc hello_monitor rem data_structures single_hop
+SUBDIRS = aodv socket hardware adhoc hello_monitor data_structures single_hop
 
 ${TARGET}: #${OBJ_FILES}
 	${CXX} -c ${CXXFLAGS} ${TARGET}.cc -o ${TARGET}.o
