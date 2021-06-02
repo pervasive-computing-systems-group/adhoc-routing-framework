@@ -27,12 +27,12 @@ int main(){
         // Send packets to all ips
         for(auto ip : ips){
             uint32_t dest = getIpFromString(ip);
-            if(!haodv->sendPacket(printPort->getPortId(), msg, message.length(), dest)){
-                fprintf(stderr, "[DO ADHOC]:[ERROR]: Muy angry send, much mad\n");
+            if(haodv->sendPacket(printPort->getPortId(), msg, message.length(), dest) == -1){
+                printf("[DO ADHOC]:[DEBUG]: unable to currently send data\n");
             }
             printf("[DO ADHOC]:[DEBUG]: Sent ");
             printPacket(stdout, msg, message.length());
-            printf(" to %s\n",ip);
+            printf(" to %s\n", ip.c_str());
         }
         // Handle packets
         int handleCount = haodv->handlePackets();

@@ -62,20 +62,20 @@ bool testHardwareAodv(){
     memcpy(msg, message.c_str(), 13);
 
     bool send = true;
-    send = send && haodv->sendPacket(printPort->getPortId(), msg, 16, getIpFromString("127.0.0.1"));
-    send = send && haodv->sendPacket(printPort->getPortId(), msg, 16, getIpFromString("127.0.0.1"));
+    send = send && (haodv->sendPacket(printPort->getPortId(), msg, 16, getIpFromString("127.0.0.1")) == -1);
+    send = send && (haodv->sendPacket(printPort->getPortId(), msg, 16, getIpFromString("127.0.0.1")) == -1);
     pass &= test(send, "Can attempt to send message to node on network");
     sleep(1);
     pass &= test(4 == haodv->handlePackets(), "RREQ are broadcasted and handled");
     send = true;
-    send = send && haodv->sendPacket(printPort->getPortId(), msg, 16, getIpFromString("127.0.0.3"));
-    send = send && haodv->sendPacket(printPort->getPortId(), msg, 16, getIpFromString("127.0.0.3"));
+    send = send && (haodv->sendPacket(printPort->getPortId(), msg, 16, getIpFromString("127.0.0.3")) == -1);
+    send = send && (haodv->sendPacket(printPort->getPortId(), msg, 16, getIpFromString("127.0.0.3")) == -1);
     pass &= test(send, "Can attempt to send message to node on network");
     sleep(1);
     pass &= test(4 == haodv->handlePackets(), "RREQ are broadcasted and handled");
     send = true;
-    send = send && haodv->sendPacket(printPort->getPortId(), msg, 16, getIpFromString("127.0.0.9"));
-    send = send && haodv->sendPacket(printPort->getPortId(), msg, 16, getIpFromString("127.0.0.9"));
+    send = send && (haodv->sendPacket(printPort->getPortId(), msg, 16, getIpFromString("127.0.0.9")));
+    send = send && (haodv->sendPacket(printPort->getPortId(), msg, 16, getIpFromString("127.0.0.9")));
     pass &= test(send, "Can attempt to send message to node on network");
     sleep(1);
     pass &= test(4 == haodv->handlePackets(), "RREQ are broadcasted and handled");

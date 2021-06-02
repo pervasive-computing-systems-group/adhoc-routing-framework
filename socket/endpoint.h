@@ -80,6 +80,11 @@ public:
    */
   int getPort(void) const;
 
+  /*! Get the remote host address struct
+   *  @return the remote host address struct
+   */
+  sockaddr_in* getRemoteHostAddr();
+
   bool operator==(Endpoint &rhs);
   bool operator!=(Endpoint &rhs);
 

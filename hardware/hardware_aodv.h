@@ -41,19 +41,14 @@ public:
     virtual int handlePackets() override;
 
 protected:
-    bool _socketSendPacket(int portId, char *buffer, int length, IP_ADDR dest) override;
+    int _socketSendPacket(int portId, char *buffer, int length, IP_ADDR dest) override;
+    // Depreciating
 	void _buildPort(Port*) override;
     void _destroyPort(Port*) override;
+    // TODO: Implement these:
+	Socket* _protocolCreateSocket(uint32_t nPortNum, AppPacketHandler* pAppPacketHandler) override {return nullptr;};
+	virtual bool _protocolDestroySocket(uint32_t nPortNum) override {return false;};
 };
-
-/*!
- * @brief prints the data of a packet to the specified filed
- * 
- * @param file  where to print the packet
- * @param buffer the packet to print
- * @param length the length of the packet
- */
-void printPacket(FILE* file, char * buffer, int length);
 
 
 #endif

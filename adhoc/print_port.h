@@ -1,3 +1,5 @@
+#pragma once
+
 #include "port.h"
 
 class PrintPort : public Port{

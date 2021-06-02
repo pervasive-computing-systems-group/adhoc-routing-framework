@@ -3,7 +3,7 @@
 # SmallSat Routing Protocol 
 #
 #  Created by Phillip Romig on 4/3/12.
-#  Modified by Josh Rands on 9/2/19
+#  Modified by Jonathan Diller on 05/14/21
 #  Copyright 2012 Colorado School of Mines. All rights reserved.
 #
 
@@ -20,13 +20,13 @@ LIBFLAGS = -cvq
 # You should be able to add object files here without changing anything else
 #
 TARGET = test
-LIB_NAME = libaodv.a
-OBJ_FILES = aodv.o aodv_rreq.o aodv_rrep.o aodv_rerr.o aodv_routing_table.o aodv_test.o buffered_packet.o
+LIB_NAME = libsingle_hop.a
+OBJ_FILES = single_hop.o
 OBJ_LIB_FILES = ${OBJ_FILES} ../adhoc/*.o ../socket/*.o
 OBJ_INCLUDE_FILES = ${TARGET}.o ${OBJ_LIB_FILES}
 OBJ_BUILD_FILES = ${TARGET}.o ${OBJ_FILES}
 
-INC_FILES = ${TARGET}.h aodv.h aodv_rreq.h aodv_rrep.h aodv_rerr.h aodv_routing_table.h aodv_test.h aodv_params.h defines.h network_monitor.h monitor_info.h buffered_packet.h
+INC_FILES = ${TARGET}.h defines.h network_monitor.h monitor_info.h
 
 SUBDIRS = ../adhoc ../socket
 

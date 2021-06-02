@@ -80,6 +80,11 @@ uint32_t Endpoint::getAddressI(void) const {
 
 int Endpoint::getPort() const { return ntohs(remoteHost.sin_port); }
 
+// Get the remote host address struct
+sockaddr_in* Endpoint::getRemoteHostAddr() {
+	return &remoteHost;
+}
+
 bool Endpoint::operator==(Endpoint &rhs) {
     return (this->getAddressI() == rhs.getAddressI() &&
             this->getPort() == rhs.getPort());

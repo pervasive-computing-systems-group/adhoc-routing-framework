@@ -8,4 +8,13 @@
 
 #define RSSI_NETWORK_FILER ""
 
+/*!
+ * @brief prints the data of a packet to the specified filed
+ *
+ * @param file  where to print the packet
+ * @param buffer the packet to print
+ * @param length the length of the packet
+ */
+void printPacket(FILE* file, char * buffer, int length);
+
 #endif

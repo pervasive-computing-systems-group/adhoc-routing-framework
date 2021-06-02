@@ -11,7 +11,11 @@
  * Date: 9/4/2019
  ********************************/
 
-#include <sys/socket.h>
+#include "adhoc_defines.h"
+#include "port.h"
+#include "../socket/socket.h"
+#include "../socket/message.h"
+
 #include <netinet/in.h>
 #include <arpa/inet.h>
 #include <unordered_map> 
@@ -22,9 +26,7 @@
 #include <math.h>
 #include <vector>
 #include <mutex>
-
-#include "adhoc_defines.h"
-#include "port.h"
+#include <unordered_map>
 
 using namespace std;
 
@@ -79,10 +81,11 @@ class RoutingProtocol {
 public: 
 	// default constructor
 	RoutingProtocol();
+	RoutingProtocol(IP_ADDR nIP);
     // Destructor
     virtual ~RoutingProtocol();
 
-	    // Functions
+    // Functions
     /**
      * @brief adds a port to the routing protocol and sets the ports adhocRouting member
      * 
@@ -97,6 +100,25 @@ public:
      */
     void removePort(Port* p);
 
+    /**
+     * @brief Adds a data socket to the routing protocol
+     * 
+     * @param nPortNum The port for the socket
+     * @param pAppPacketHandler The sockets packet handler
+     * @return true if the socket was successfully added
+     * @return false unable to add teh socket
+     */
+    bool addSocket(uint32_t nPortNum, AppPacketHandler* pAppPacketHandler = nullptr);
+    
+    /**
+     * @brief Removes the socket from the routing protocl
+     * 
+     * @param nPortNum which port the socket to remove is on
+     * @return true if the socket was removed successfully
+     * @return false if the socket didn't exist or couldnt be removed
+     */
+    bool removeSocket(uint32_t nPortNum);
+
 	/**
      * @brief Send a packet to a given ip address using a specified port
      * 
@@ -105,22 +127,26 @@ public:
      * @param length the length of the data
      * @param dest 
      * @param origIP 
+     * 
+     * @returns The bytes sent or -1 on failure
      */
-    bool sendPacket(Port* p, char* data, int length, IP_ADDR dest, IP_ADDR origIP = -1);
+    int sendPacket(Port* p, char* data, int length, IP_ADDR dest, IP_ADDR origIP = -1);
+
+	/**
+     * @brief Send a packet to a given ip address using a specified port
+     *
+     * @param p the port to use
+     * @param data the data to send
+     * @param length the length of the data
+     * @param dest
+     * @param origIP
+     *
+     * @returns The bytes sent or -1 on failure
+     */
+    int sendPacket(int portId, char* data, int length, IP_ADDR dest, IP_ADDR origIP = -1);
 
     // Virtual Functions
-	/**
-     * @brief Send a packet to a given ip address using a specified port
-     * 
-     * @param p the port to use
-     * @param data the data to send
-     * @param length the length of the data
-     * @param dest 
-     * @param origIP 
-     * 
-     * @returns Whether or not the packet was sent
-     */
-    virtual bool sendPacket(int portId, char* data, int length, IP_ADDR dest, IP_ADDR origIP = -1) = 0;
+
     /**
      * @brief Handles the receiving or processing of all packets
      * @brief when implementing this should query each of the sockets corresponding to each port
@@ -129,7 +155,7 @@ public:
      * 
      * @returns the number of handled packets
      */
-    virtual int handlePackets() = 0;
+    virtual int handlePackets();
 	
     /**
      * @brief is there a link between this node and dest? 
@@ -174,16 +200,38 @@ public:
 protected:
 	// vector of one hop neighbors to this node. Can be from network monitoring, HELLO messages, etc
 	vector<IP_ADDR> m_neighbors;
-    // The ip address of the cimputer this routing protocol is running on
+	// The ip address of the cimputer this routing protocol is running on
 	uint32_t ipAddress;
-    // The list of ports that can send and receive messages using this routing protocol
+	// The list of ports that can send and receive messages using this routing protocol
+	// TODO: remove this and use m_mSockets to track sockets with port numbers (an integer)
 	unordered_map<int, Port*> ports;
 
-    RoutingTable* m_pRoutingTable;
+	// TODO: Move this into AODV, along with link related functions
+	RoutingTable* m_pRoutingTable;
+	// Map of Sockets held by the node
+	unordered_map<uint32_t, Socket*> m_mSockets;
 
 	// Functions
+	virtual Socket* _protocolCreateSocket(uint32_t nPortNum, AppPacketHandler* pAppPacketHandler) = 0;
+	virtual bool _protocolDestroySocket(uint32_t nPortNum) = 0;
 	virtual void _buildPort(Port*) = 0;
     virtual void _destroyPort(Port*) = 0;
+
+	// Handle the packet for specific routing protocols
+	virtual void protocolHandlePacket(Socket* pSocket, Message* pMsg) = 0;
+
+	/**
+     * @brief Send a packet to a given ip address using a specified port
+     *
+     * @param p the port to use
+     * @param data the data to send
+     * @param length the length of the data
+     * @param dest
+     * @param origIP
+     *
+     * @returns The number of bytes sent
+     */
+    virtual int protocolSendPacket(int portId, char* data, int length, IP_ADDR dest, IP_ADDR origIP = -1) = 0;
 };
 
 #endif

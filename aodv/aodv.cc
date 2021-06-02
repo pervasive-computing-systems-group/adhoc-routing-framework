@@ -17,11 +17,10 @@ AODV::AODV() {
 
 AODV::AODV(const char* ip) : AODV(getIpFromString(ip)){}
 
-AODV::AODV(IP_ADDR ip) {
+AODV::AODV(IP_ADDR ip) : RoutingProtocol(ip) {
     if (AODV_DEBUG)
         cout << "[AODV]:[DEBUG]: Created new aodv routing protocol." << endl;
 
-    this->ipAddress = ip;
     this->sequenceNum = 0;
     this->m_pRoutingTable = (RoutingTable*) new AODVRoutingTable();
 
@@ -55,9 +54,10 @@ AODV::~AODV() {
 /******************************
  * Public Functions
  ******************************/
-bool AODV::sendPacket(int portId, char* packet, int length, IP_ADDR dest, IP_ADDR origIP) {
+int AODV::protocolSendPacket(int portId, char* packet, int length, IP_ADDR dest, IP_ADDR origIP) {
     // by default the next hop is the final destination in case this is a broadcast 
     IP_ADDR nextHop = dest;
+    int bytesSent = -1;
 
     if (getStringFromIp(dest) != BROADCAST_STR)
     {
@@ -82,7 +82,7 @@ bool AODV::sendPacket(int portId, char* packet, int length, IP_ADDR dest, IP_ADD
             nextHop = m_pRoutingTable->getNextHop(dest);
         }
 
-        if (false == getTable()->getIsRouteActive(dest)) {
+        if (!getTable()->getIsRouteActive(dest)) {
             BufferedPacket bufferedPacket(portId, packet, length);
 
             // Put this packet in a buffer to be sent when a route opens up
@@ -115,7 +115,8 @@ bool AODV::sendPacket(int portId, char* packet, int length, IP_ADDR dest, IP_ADD
             }
             _broadcastRREQBuffer(rreq);
 
-            return true;
+            // TODO: determine if we should return something more here (# bytes sent?)
+            return -1;
         }
         else if (AODV_DEBUG)
         {
@@ -144,14 +145,14 @@ bool AODV::sendPacket(int portId, char* packet, int length, IP_ADDR dest, IP_ADD
     buffer -= HEADER_SIZE;
 
     if (linkExists(nextHop)) {
-        _socketSendPacket(portId, buffer, length + HEADER_SIZE, nextHop);
+        bytesSent = _socketSendPacket(portId, buffer, length + HEADER_SIZE, nextHop);
     } else {
         repairLink(portId, nextHop, dest, buffer, length, origIP);
     }
 
     free(buffer);
 
-    return true;
+    return bytesSent;
 }
 
 void AODV::repairLink(int port, IP_ADDR brokenLink, IP_ADDR finalDest, char *buffer,
@@ -355,13 +356,20 @@ void AODV::_handleRREP(char *buffer, int length, IP_ADDR source) {
                 BufferedPacket packet;
                 this->rreqPacketBuffer[rrep.destIP]->pop(packet);
                 char* buffer = packet.getBuffer();
-                sendPacket(packet.getPortId(), buffer, packet.getLength(), rrep.destIP);
+                int bytesSent = sendPacket(packet.getPortId(), buffer, packet.getLength(), rrep.destIP);
                 free(buffer);
+                if( bytesSent == -1){
+                    // connection breaks or the packet can't be sent 
+                    // then stop sending out the buffered packets otherwise this will cause inf loop
+                    break;
+                }
             }
-            delete this->rreqPacketBuffer[rrep.destIP];
-        }
-        this->rreqPacketBuffer.erase(rrep.destIP);
 
+            // Delete the buffer if it was successfully emptied
+            if(this->rreqPacketBuffer[rrep.destIP]->empty()){
+                delete this->rreqPacketBuffer[rrep.destIP]; // delete the buffer
+            }
+        }
     } else {
         // forward this packet
         rrepPacket forwardRREP =
@@ -451,6 +459,11 @@ void AODV::_handlePacket(int port, char *packet, int length, IP_ADDR source) {
     }
 }
 
+// Handle the packet AODV routing
+void AODV::protocolHandlePacket(Socket* pSocket, Message* pMsg) {
+	// TODO: Implement this logic to handle different types of AODV packets!!
+}
+
 void AODV::_handlePacket(Port* p, char *buffer, int length, IP_ADDR source){
     _handlePacket(p->getPortId(), buffer, length, source);
 }
@@ -483,7 +496,7 @@ void AODV::_handleAODVPacket(char *buffer, int length, IP_ADDR source){
     }
 }
 
-bool AODV::_socketSendPacket(Port* p, char *buffer, int length, IP_ADDR dest){
+int AODV::_socketSendPacket(Port* p, char *buffer, int length, IP_ADDR dest){
     return _socketSendPacket(p->getPortId(), buffer, length, dest);
 }
 

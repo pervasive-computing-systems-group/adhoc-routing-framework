@@ -27,7 +27,14 @@
 
 using std::memset;
 
-Socket::Socket() : sockfd(-1) {}
+Socket::Socket() : sockfd(-1), m_nPortNum(0), m_pAppPacketHandler(NULL) {}
+
+Socket::Socket(uint32_t nPortNum, uint32_t nMsgBffrSize)
+		: m_nPortNum(nPortNum),
+		  sockfd(-1),
+		  m_pAppPacketHandler(NULL),
+		  messages(nMsgBffrSize)
+{}
 
 Socket::~Socket() { sclose(); }
 
@@ -37,6 +44,7 @@ bool Socket::initSocket(int type) {
     return false;
   }
 
+  // NOTE: this is bad practice, we should be using getaddrinfo() and looping through good connections
   int fd = socket(AF_INET, type, 0);
   if (fd < 0) {
     perror("[SOCKET]:[ERROR]: socket creation failed\n");
@@ -93,4 +101,49 @@ bool Socket::setTransmissionPower(int txPwr){
   }
   // Check change was performed   
   return getTransmissionPower() == txPwr;
+}
+
+// Send a packet to a remote endpoint
+int Socket::sendTo(Endpoint &remote, const char *packet, int length) {
+	return typeSendTo(remote, packet, length);
+}
+
+int Socket::sendTo(char *buffer, int length, uint32_t dest, int port) {
+  Endpoint remote;
+  remote.setAddress(dest, port);
+  return sendTo(remote, buffer, length);
+}
+
+// Run the application packet received handler (if one was given to this socket)
+void Socket::runAPHReceive(Message* pMsg) {
+	if(m_pAppPacketHandler != NULL) {
+		m_pAppPacketHandler->runReceiveHandler(pMsg);
+	}
+}
+
+// Run the application packet send handler (if one was given to this socket)
+void Socket::runAPHSend(int nBytesSent, char* pMsg) {
+	if(m_pAppPacketHandler != NULL) {
+		m_pAppPacketHandler->runSendHandler(nBytesSent, pMsg);
+	}
+}
+
+// Set an application specific packet handler for this socket
+void Socket::setAppPacketHandler(AppPacketHandler* pAppPacketHandler) {
+	m_pAppPacketHandler = pAppPacketHandler;
+}
+
+// Gets the next packet, if buffer has one. Returns true if packet was popped
+// off of buffer, false otherwise.
+bool Socket::getMessage(Message &message) {
+	return messages.pop(message);
+}
+
+bool Socket::areThereMessages(){
+  Message temp;
+  return messages.peek(temp);
+}
+
+int Socket::getSockfd() const{
+  return sockfd;
 }
