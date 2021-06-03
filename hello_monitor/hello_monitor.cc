@@ -103,12 +103,12 @@ void HelloMonitor::_updateNeighbors(uint64_t remaining_time_ms)
 
 void HelloMonitor::_broadcastHelloMessage()
 {
-    int packetSize = 40;
+    int packetSize = 512;
     char* buffer = (char*)(malloc(packetSize));
-    memcpy(buffer, &m_parentIp, packetSize);
+    memcpy(buffer, &m_parentIp, sizeof(uint32_t));
 
     if (HELLO_DEBUG)
-        cout << "[DEBUG]:[HELLO]: Broadcasting hello message from node " << getStringFromIp(m_parentIp) << endl;
+        cout << "[HELLO]:[DEBUG]: Broadcasting hello message from node " << getStringFromIp(m_parentIp) << endl;
 
     // send data on HELLO port
     routingProtocol->sendPacket(getPortId(), buffer, packetSize, getIpFromString(BROADCAST_STR), m_parentIp);
