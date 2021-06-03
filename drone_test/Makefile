@@ -21,12 +21,12 @@ LIBFLAGS = -cvq
 # You should be able to add object files here without changing anything else
 #
 TARGET = main
-OBJ_FILES = data_creator.o data_manager.o image_creator.o random_data_manager.o gps_creator.o
+OBJ_FILES = data_creator.o data_manager.o image_creator.o random_data_manager.o gps_creator.o log_port.o
 OBJ_LIB_FILES = ${OBJ_FILES} ../aodv/*.o ../socket/*.o ../adhoc/*.o ../single_hop/*.o ../hello_monitor/*.o ../hardware/*.o ../hardware/rssi/*.o
 OBJ_INCLUDE_FILES = ${TARGET}.o ${OBJ_LIB_FILES}
 OBJ_BUILD_FILES = ${TARGET}.o ${OBJ_FILES}
 
-INC_FILES = data_creator.h data_manager.h image_creator.h random_data_manager.h gps_creator.h
+INC_FILES = data_creator.h data_manager.h image_creator.h random_data_manager.h gps_creator.h log_port.h
 
 SUBDIRS = ../aodv ../socket ../adhoc ../single_hop ../hello_monitor ../hardware
 

@@ -13,7 +13,7 @@
 #include "gps_creator.h"
 #include "hardware_sh_ap.h"
 #include "hardware_sh_station.h"
-#include "print_port.h"
+#include "log_port.h"
 
 using namespace std;
 
@@ -25,11 +25,14 @@ int main(){
 	vector<string> ips = { "192.168.1.1" };
 	RoutingProtocol* routingPrtcl;
 	DataManager* dataManager = new RandomDataManager();
+	
 	// Add data creators
 	ImageCreator imageCreator;
 	GPSCreator gpsCreator;
 	dataManager->addDataCreator(&imageCreator);
 	dataManager->addDataCreator(&gpsCreator);
+
+	// Logging
 
 
 	if(RT_PROTOCOL == USE_SINGLE_HOP) {
@@ -81,13 +84,12 @@ int main(){
 		printf("[TEST ADHOC]: Using AODV\n");
 		routingPrtcl = new HardwareHelloAODV(MY_IP_ADDR);
         // TODO: Create data loging port
-		Port* printPort = new PrintPort(DATA_PORT);
-		routingPrtcl->addPort(printPort);
+		Port* logPort = new LogPort(DATA_PORT, "test_logs/aodv_test_1_received.txt", 10);
+		routingPrtcl->addPort(logPort);
 
 		// Network
 		std::chrono::milliseconds last_send_time = std::chrono::duration_cast< std::chrono::milliseconds >(std::chrono::system_clock::now().time_since_epoch());
 		while(true) {
-			// Send packets to all ips every secondPort* printPort = new PrintPort(DATA_PORT);
 			std::chrono::milliseconds current_time = std::chrono::duration_cast< std::chrono::milliseconds >(std::chrono::system_clock::now().time_since_epoch());
 
 			if((current_time - last_send_time).count() > 1000){
@@ -96,7 +98,7 @@ int main(){
 					uint32_t dest = getIpFromString(ip);
 					string message = dataManager->getData();
 					char* msg = strdup(message.c_str());
-					if(routingPrtcl->sendPacket(printPort->getPortId(), msg, message.length()+1, dest) == -1){
+					if(routingPrtcl->sendPacket(logPort->getPortId(), msg, message.length()+1, dest) == -1){
 						printf("[TEST ADHOC]:[DEBUG]: Unable to send packet (not connected or an error)\n");
 					}
 					free(msg);
@@ -108,7 +110,7 @@ int main(){
 		}
 
 		// Clean memory up
-		delete printPort;
+		delete logPort;
 	}
 	delete routingPrtcl;
 }
