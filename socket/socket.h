@@ -147,12 +147,19 @@ public:
 	*/
 	bool areThereMessages();
 
-	  /*!
-	   * @brief Get the sockfd object
-	   *
-	   * @return int
-	   */
-	  int getSockfd() const;
+  /*!
+    * @brief Get the sockfd object
+    *
+    * @return int
+    */
+  int getSockfd() const;
+
+  /**
+   * @brief Returns the port of the socket
+   * 
+   * @return uint32_t 
+   */
+  uint32_t getPortNum() const;
 
 protected:
   bool initSocket(int type);

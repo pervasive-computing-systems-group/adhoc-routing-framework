@@ -27,7 +27,7 @@ public:
 protected:
 	int _socketSendPacket(int portId, char *buffer, int length, IP_ADDR dest) override;
 
-	unordered_map<int, thread> portThreads;
+	unordered_map<int, thread> socketThreads;
 
 private:
 	// Shared private constructor

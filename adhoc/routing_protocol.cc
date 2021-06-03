@@ -90,6 +90,7 @@ RoutingProtocol::RoutingProtocol(){
 RoutingProtocol::RoutingProtocol(IP_ADDR nIP) : ipAddress(nIP) { }
 
 RoutingProtocol::~RoutingProtocol(){
+	// TODO: GO through and delete sockets before exiting
 }
 
 

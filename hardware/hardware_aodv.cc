@@ -4,25 +4,12 @@
 
 // Helpers
 void HardwareAODV::_hardwareAODV(){
-    aodvSocket = new UDPSocket();
-    const int REUSE_VAL = 1;
-    if(!aodvSocket->init()){
-        fprintf(stderr, "[HARDWARE]:[ERROR]:Could not initialize the aodv socket\n");
-    }
-    if(!aodvSocket->setOption(SOL_SOCKET, SO_REUSEPORT, &REUSE_VAL, sizeof(REUSE_VAL))){
-        fprintf(stderr, "[HARDWARE]:[ERROR]:Could not set the aodv socket to reuse ports\n");
-    }
-    if (!aodvSocket->bindToPort(ROUTING_PORT)) {
-        fprintf(stderr, "[HARDWARE]:[ERROR]:Could not bind the aodv socket to port:%d\n", ROUTING_PORT);
-    }
-    if(!aodvSocket->setBroadcasting()){
-        fprintf(stderr, "[HARDWARE]:[ERROR]:Could not set the aodv socket to broadcasting\n");
+    if(this->addSocket(ROUTING_PORT)){
+        this->aodvSocket = this->m_mSockets[ROUTING_PORT];
+    }else{
+        fprintf(stderr, "[AODV]:[ERROR]: Unable to build AODV port");
         exit(-1);
     }
-
-    // create thread
-    aodving = thread(&UDPSocket::receiveFromPortThread, aodvSocket);
-    aodving.detach();
 }
 
 // Constructors
@@ -43,16 +30,9 @@ HardwareAODV::~HardwareAODV(){
     if(HARDWARE_DEBUG){
         printf("[HARDWARE]:[DEBUG]: Destructing hardware aodv\n");
     }
-    
-    delete aodvSocket;
-
-    int n = portSockets.size();
-    while(n-- > 0){
-        delete portSockets.begin()->second;
-        portSockets.erase(portSockets.begin());
-    }
 }
 
+/*
 // Public functions
 int HardwareAODV::handlePackets(){
     int count = 0;
@@ -75,25 +55,19 @@ int HardwareAODV::handlePackets(){
     }
     return count;
 }
+*/
 
 // Private Functions
 int HardwareAODV::_socketSendPacket(int portId, char *buffer, int length, IP_ADDR dest){
-    if(portId == ROUTING_PORT){
-        if(HARDWARE_DEBUG){
-            printf("[HARDWARE]:[DEBUG]: sending packet '");
-            printPacket(stdout, buffer, length);
-            printf("' through AODV\n");
-        }
-        return ((Socket*)aodvSocket)->sendTo(buffer, length, dest, portId) > 0;
-    }
-    if(ports.count(portId)){
+    if(this->m_mSockets.count(portId)){
         if(HARDWARE_DEBUG){
             printf("[HARDWARE]:[DEBUG]: sending packet '");
             printPacket(stdout, buffer, length);
             printf("' through port %d\n", portId);
         }
-        return portSockets[portId]->sendTo(buffer, length, dest, portId) > 0;
+        return this->m_mSockets[portId]->sendTo(buffer, length, dest, portId) > 0;
     }
+    
     fprintf(stderr, "[HARDWARE]:[ERROR]: Tried to send packet '");
     printPacket(stderr, buffer, length);
     fprintf(stderr, "' through non-existent port %d\n", portId);
@@ -101,44 +75,53 @@ int HardwareAODV::_socketSendPacket(int portId, char *buffer, int length, IP_ADD
 }
 
 void HardwareAODV::_buildPort(Port* p){
-    // Create socket
-    UDPSocket* portSocket = new UDPSocket();
-    const int REUSE_VAL = 1;
-    if(!portSocket->init()){
-        fprintf(stderr, "[HARDWARE]:[ERROR]: Could not initialize the aodv port socket\n");
-        exit(-1);
-    }
-    if(!portSocket->setOption(SOL_SOCKET, SO_REUSEPORT, &REUSE_VAL, sizeof(REUSE_VAL))){
-        fprintf(stderr, "[HARDWARE]:[ERROR]: Could not set the aodv port socket to reuse ports\n");
-        exit(-1);
-    }
-    if (!portSocket->bindToPort(p->getPortId())) {
-        fprintf(stderr, "[HARDWARE]:[ERROR]: Could not bind the aodv port socket to port:%d\n", p->getPortId());
-        exit(-1);
-    }
-    if(!portSocket->setBroadcasting()){
-        fprintf(stderr, "[HARDWARE]:[ERROR]:Could not set the aodv port socket to broadcasting\n");
-        exit(-1);
-    }
-    
-    portSockets[p->getPortId()] = portSocket;
-
-    // create thread
-    portThreads[p->getPortId()] = thread(&UDPSocket::receiveFromPortThread, portSocket);
-    portThreads[p->getPortId()].detach();
-    
-    if(UDP_DEBUG){
-        printf("[HARDWARE]:[DEBUG]: Created port %d\n", p->getPortId());
-    }
+    this->addSocket(p->getPortId());
 }
 
 void HardwareAODV::_destroyPort(Port* p){
+    this->removeSocket(p->getPortId());
+}
+
+Socket* HardwareAODV::_protocolCreateSocket(uint32_t nPortNum, AppPacketHandler* pAppPacketHandler){
+    // Create socket
+    UDPSocket* newSocket = new UDPSocket();
+
+    const int REUSE_VAL = 1;
+    if(!newSocket->init()){
+        fprintf(stderr, "[HARDWARE]:[ERROR]: Could not initialize the aodv port socket\n");
+        exit(-1);
+    }
+    if(!newSocket->setOption(SOL_SOCKET, SO_REUSEPORT, &REUSE_VAL, sizeof(REUSE_VAL))){
+        fprintf(stderr, "[HARDWARE]:[ERROR]: Could not set the aodv port socket to reuse ports\n");
+        exit(-1);
+    }
+    if (!newSocket->bindToPort(nPortNum)) {
+        fprintf(stderr, "[HARDWARE]:[ERROR]: Could not bind the aodv port socket to port:%d\n", nPortNum);
+        exit(-1);
+    }
+    if(!newSocket->setBroadcasting()){
+        fprintf(stderr, "[HARDWARE]:[ERROR]:Could not set the aodv port socket to broadcasting\n");
+        exit(-1);
+    }
+
+    // Set app packet handler
+    newSocket->setAppPacketHandler(pAppPacketHandler);
+
+    // create thread
+    socketThreads[nPortNum] = thread(&UDPSocket::receiveFromPortThread, newSocket);
+    socketThreads[nPortNum].detach();
+    
     if(UDP_DEBUG){
-        printf("[HARDWARE]:[DEBUG]: Destroying port %d\n", p->getPortId());
+        printf("[HARDWARE]:[DEBUG]: Created port %d\n", nPortNum);
     }
-    if(portSockets.count(p->getPortId())){
-        UDPSocket* portSocket = portSockets[p->getPortId()];
-        portSockets.erase(p->getPortId());
-        delete portSocket;
+
+    return newSocket;
+}
+
+bool HardwareAODV::_protocolDestroySocket(uint32_t nPortNum){
+    if(UDP_DEBUG){
+        printf("[HARDWARE]:[DEBUG]: Destroying socket on port %d\n", nPortNum);
     }
+    // TODO: clean up the memory
+    // TODO: OPTIONAL: Stop the thread it is on
 }

@@ -56,8 +56,9 @@ int HardwareHelloAODV::handlePackets() {
     free(messageData);
     count++;
   }
+  
   // Handle packets on the ports
-  for (auto socketPair : portSockets) {
+  for (auto socketPair : this->m_mSockets) {
     while (socketPair.second->getMessage(message)) {
       char* messageData = message.getData();
       this->_handlePacket(socketPair.first, messageData,

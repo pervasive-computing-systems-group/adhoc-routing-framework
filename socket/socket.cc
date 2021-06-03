@@ -147,3 +147,7 @@ bool Socket::areThereMessages(){
 int Socket::getSockfd() const{
   return sockfd;
 }
+
+uint32_t Socket::getPortNum() const{
+  return this->m_nPortNum;
+}

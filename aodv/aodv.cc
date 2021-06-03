@@ -461,7 +461,39 @@ void AODV::_handlePacket(int port, char *packet, int length, IP_ADDR source) {
 
 // Handle the packet AODV routing
 void AODV::protocolHandlePacket(Socket* pSocket, Message* pMsg) {
-	// TODO: Implement this logic to handle different types of AODV packets!!
+    int port = pSocket->getPortNum();
+    char* packet = pMsg->getData();
+    int length = pMsg->getLength();
+    IP_ADDR source = pMsg->getAddressI();
+
+	if(port == ROUTING_PORT){
+        _handleAODVPacket(packet, length, source);
+    }else{
+        // get final destination
+        IP_ADDR finalDestination;
+        memcpy(&finalDestination, &(packet[1]), 4);
+        IP_ADDR origIP;
+        memcpy(&origIP, &(packet[5]), 4);
+        if (this->getIp() == finalDestination || finalDestination == getIpFromString(BROADCAST_STR)) {
+            // We are the final destinatin
+            // Have socket handle the packet
+            packet += HEADER_SIZE; // Get only the data part of the packet
+            if(this->m_mSockets.count(port)){
+                if(AODV_DEBUG)
+                    std::cout << "[AODV]:[INFO]: Received packet on port " << port << endl; 
+                this->m_mSockets[port]->runAPHReceive(pMsg);
+            }else{
+                fprintf(stderr, "[AODV]:[ERROR]: Received packet on port with no port handler\n");
+            }
+            packet -= HEADER_SIZE;
+        }else{
+            // send the packet to final destination - will check routing table
+            // strip header and send packet
+            packet += HEADER_SIZE;
+            sendPacket(port, packet, length - HEADER_SIZE, finalDestination, origIP);
+            packet -= HEADER_SIZE;
+        }
+    }
 }
 
 void AODV::_handlePacket(Port* p, char *buffer, int length, IP_ADDR source){

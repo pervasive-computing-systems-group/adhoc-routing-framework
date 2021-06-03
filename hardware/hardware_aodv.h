@@ -17,9 +17,8 @@ private:
     void _hardwareAODV();
     
 protected:
-    unordered_map<int, thread> portThreads;
-    unordered_map<int, UDPSocket*> portSockets;
-    UDPSocket* aodvSocket;
+    unordered_map<int, thread> socketThreads;
+    Socket* aodvSocket;
     thread aodving;
 
 public:
@@ -38,16 +37,14 @@ public:
     // Destructors
     ~HardwareAODV();
 
-    virtual int handlePackets() override;
-
 protected:
     int _socketSendPacket(int portId, char *buffer, int length, IP_ADDR dest) override;
     // Depreciating
 	void _buildPort(Port*) override;
     void _destroyPort(Port*) override;
     // TODO: Implement these:
-	Socket* _protocolCreateSocket(uint32_t nPortNum, AppPacketHandler* pAppPacketHandler) override {return nullptr;};
-	virtual bool _protocolDestroySocket(uint32_t nPortNum) override {return false;};
+	Socket* _protocolCreateSocket(uint32_t nPortNum, AppPacketHandler* pAppPacketHandler) override;
+	virtual bool _protocolDestroySocket(uint32_t nPortNum) override;
 };
 
 
