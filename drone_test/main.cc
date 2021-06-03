@@ -5,20 +5,31 @@
 #include <utility>
 #include <fstream>
 
-#include "hardware_led_aodv.h"
-#include "aodv_test.h"
+#include "routing_protocol.h"
+#include "hardware_hello_aodv.h"
+#include "data_manager.h"
+#include "random_data_manager.h"
+#include "image_creator.h"
+#include "gps_creator.h"
 #include "hardware_sh_ap.h"
 #include "hardware_sh_station.h"
-#include "LED_APH_SHData.h"
+#include "print_port.h"
 
 using namespace std;
 
 int main(){
+	// Seed random
+	srand(time(0));
+
 	/// Networking Settings
-	string message = "Hello World!";
-	char* msg = strdup(message.c_str());
 	vector<string> ips = { "192.168.1.1" };
 	RoutingProtocol* routingPrtcl;
+	DataManager* dataManager = new RandomDataManager();
+	// Add data creators
+	ImageCreator imageCreator;
+	GPSCreator gpsCreator;
+	dataManager->addDataCreator(&imageCreator);
+	dataManager->addDataCreator(&gpsCreator);
 
 
 	if(RT_PROTOCOL == USE_SINGLE_HOP) {
@@ -52,9 +63,12 @@ int main(){
 					last_send_time = current_time;
 					for(auto ip : ips) {
 						uint32_t dest = getIpFromString(ip);
+						string message = dataManager->getData();
+						char* msg = strdup(message.c_str());
 						if(routingPrtcl->sendPacket(DATA_PORT, msg, message.length() + 1, dest) == -1){
 							fprintf(stderr, "[TEST ADHOC]:[ERROR]: Unable to send packet\n");
 						}
+						free(msg);
 					}
 				}
 
@@ -65,7 +79,7 @@ int main(){
 	else if(RT_PROTOCOL == USE_AODV) {
 		/// Setup
 		printf("[TEST ADHOC]: Using AODV\n");
-		routingPrtcl = new HardwareLedAODV(MY_IP_ADDR);
+		routingPrtcl = new HardwareHelloAODV(MY_IP_ADDR);
         // TODO: Create data loging port
 		Port* printPort = new PrintPort(DATA_PORT);
 		routingPrtcl->addPort(printPort);
@@ -80,27 +94,21 @@ int main(){
 				last_send_time = current_time;
 				for(auto ip : ips){
 					uint32_t dest = getIpFromString(ip);
+					string message = dataManager->getData();
+					char* msg = strdup(message.c_str());
 					if(routingPrtcl->sendPacket(printPort->getPortId(), msg, message.length()+1, dest) == -1){
 						printf("[TEST ADHOC]:[DEBUG]: Unable to send packet (not connected or an error)\n");
-					}else{
-                        printf("[TEST ADHOC]:[DEBUG]: Sent ");
-                        printPacket(stdout, msg, message.length()+1);
-                        printf(" to %s\n", ip.c_str());
-                    }
+					}
+					free(msg);
 				}
 			}
 
 			// Handle packets
 			int handleCount = routingPrtcl->handlePackets();
-			if(handleCount > 0){
-				printf("[TEST ADHOC]:[DEBUG]: Handled %d packets\n", handleCount);
-			}
 		}
 
 		// Clean memory up
 		delete printPort;
 	}
-
-	free(msg);
 	delete routingPrtcl;
 }
