@@ -85,13 +85,15 @@ void RoutingTable::updateTableEntry(const IP_ADDR dest, const IP_ADDR nextHop)
 }
 
 RoutingProtocol::RoutingProtocol(){
+	this->m_pAppConnectionHandler = nullptr;
 }
 
-RoutingProtocol::RoutingProtocol(IP_ADDR nIP) : ipAddress(nIP) { }
+RoutingProtocol::RoutingProtocol(IP_ADDR nIP) : ipAddress(nIP) { 
+	this->m_pAppConnectionHandler = nullptr;
+}
 
 RoutingProtocol::~RoutingProtocol(){
 }
-
 
 bool RoutingProtocol::addSocket(uint32_t nPortNum, AppPacketHandler* pAppPacketHandler) {
 	if(!this->m_mSockets.count(nPortNum)) {
@@ -137,6 +139,10 @@ void RoutingProtocol::removePort(Port* p){
 		this->_destroyPort(p);
 		ports.erase(p->getPortId());
 	}
+}
+
+void RoutingProtocol::setAppConnectionHandler(AppConnectionHandler* pAppConnectionHandler){
+	this->m_pAppConnectionHandler = pAppConnectionHandler;
 }
 
 int RoutingProtocol::sendPacket(Port* p, char* data, int length, IP_ADDR dest, IP_ADDR origIP){
@@ -234,4 +240,11 @@ void RoutingProtocol::addLink(IP_ADDR node)
 		if (ROUTING_DEBUG)
 			cout << "[ROUTING]:[INFO]: One hop neighbor: " << getStringFromIp(node) << " added to routing table." << endl; 
 	}
+}
+
+bool RoutingProtocol::_isAppConnected(IP_ADDR ip){
+	if(this->m_pAppConnectionHandler != nullptr){
+		return this->m_pAppConnectionHandler->isConnected(ip);
+	}
+	return true;
 }

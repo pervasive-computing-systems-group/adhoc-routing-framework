@@ -13,8 +13,9 @@
 
 #include "adhoc_defines.h"
 #include "port.h"
-#include "../socket/socket.h"
-#include "../socket/message.h"
+#include "socket.h"
+#include "message.h"
+#include "app_connection_handler.h"
 
 #include <netinet/in.h>
 #include <arpa/inet.h>
@@ -119,6 +120,14 @@ public:
      */
     bool removeSocket(uint32_t nPortNum);
 
+    /**
+     * @brief Set the App Connection Handler object, 
+     * routing protocol will not free this memory ever (thats on the user)
+     * 
+     * @param pAppConnectionHandler 
+     */
+    void setAppConnectionHandler(AppConnectionHandler* pAppConnectionHandler);
+
 	/**
      * @brief Send a packet to a given ip address using a specified port
      * 
@@ -165,11 +174,13 @@ public:
      * @return false link does not exist
      */
 	virtual bool linkExists(IP_ADDR dest);
+
     /**
      * @brief function to reset the neighbors of this node to none 
      * 
      */
 	void resetLinks();
+
     /**
      * @brief add this ip address to this list of current 1 hop neighbors 
      * 
@@ -210,6 +221,17 @@ protected:
 	RoutingTable* m_pRoutingTable;
 	// Map of Sockets held by the node
 	unordered_map<uint32_t, Socket*> m_mSockets;
+
+    AppConnectionHandler* m_pAppConnectionHandler;
+
+    /**
+     * @brief Checks if the app connection handler says the nodes are connected
+     * 
+     * @return true application layer connection is good
+     * @return false cannot send/reiceive messages from that ip
+     */
+    bool _isAppConnected(IP_ADDR ip);
+
 
 	// Functions
 	virtual Socket* _protocolCreateSocket(uint32_t nPortNum, AppPacketHandler* pAppPacketHandler) = 0;
