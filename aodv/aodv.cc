@@ -368,7 +368,9 @@ void AODV::_handleRREP(char *buffer, int length, IP_ADDR source) {
             // Delete the buffer if it was successfully emptied
             if(this->rreqPacketBuffer[rrep.destIP]->empty()){
                 delete this->rreqPacketBuffer[rrep.destIP]; // delete the buffer
+                this->rreqPacketBuffer.erase(rrep.destIP);
             }
+            
         }
     } else {
         // forward this packet
