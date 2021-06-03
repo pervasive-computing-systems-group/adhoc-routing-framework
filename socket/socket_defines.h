@@ -8,7 +8,7 @@
 #define SOCKET_DEBUG DEBUG && 1
 #define UDP_QUEUE_SIZE 20
 #define TCP_QUEUE_SIZE 20
-#define MAXLINE 1024
+#define MAXLINE 8192 // max buffer to send and receive, based on microsoft standards
 // Number of pending connections to queue
 #define CONNECTION_QUEUE_SIZE 10
 
