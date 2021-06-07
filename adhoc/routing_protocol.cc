@@ -146,6 +146,10 @@ int RoutingProtocol::sendPacket(Port* p, char* data, int length, IP_ADDR dest, I
 int RoutingProtocol::sendPacket(int portId, char* data, int length, IP_ADDR dest, IP_ADDR origIP) {
 	int bytesSent = protocolSendPacket(portId, data, length, dest, origIP);
 
+	if(bytesSent < 0) {
+		m_oPacketBuffer.storePacket(dest, portId, data, length);
+	}
+
 	auto soc = m_mSockets.find(portId);
 	if(soc != m_mSockets.end()) {
 		soc->second->runAPHSend(bytesSent, data);
@@ -164,6 +168,24 @@ int RoutingProtocol::handlePackets() {
 		while(socPair.second->getMessage(message)) {
 			protocolHandlePacket(socPair.second, &message);
 			count++;
+		}
+	}
+
+	// Check to see if there are any packets waiting to be sent
+	if(m_oPacketBuffer.getNumbPackets()) {
+		// Grab list of destination addresses
+		std::deque<int> list;
+		m_oPacketBuffer.getReceiverList(&list);
+
+		for(std::deque<int>::iterator it = list.begin(); it != list.end(); it++) {
+			BufferedPacket bufferedPacket;
+			m_oPacketBuffer.getPacket(*it, &bufferedPacket);
+			int bytesSent = protocolSendPacket(bufferedPacket.getPortId(), bufferedPacket.getBuffer(), bufferedPacket.getLength(), bufferedPacket.getDestination());
+
+			// TODO: This will put the packet at the back, we should change this so that it isn't rotating packets through the internal buffer queue
+			if(bytesSent < 0) {
+				m_oPacketBuffer.storePacket(bufferedPacket.getDestination(), bufferedPacket.getPortId(), bufferedPacket.getBuffer(), bufferedPacket.getLength());
+			}
 		}
 	}
 

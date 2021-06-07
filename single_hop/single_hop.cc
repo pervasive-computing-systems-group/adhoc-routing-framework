@@ -43,8 +43,6 @@ int SingleHop::protocolSendPacket(int portId, char* packet, int length, IP_ADDR 
 	// Attempt to send packet
 	ret_val = _socketSendPacket(portId, buffer, length + HEADER_SIZE, dest);
 
-	// TODO: Determine how we will handle packets that failed to send!
-
 	free(buffer);
 
 	return ret_val;
@@ -54,6 +52,10 @@ int SingleHop::protocolSendPacket(int portId, char* packet, int length, IP_ADDR 
 /******************************
  * Protected Functions
  ******************************/
+
+void SingleHop::_handlePacket(Port* p, char *buffer, int length, IP_ADDR source){
+	_handlePacket(p->getPortId(), buffer, length, source);
+}
 
 void SingleHop::_handlePacket(int port, char *packet, int length, IP_ADDR source) {
 	// Get final destination
@@ -82,10 +84,6 @@ void SingleHop::_handlePacket(int port, char *packet, int length, IP_ADDR source
 // Handle the packet for single-hop
 void SingleHop::protocolHandlePacket(Socket* pSocket, Message* pMsg) {
 
-}
-
-void SingleHop::_handlePacket(Port* p, char *buffer, int length, IP_ADDR source){
-	_handlePacket(p->getPortId(), buffer, length, source);
 }
 
 int SingleHop::_socketSendPacket(Port* p, char *buffer, int length, IP_ADDR dest){

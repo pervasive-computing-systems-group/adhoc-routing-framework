@@ -11,7 +11,7 @@
 CXX = g++
 LD = g++
 LIB = ar
-INC_DIRS = -I../adhoc -I../ -I../socket
+INC_DIRS = -I../adhoc -I../ -I../socket -I../data_structures
 
 CXXFLAGS = -g -fPIC -pthread -std=c++17 -DBOOST_LOG_DYN_LINK -Wall ${INC_DIRS}
 LIBFLAGS = r
@@ -20,12 +20,12 @@ LIBFLAGS = r
 # You should be able to add object files here without changing anything else
 #
 LIB_NAME = libadhoc.a
-OBJ_LIB_FILES = port.o routing_protocol.o send_packet.o network_monitor.o
+OBJ_LIB_FILES = port.o routing_protocol.o send_packet.o network_monitor.o ../data_structures/*.o
 OBJ_FILES = ${OBJ_LIB_FILES}
 
 INC_FILES = port.h routing_protocol.h send_packet.h network_monitor.h adhoc_defines.h
 
-SUBDIRS = ../socket
+SUBDIRS = ../socket ../data_structures
 
 #
 # Any libraries we might need.

@@ -36,4 +36,6 @@
 #define LOCAL_DATA_UPDATE_RATE_MS 500
 #define HELLO_PORT          5124
 
+#define PACKET_BUFFER_CAPACITY	1048576 // 1 GiB
+
 #endif

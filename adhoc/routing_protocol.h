@@ -15,6 +15,7 @@
 #include "port.h"
 #include "../socket/socket.h"
 #include "../socket/message.h"
+#include "packet_buffer.h"
 
 #include <netinet/in.h>
 #include <arpa/inet.h>
@@ -27,6 +28,7 @@
 #include <vector>
 #include <mutex>
 #include <unordered_map>
+#include <deque>
 
 using namespace std;
 
@@ -210,6 +212,8 @@ protected:
 	RoutingTable* m_pRoutingTable;
 	// Map of Sockets held by the node
 	unordered_map<uint32_t, Socket*> m_mSockets;
+	// Packet buffer to store packets waiting to be sent
+	PacketBuffer m_oPacketBuffer;
 
 	// Functions
 	virtual Socket* _protocolCreateSocket(uint32_t nPortNum, AppPacketHandler* pAppPacketHandler) = 0;
