@@ -22,7 +22,7 @@ LIBFLAGS = -cvq
 #
 TARGET = main
 OBJ_FILES = hardware_led_aodv.o LED_APH_SHData.o led_helper.o
-OBJ_LIB_FILES = ${OBJ_FILES} ../aodv/*.o ../socket/*.o ../adhoc/*.o ../single_hop/*.o ../hello_monitor/*.o ../hardware/*.o ../hardware/rssi/*.o ../data_structures/*.o
+OBJ_LIB_FILES = ../aodv/*.o ../socket/*.o ../adhoc/*.o ../single_hop/*.o ../hello_monitor/*.o ../hardware/*.o ../hardware/rssi/*.o ../data_structures/*.o ${OBJ_FILES}
 OBJ_INCLUDE_FILES = ${TARGET}.o ${OBJ_LIB_FILES}
 OBJ_BUILD_FILES = ${TARGET}.o ${OBJ_FILES}
 
