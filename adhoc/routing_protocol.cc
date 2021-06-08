@@ -167,6 +167,7 @@ int RoutingProtocol::handlePackets() {
 	for(pair<const uint32_t, Socket*>& socPair : m_mSockets) {
 		while(socPair.second->getMessage(message)) {
 			protocolHandlePacket(socPair.second, &message);
+			socPair.second->runAPHReceive(&message);
 			count++;
 		}
 	}
@@ -177,6 +178,7 @@ int RoutingProtocol::handlePackets() {
 		std::deque<int> list;
 		m_oPacketBuffer.getReceiverList(&list);
 
+		// Pop-off one packet for each destination and attempt to send it
 		for(std::deque<int>::iterator it = list.begin(); it != list.end(); it++) {
 			BufferedPacket bufferedPacket;
 			m_oPacketBuffer.getPacket(*it, &bufferedPacket);
@@ -185,6 +187,13 @@ int RoutingProtocol::handlePackets() {
 			// TODO: This will put the packet at the back, we should change this so that it isn't rotating packets through the internal buffer queue
 			if(bytesSent < 0) {
 				m_oPacketBuffer.storePacket(bufferedPacket.getDestination(), bufferedPacket.getPortId(), bufferedPacket.getBuffer(), bufferedPacket.getLength());
+			}
+			else {
+				// Run app packet handler only if we sent the packet
+				auto soc = m_mSockets.find(bufferedPacket.getPortId());
+				if(soc != m_mSockets.end()) {
+					soc->second->runAPHSend(bytesSent, bufferedPacket.getBuffer());
+				}
 			}
 		}
 	}
