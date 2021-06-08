@@ -57,7 +57,7 @@ int TCPStationSocket::typeSendTo(Endpoint &remote, const char *packet, int lengt
 	// Get a set of socket addresses
 	int nRVal = getaddrinfo(remote.getAddressC(), str, &tConfigAddr, &tAddrSet);
 	if(nRVal != 0) {
-		fprintf(stderr,"ERROR: getaddrinfo() failed: %s\n", gai_strerror(nRVal));
+		printf("ERROR: getaddrinfo() failed: %s\n", gai_strerror(nRVal));
 		returnVal = -1;
 	}
 	else {
@@ -96,15 +96,15 @@ int TCPStationSocket::typeSendTo(Endpoint &remote, const char *packet, int lengt
 		freeaddrinfo(tAddrSet);
 
 		if(tAddrInfo == NULL) {
-			fprintf(stderr,"ERROR: failed to connect\n");
+			printf("ERROR: failed to connect\n");
 			returnVal = -1;
 		}
 		else {
 			returnVal = send(sockfd, packet, length, 0);
 
 			if(returnVal < 0) {
-				fprintf(stderr, "[TCP SOCKET]:[ERROR] Could not send packet %s to %s\n", packet, remote.getAddressC());
-				fprintf(stderr, "[TCP SOCKET]:[ERROR]: %s\n", strerror(errno));
+				printf("[TCP SOCKET]:[ERROR] Could not send packet %s to %s\n", packet, remote.getAddressC());
+				printf("[TCP SOCKET]:[ERROR]: %s\n", strerror(errno));
 			}
 
 			// Close the socket
