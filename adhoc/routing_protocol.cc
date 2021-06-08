@@ -147,6 +147,9 @@ int RoutingProtocol::sendPacket(int portId, char* data, int length, IP_ADDR dest
 	int bytesSent = protocolSendPacket(portId, data, length, dest, origIP);
 
 	if(bytesSent < 0) {
+		if(PB_DEBUG) {
+			printf("[ROUTING]:[PB_DEBUG]: Buffering packet for %d\n", dest);
+		}
 		m_oPacketBuffer.storePacket(dest, portId, data, length);
 	}
 
@@ -189,6 +192,10 @@ int RoutingProtocol::handlePackets() {
 				m_oPacketBuffer.storePacket(bufferedPacket.getDestination(), bufferedPacket.getPortId(), bufferedPacket.getBuffer(), bufferedPacket.getLength());
 			}
 			else {
+				if(PB_DEBUG) {
+					printf("[ROUTING]:[PB_DEBUG]: Found route to %d\n", bufferedPacket.getDestination());
+				}
+
 				// Run app packet handler only if we sent the packet
 				auto soc = m_mSockets.find(bufferedPacket.getPortId());
 				if(soc != m_mSockets.end()) {

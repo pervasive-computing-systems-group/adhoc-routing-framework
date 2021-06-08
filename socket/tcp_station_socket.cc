@@ -42,6 +42,7 @@ int TCPStationSocket::typeSendTo(Endpoint &remote, const char *packet, int lengt
 	}
 
 	int returnVal = -1;
+	long arg;
 	struct addrinfo tConfigAddr, *tAddrSet, *tAddrInfo;
 
 	// Configure the socket type that we want
@@ -74,6 +75,17 @@ int TCPStationSocket::typeSendTo(Endpoint &remote, const char *packet, int lengt
 				tAddrInfo = tAddrInfo->ai_next;
 
 				continue;
+			}
+
+			// Set non-blocking
+			if( (arg = fcntl(sockfd, F_GETFL, NULL)) < 0) {
+				printf("[TCP SOCKET]:[ERROR]: fcntl(..., F_GETFL) (%s)\n", strerror(errno));
+				exit(0);
+			}
+			arg |= O_NONBLOCK;
+			if( fcntl(sockfd, F_SETFL, arg) < 0) {
+				printf("[TCP SOCKET]:[ERROR]: fcntl(..., F_SETFL) (%s)\n", strerror(errno));
+				exit(0);
 			}
 
 			// Attempt to connect to server socket
