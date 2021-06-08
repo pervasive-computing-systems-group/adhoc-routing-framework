@@ -41,7 +41,7 @@ int TCPStationSocket::typeSendTo(Endpoint &remote, const char *packet, int lengt
 		printf("[TCP SOCKET]:[DEBUG]: Sending %s to %s via TCP connection\n", packet, remote.getAddressC());
 	}
 
-	int returnVal = 0;
+	int returnVal = -1;
 	struct addrinfo tConfigAddr, *tAddrSet, *tAddrInfo;
 
 	// Configure the socket type that we want
@@ -100,10 +100,9 @@ int TCPStationSocket::typeSendTo(Endpoint &remote, const char *packet, int lengt
 			returnVal = -1;
 		}
 		else {
-//			sendto(sockfd, packet, length, MSG_CONFIRM, (const struct sockaddr *)&remote.remoteHost, sizeof(remote.remoteHost));
 			returnVal = send(sockfd, packet, length, 0);
 
-			if(returnVal < 0){
+			if(returnVal < 0) {
 				fprintf(stderr, "[TCP SOCKET]:[ERROR] Could not send packet %s to %s\n", packet, remote.getAddressC());
 				fprintf(stderr, "[TCP SOCKET]:[ERROR]: %s\n", strerror(errno));
 			}

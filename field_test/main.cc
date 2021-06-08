@@ -64,7 +64,9 @@ int main(){
 					}
 				}
 
-				routingPrtcl->handlePackets();
+				if((current_time - last_send_time).count() > 100) {
+					routingPrtcl->handlePackets();
+				}
 			}
 		}
 	}
