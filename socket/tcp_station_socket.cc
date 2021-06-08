@@ -42,7 +42,7 @@ int TCPStationSocket::typeSendTo(Endpoint &remote, const char *packet, int lengt
 	}
 
 	int returnVal = -1;
-	long arg;
+//	long arg;
 	struct addrinfo tConfigAddr, *tAddrSet, *tAddrInfo;
 
 	// Configure the socket type that we want
@@ -77,6 +77,10 @@ int TCPStationSocket::typeSendTo(Endpoint &remote, const char *packet, int lengt
 				continue;
 			}
 
+			int synRetries = 2; // Send a total of 3 SYN packets => Timeout ~7s
+			setsockopt(sockfd, IPPROTO_TCP, TCP_SYNCNT, &synRetries, sizeof(synRetries));
+
+			/*
 			// Set non-blocking
 			if( (arg = fcntl(sockfd, F_GETFL, NULL)) < 0) {
 				printf("[TCP SOCKET]:[ERROR]: fcntl(..., F_GETFL) (%s)\n", strerror(errno));
@@ -87,6 +91,7 @@ int TCPStationSocket::typeSendTo(Endpoint &remote, const char *packet, int lengt
 				printf("[TCP SOCKET]:[ERROR]: fcntl(..., F_SETFL) (%s)\n", strerror(errno));
 				exit(0);
 			}
+			*/
 
 			// Attempt to connect to server socket
 			if(connect(sockfd, tAddrInfo->ai_addr, tAddrInfo->ai_addrlen) == -1) {

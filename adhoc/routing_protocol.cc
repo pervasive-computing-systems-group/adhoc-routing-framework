@@ -148,7 +148,7 @@ int RoutingProtocol::sendPacket(int portId, char* data, int length, IP_ADDR dest
 
 	if(bytesSent < 0) {
 		if(PB_DEBUG) {
-			printf("[ROUTING]:[PB_DEBUG]: Buffering packet for %d\n", dest);
+			printf("[ROUTING]:[PB_DEBUG]: Buffering packet for %s\n", getStringFromIp(dest).c_str());
 		}
 		m_oPacketBuffer.storePacket(dest, portId, data, length);
 	}
@@ -177,6 +177,9 @@ int RoutingProtocol::handlePackets() {
 
 	// Check to see if there are any packets waiting to be sent
 	if(m_oPacketBuffer.getNumbPackets()) {
+		if(PB_DEBUG) {
+			printf("[ROUTING]:[PB_DEBUG]: %li packets waiting\n", m_oPacketBuffer.getNumbPackets());
+		}
 		// Grab list of destination addresses
 		std::deque<int> list;
 		m_oPacketBuffer.getReceiverList(&list);
@@ -193,7 +196,7 @@ int RoutingProtocol::handlePackets() {
 			}
 			else {
 				if(PB_DEBUG) {
-					printf("[ROUTING]:[PB_DEBUG]: Found route to %d\n", bufferedPacket.getDestination());
+					printf("[ROUTING]:[PB_DEBUG]: Found route to %s\n", getStringFromIp(bufferedPacket.getDestination()).c_str());
 				}
 
 				// Run app packet handler only if we sent the packet
