@@ -82,18 +82,21 @@ int main(){
 	else if(RT_PROTOCOL == USE_AODV) {
 		/// Setup
 		printf("[TEST ADHOC]: Using AODV\n");
+		int last_sent = 0;
 		routingPrtcl = new HardwareLedAODV(MY_IP_ADDR);
 		Port* printPort = new PrintPort(DATA_PORT);
 		routingPrtcl->addPort(printPort);
 
-		// Network
+		/// main loop to read/send packets
 		std::chrono::milliseconds last_send_time = std::chrono::duration_cast< std::chrono::milliseconds >(std::chrono::system_clock::now().time_since_epoch());
+		std::chrono::milliseconds last_buff_time = last_send_time;
+		std::chrono::milliseconds lapse_1s = std::chrono::milliseconds(1000);
 		while(true) {
-			// Send packets to all ips every second
 			std::chrono::milliseconds current_time = std::chrono::duration_cast< std::chrono::milliseconds >(std::chrono::system_clock::now().time_since_epoch());
 
+			// Send packets to all ips every second
 			if((current_time - last_send_time).count() > 1000){
-				last_send_time = current_time;
+				last_send_time += lapse_1s;
 				for(auto ip : ips){
 					uint32_t dest = getIpFromString(ip);
 					if(routingPrtcl->sendPacket(printPort->getPortId(), msg, message.length()+1, dest) == -1){
@@ -103,6 +106,12 @@ int main(){
 					printPacket(stdout, msg, message.length()+1);
 					printf(" to %s\n", ip.c_str());
 				}
+			}
+
+			// Periodically check packet buffer
+			if(((current_time - last_buff_time).count() > 100) || (last_sent)) {
+				last_buff_time = current_time;
+				last_sent = routingPrtcl->emptyBuffer();
 			}
 
 			// Handle packets

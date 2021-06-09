@@ -150,6 +150,7 @@ int RoutingProtocol::sendPacket(int portId, char* data, int length, IP_ADDR dest
 		if(PB_DEBUG) {
 			printf("[ROUTING]:[PB_DEBUG]: Buffering packet for %s\n", getStringFromIp(dest).c_str());
 		}
+
 		m_oPacketBuffer.storePacket(dest, portId, data, length);
 	}
 
