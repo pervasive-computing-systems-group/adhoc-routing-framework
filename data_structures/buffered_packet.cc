@@ -5,7 +5,7 @@ BufferedPacket::BufferedPacket(IP_ADDR destination, int portId, char* buffer, in
 	m_pBuffer = (char *)(malloc(length));
 	memcpy(m_pBuffer, buffer, length);
 	m_nLength = length;
-	m_nDestination = 0;
+	m_nDestination = destination;
 }
 
 BufferedPacket::BufferedPacket(){
@@ -32,6 +32,7 @@ BufferedPacket& BufferedPacket::operator=(const BufferedPacket& bufferedPacket){
     free(m_pBuffer);
     m_pBuffer = bufferedPacket.m_pBuffer;
     m_nLength = bufferedPacket.m_nLength;
+	m_nDestination = bufferedPacket.m_nDestination;
     return *this;
 }
 

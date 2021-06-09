@@ -147,6 +147,13 @@ public:
      */
     int sendPacket(int portId, char* data, int length, IP_ADDR dest, IP_ADDR origIP = -1);
 
+	/**
+     * @brief Attempts to send one packet from the buffer for each unique destination
+     *
+     * @returns The number of packets sent
+     */
+    int emptyBuffer();
+
     // Virtual Functions
 
     /**

@@ -161,19 +161,9 @@ int RoutingProtocol::sendPacket(int portId, char* data, int length, IP_ADDR dest
 	return bytesSent;
 }
 
-// Handles the receiving or processing of all packets when implementing this should query each of the
-// sockets corresponding to each port and then "give" the data to each port
-int RoutingProtocol::handlePackets() {
-	Message message;
-	int count = 0;
-
-	for(pair<const uint32_t, Socket*>& socPair : m_mSockets) {
-		while(socPair.second->getMessage(message)) {
-			protocolHandlePacket(socPair.second, &message);
-			socPair.second->runAPHReceive(&message);
-			count++;
-		}
-	}
+// Attempts to send one packet from the buffer for each unique destination
+int RoutingProtocol::emptyBuffer() {
+	int packsSent = 0;
 
 	// Check to see if there are any packets waiting to be sent
 	if(m_oPacketBuffer.getNumbPackets()) {
@@ -204,7 +194,25 @@ int RoutingProtocol::handlePackets() {
 				if(soc != m_mSockets.end()) {
 					soc->second->runAPHSend(bytesSent, bufferedPacket.getBuffer());
 				}
+				packsSent++;
 			}
+		}
+	}
+
+	return packsSent;
+}
+
+// Handles the receiving or processing of all packets when implementing this should query each of the
+// sockets corresponding to each port and then "give" the data to each port
+int RoutingProtocol::handlePackets() {
+	Message message;
+	int count = 0;
+
+	for(pair<const uint32_t, Socket*>& socPair : m_mSockets) {
+		while(socPair.second->getMessage(message)) {
+			protocolHandlePacket(socPair.second, &message);
+			socPair.second->runAPHReceive(&message);
+			count++;
 		}
 	}
 

@@ -77,7 +77,8 @@ int TCPStationSocket::typeSendTo(Endpoint &remote, const char *packet, int lengt
 				continue;
 			}
 
-			int synRetries = 2; // Send a total of 3 SYN packets => Timeout ~7s
+			// Only allow 1 SYN packet. This keeps a reasonable timeout
+			int synRetries = 0; // Send a total of 3 SYN packets => Timeout ~7s
 			setsockopt(sockfd, IPPROTO_TCP, TCP_SYNCNT, &synRetries, sizeof(synRetries));
 
 			/*
