@@ -35,6 +35,7 @@
 #include <cstring>
 #include <errno.h>
 #include <atomic>
+#include <netinet/tcp.h>
 #include <signal.h>
 #include <sys/types.h>
 #include <sys/socket.h>

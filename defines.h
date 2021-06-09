@@ -22,7 +22,7 @@
 #define USE_SINGLE_HOP		0
 #define USE_AODV			1
 // The routing protocol to use in field test (select from above)
-#define RT_PROTOCOL			USE_SINGLE_HOP
+#define RT_PROTOCOL			USE_AODV
 
 // Single-hop node type
 #define AP_NODE				0
@@ -35,5 +35,7 @@
 #define MONITOR_PORT        5123
 #define LOCAL_DATA_UPDATE_RATE_MS 500
 #define HELLO_PORT          5124
+
+#define PACKET_BUFFER_CAPACITY	1048576 // 1 GiB
 
 #endif

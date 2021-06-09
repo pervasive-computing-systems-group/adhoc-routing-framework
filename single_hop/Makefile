@@ -22,13 +22,13 @@ LIBFLAGS = -cvq
 TARGET = test
 LIB_NAME = libsingle_hop.a
 OBJ_FILES = single_hop.o
-OBJ_LIB_FILES = ${OBJ_FILES} ../adhoc/*.o ../socket/*.o
+OBJ_LIB_FILES = ${OBJ_FILES} ../adhoc/*.o ../socket/*.o ../data_structures/*.o
 OBJ_INCLUDE_FILES = ${TARGET}.o ${OBJ_LIB_FILES}
 OBJ_BUILD_FILES = ${TARGET}.o ${OBJ_FILES}
 
 INC_FILES = ${TARGET}.h defines.h network_monitor.h monitor_info.h
 
-SUBDIRS = ../adhoc ../socket
+SUBDIRS = ../adhoc ../socket ../data_structures 
 
 ${TARGET} : ${OBJ_BUILD_FILES}
 	for dir in $(SUBDIRS); do \

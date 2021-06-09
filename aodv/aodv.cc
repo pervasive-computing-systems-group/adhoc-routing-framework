@@ -83,7 +83,7 @@ int AODV::protocolSendPacket(int portId, char* packet, int length, IP_ADDR dest,
         }
 
         if (!getTable()->getIsRouteActive(dest)) {
-            BufferedPacket bufferedPacket(portId, packet, length);
+            BufferedPacket bufferedPacket(dest, portId, packet, length);
 
             // Put this packet in a buffer to be sent when a route opens up
             if (this->rreqPacketBuffer.count(dest)) {

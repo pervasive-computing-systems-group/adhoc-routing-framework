@@ -146,12 +146,61 @@ int RoutingProtocol::sendPacket(Port* p, char* data, int length, IP_ADDR dest, I
 int RoutingProtocol::sendPacket(int portId, char* data, int length, IP_ADDR dest, IP_ADDR origIP) {
 	int bytesSent = protocolSendPacket(portId, data, length, dest, origIP);
 
+	if(bytesSent < 0) {
+		if(PB_DEBUG) {
+			printf("[ROUTING]:[PB_DEBUG]: Buffering packet for %s\n", getStringFromIp(dest).c_str());
+		}
+
+		m_oPacketBuffer.storePacket(dest, portId, data, length);
+	}
+
 	auto soc = m_mSockets.find(portId);
 	if(soc != m_mSockets.end()) {
 		soc->second->runAPHSend(bytesSent, data);
 	}
 
 	return bytesSent;
+}
+
+// Attempts to send one packet from the buffer for each unique destination
+int RoutingProtocol::emptyBuffer() {
+	int packsSent = 0;
+
+	// Check to see if there are any packets waiting to be sent
+	if(m_oPacketBuffer.getNumbPackets()) {
+		if(PB_DEBUG) {
+			printf("[ROUTING]:[PB_DEBUG]: %li packets waiting\n", m_oPacketBuffer.getNumbPackets());
+		}
+		// Grab list of destination addresses
+		std::deque<int> list;
+		m_oPacketBuffer.getReceiverList(&list);
+
+		// Pop-off one packet for each destination and attempt to send it
+		for(std::deque<int>::iterator it = list.begin(); it != list.end(); it++) {
+			BufferedPacket bufferedPacket;
+			m_oPacketBuffer.getPacket(*it, &bufferedPacket);
+			int bytesSent = protocolSendPacket(bufferedPacket.getPortId(), bufferedPacket.getBuffer(), bufferedPacket.getLength(), bufferedPacket.getDestination());
+
+			// TODO: This will put the packet at the back, we should change this so that it isn't rotating packets through the internal buffer queue
+			if(bytesSent < 0) {
+				m_oPacketBuffer.storePacket(bufferedPacket.getDestination(), bufferedPacket.getPortId(), bufferedPacket.getBuffer(), bufferedPacket.getLength());
+			}
+			else {
+				if(PB_DEBUG) {
+					printf("[ROUTING]:[PB_DEBUG]: Found route to %s\n", getStringFromIp(bufferedPacket.getDestination()).c_str());
+				}
+
+				// Run app packet handler only if we sent the packet
+				auto soc = m_mSockets.find(bufferedPacket.getPortId());
+				if(soc != m_mSockets.end()) {
+					soc->second->runAPHSend(bytesSent, bufferedPacket.getBuffer());
+				}
+				packsSent++;
+			}
+		}
+	}
+
+	return packsSent;
 }
 
 // Handles the receiving or processing of all packets when implementing this should query each of the
@@ -163,6 +212,7 @@ int RoutingProtocol::handlePackets() {
 	for(pair<const uint32_t, Socket*>& socPair : m_mSockets) {
 		while(socPair.second->getMessage(message)) {
 			protocolHandlePacket(socPair.second, &message);
+			socPair.second->runAPHReceive(&message);
 			count++;
 		}
 	}

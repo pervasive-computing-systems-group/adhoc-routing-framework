@@ -9,19 +9,22 @@
 
 CXX = g++
 LD = g++
-INC_DIRS = 
+LIB = ar
+INC_DIRS = -I../
 
 CXXFLAGS = -g -fPIC -pthread -std=c++17 -DBOOST_LOG_DYN_LINK ${INC_DIRS}
+LIBFLAGS = -cvq
 LDFLAGS = -g -pthread ${INC_DIRS}
 
 # You should be able to add object files here without changing anything else
 TARGET = test
-OBJ_LIB_FILES = 
+LIB_NAME = libdatastructures.a
+OBJ_LIB_FILES = buffered_packet.o packet_buffer.o
 
 STATIC_LIBRARIES = 
 
 OBJ_FILES = ${TARGET}.o ${OBJ_LIB_FILES} 
-INC_FILES = 
+INC_FILES = buffered_packet.h packet_buffer.h defines.h
 
 # Any libraries we might need.
 LIBRARYS = -lpthread
@@ -29,6 +32,8 @@ LIBRARYS = -lpthread
 ${TARGET}: ${OBJ_FILES}
 	${LD} ${LDFLAGS} ${OBJ_FILES} -o $@ ${LIBRARYS}
 	rm test.o
+	${LIB} ${LIBFLAGS} ${LIB_NAME} ${OBJ_LIB_FILES}
+	rm -f "*.o"
 
 %.o : %.cc ${INC_FILES}
 	${CXX} -c ${CXXFLAGS} -o $@ $<
