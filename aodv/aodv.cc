@@ -354,7 +354,7 @@ void AODV::_handleRREP(char *buffer, int length, IP_ADDR source) {
             // Pull all the packets off the queue and send them
             while (!this->rreqPacketBuffer[rrep.destIP]->empty()) {
                 BufferedPacket packet;
-                this->rreqPacketBuffer[rrep.destIP]->pop(packet);
+                this->rreqPacketBuffer[rrep.destIP]->peek(packet);
                 char* buffer = packet.getBuffer();
                 int bytesSent = sendPacket(packet.getPortId(), buffer, packet.getLength(), rrep.destIP);
                 free(buffer);
@@ -362,6 +362,8 @@ void AODV::_handleRREP(char *buffer, int length, IP_ADDR source) {
                     // connection breaks or the packet can't be sent 
                     // then stop sending out the buffered packets otherwise this will cause inf loop
                     break;
+                }else{
+                    this->rreqPacketBuffer[rrep.destIP]->pop();
                 }
             }
 
