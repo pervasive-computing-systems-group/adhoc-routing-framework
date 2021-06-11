@@ -11,15 +11,14 @@ BufferedPacket::BufferedPacket(IP_ADDR destination, int portId, char* buffer, in
 BufferedPacket::BufferedPacket(){
 	m_nPortId = 0;
 	m_nLength = 0;
-	m_pBuffer = NULL;
+	m_pBuffer = nullptr;
 	m_nDestination = 0;
 }
 
 BufferedPacket::BufferedPacket(const BufferedPacket &bufferedPacket){
 	m_nPortId = bufferedPacket.m_nPortId;
 	m_nLength = bufferedPacket.m_nLength;
-	m_pBuffer = (char *)(malloc(bufferedPacket.m_nLength));
-	memcpy(m_pBuffer, bufferedPacket.m_pBuffer, bufferedPacket.m_nLength);
+	m_pBuffer = bufferedPacket.getBuffer();
 	m_nDestination = bufferedPacket.m_nDestination;
 }
 
@@ -30,7 +29,7 @@ BufferedPacket::~BufferedPacket(){
 BufferedPacket& BufferedPacket::operator=(const BufferedPacket& bufferedPacket){
     m_nPortId = bufferedPacket.m_nPortId;
     free(m_pBuffer);
-    m_pBuffer = bufferedPacket.m_pBuffer;
+    m_pBuffer = bufferedPacket.getBuffer();
     m_nLength = bufferedPacket.m_nLength;
 	m_nDestination = bufferedPacket.m_nDestination;
     return *this;
@@ -39,8 +38,7 @@ BufferedPacket& BufferedPacket::operator=(const BufferedPacket& bufferedPacket){
 void BufferedPacket::copyPacket(const BufferedPacket &bufferedPacket) {
 	m_nPortId = bufferedPacket.m_nPortId;
 	m_nLength = bufferedPacket.m_nLength;
-	m_pBuffer = (char *)(malloc(bufferedPacket.m_nLength));
-	memcpy(m_pBuffer, bufferedPacket.m_pBuffer, bufferedPacket.m_nLength);
+	m_pBuffer = bufferedPacket.getBuffer();
 	m_nDestination = bufferedPacket.m_nDestination;
 }
 
@@ -48,7 +46,7 @@ int BufferedPacket::getPortId() {
     return m_nPortId;
 }
 
-char* BufferedPacket::getBuffer() {
+char* BufferedPacket::getBuffer() const{
     char* bufferCopy = (char *)(malloc(m_nLength));
     memcpy(bufferCopy, m_pBuffer, m_nLength);
     return bufferCopy;

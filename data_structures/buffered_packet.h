@@ -27,7 +27,7 @@ public:
 	void copyPacket(const BufferedPacket &bufferedPacket);
 
 	int getPortId();
-	char* getBuffer();
+	char* getBuffer() const;
 	int getLength();
 	IP_ADDR getDestination();
 
