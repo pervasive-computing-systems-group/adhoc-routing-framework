@@ -20,7 +20,7 @@ LIBFLAGS = -cvq
 TARGET = do-adhoc
 OBJ_LIB_FILES = hardware/hardware_aodv.o
 
-STATIC_LIBRARIES = hardware/libhardware.a adhoc/libadhoc.a socket/libsocket.a
+STATIC_LIBRARIES = hardware/libhardware.a adhoc/libadhoc.a socket/libsocket.a  data_structures/libdatastructures.a
 
 OBJ_FILES = ${OBJ_LIB_FILES} 
 INC_FILES = 

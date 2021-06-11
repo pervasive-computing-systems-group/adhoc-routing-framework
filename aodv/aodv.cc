@@ -83,7 +83,7 @@ int AODV::protocolSendPacket(int portId, char* packet, int length, IP_ADDR dest,
         }
 
         if (!getTable()->getIsRouteActive(dest)) {
-            BufferedPacket bufferedPacket(portId, packet, length);
+            BufferedPacket bufferedPacket(dest, portId, packet, length);
 
             // Put this packet in a buffer to be sent when a route opens up
             if (this->rreqPacketBuffer.count(dest)) {
@@ -368,7 +368,9 @@ void AODV::_handleRREP(char *buffer, int length, IP_ADDR source) {
             // Delete the buffer if it was successfully emptied
             if(this->rreqPacketBuffer[rrep.destIP]->empty()){
                 delete this->rreqPacketBuffer[rrep.destIP]; // delete the buffer
+                this->rreqPacketBuffer.erase(rrep.destIP);
             }
+            
         }
     } else {
         // forward this packet

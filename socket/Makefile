@@ -20,15 +20,20 @@ LIBFLAGS = -cvq
 #
 TARGET = test
 LIB_NAME = libsocket.a 
-OBJ_LIB_FILES = endpoint.o socket.o udp_socket.o tcp_socket.o tcp_ap_socket.o tcp_station_socket.o message.o
+OBJ_LIB_FILES = endpoint.o socket.o udp_socket.o tcp_socket.o tcp_ap_socket.o tcp_station_socket.o message.o ../data_structures/*.o
 
 OBJ_FILES = ${TARGET}.o ${OBJ_LIB_FILES} 
 INC_FILES = endpoint.h socket.h udp_socket.h tcp_ap_socket.h tcp_station_socket.h message.h tcp_socket.h app_packet_handler.h ../data_structures/safe_circular_queue.h ../defines.h socket_defines.h
+
+SUBDIRS = ../data_structures
 
 # Any libraries we might need.
 LIBRARYS = -lpthread
 
 ${TARGET}: ${OBJ_FILES}
+	for dir in $(SUBDIRS); do \
+		$(MAKE) -C $$dir; \
+	done
 	${LD} ${LDFLAGS} ${OBJ_FILES} -o $@ ${LIBRARYS}
 	rm test.o
 	${LIB} ${LIBFLAGS} ${LIB_NAME} ${OBJ_LIB_FILES}

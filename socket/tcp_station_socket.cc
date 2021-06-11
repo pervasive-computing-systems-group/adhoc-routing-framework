@@ -41,7 +41,7 @@ int TCPStationSocket::typeSendTo(Endpoint &remote, const char *packet, int lengt
 		printf("[TCP SOCKET]:[DEBUG]: Sending %s to %s via TCP connection\n", packet, remote.getAddressC());
 	}
 
-	int returnVal = 0;
+	int returnVal = -1;
 	struct addrinfo tConfigAddr, *tAddrSet, *tAddrInfo;
 
 	// Configure the socket type that we want
@@ -57,7 +57,7 @@ int TCPStationSocket::typeSendTo(Endpoint &remote, const char *packet, int lengt
 	// Get a set of socket addresses
 	int nRVal = getaddrinfo(remote.getAddressC(), str, &tConfigAddr, &tAddrSet);
 	if(nRVal != 0) {
-		fprintf(stderr,"ERROR: getaddrinfo() failed: %s\n", gai_strerror(nRVal));
+		printf("ERROR: getaddrinfo() failed: %s\n", gai_strerror(nRVal));
 		returnVal = -1;
 	}
 	else {
@@ -75,6 +75,10 @@ int TCPStationSocket::typeSendTo(Endpoint &remote, const char *packet, int lengt
 
 				continue;
 			}
+
+			// Only allow 2 SYN packet. This keeps a reasonable timeout
+			int synRetries = 1;
+			setsockopt(sockfd, IPPROTO_TCP, TCP_SYNCNT, &synRetries, sizeof(synRetries));
 
 			// Attempt to connect to server socket
 			if(connect(sockfd, tAddrInfo->ai_addr, tAddrInfo->ai_addrlen) == -1) {
@@ -96,16 +100,15 @@ int TCPStationSocket::typeSendTo(Endpoint &remote, const char *packet, int lengt
 		freeaddrinfo(tAddrSet);
 
 		if(tAddrInfo == NULL) {
-			fprintf(stderr,"ERROR: failed to connect\n");
+			printf("ERROR: failed to connect\n");
 			returnVal = -1;
 		}
 		else {
-//			sendto(sockfd, packet, length, MSG_CONFIRM, (const struct sockaddr *)&remote.remoteHost, sizeof(remote.remoteHost));
 			returnVal = send(sockfd, packet, length, 0);
 
-			if(returnVal < 0){
-				fprintf(stderr, "[TCP SOCKET]:[ERROR] Could not send packet %s to %s\n", packet, remote.getAddressC());
-				fprintf(stderr, "[TCP SOCKET]:[ERROR]: %s\n", strerror(errno));
+			if(returnVal < 0) {
+				printf("[TCP SOCKET]:[ERROR] Could not send packet %s to %s\n", packet, remote.getAddressC());
+				printf("[TCP SOCKET]:[ERROR]: %s\n", strerror(errno));
 			}
 
 			// Close the socket

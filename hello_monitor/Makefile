@@ -21,12 +21,12 @@ LIBFLAGS = -cvq
 #
 TARGET = test
 LIB_NAME = libhello.a
-OBJ_LIB_FILES = hello_monitor.o ../adhoc/*.o ../aodv/*.o ../socket/*.o
+OBJ_LIB_FILES = hello_monitor.o ../adhoc/*.o ../aodv/*.o ../socket/*.o ../data_structures/*.o
 
 OBJ_FILES = ${TARGET}.o ${OBJ_LIB_FILES} 
 INC_FILES = ${TARGET}.h hello_monitor.h
 
-SUBDIRS = ../adhoc ../aodv ../socket
+SUBDIRS = ../adhoc ../aodv ../socket ../data_structures
 
 all: ${TARGET}
 

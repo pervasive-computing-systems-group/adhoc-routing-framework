@@ -13,6 +13,7 @@
 
 #include "adhoc_defines.h"
 #include "port.h"
+#include "packet_buffer.h"
 #include "socket.h"
 #include "message.h"
 #include "app_connection_handler.h"
@@ -28,6 +29,7 @@
 #include <vector>
 #include <mutex>
 #include <unordered_map>
+#include <deque>
 
 using namespace std;
 
@@ -154,6 +156,13 @@ public:
      */
     int sendPacket(int portId, char* data, int length, IP_ADDR dest, IP_ADDR origIP = -1);
 
+	/**
+     * @brief Attempts to send one packet from the buffer for each unique destination
+     *
+     * @returns The number of packets sent
+     */
+    int emptyBuffer();
+
     // Virtual Functions
 
     /**
@@ -221,6 +230,8 @@ protected:
 	RoutingTable* m_pRoutingTable;
 	// Map of Sockets held by the node
 	unordered_map<uint32_t, Socket*> m_mSockets;
+	// Packet buffer to store packets waiting to be sent
+	PacketBuffer m_oPacketBuffer;
 
     AppConnectionHandler* m_pAppConnectionHandler;
 
