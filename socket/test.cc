@@ -10,6 +10,8 @@
 
 #include "endpoint.h"
 #include "udp_socket.h"
+#include "test_ach.h"
+
 using namespace std;
 
 const string RED = "\033[1;31m";
@@ -62,6 +64,45 @@ void sendMessageToThreadedServerTest(UDPSocket *server, UDPSocket &sender,
     test(strcmp(message.getData(), &data[0]) == 0, messageSentMessage);
 
     // Clear the servers queue
+    do {
+        sleep(1);
+    } while (server->getMessage(message));
+}
+
+void threadedServerWithACHTest(UDPSocket *server, UDPSocket &sender,
+                                     Endpoint &serverEnd, string data) {
+    // Continue to send data until received
+    Message message;
+    int count = 0;
+    const int MAX_ATTEMPTS = 2;
+    do {
+        count++;
+        sender.sendTo(serverEnd, &data[0], data.length()+1);
+        sleep(1);
+    } while ((!server->getMessage(message) && count < MAX_ATTEMPTS));
+    // Check if test was successful
+    bool noAchReceived = strcmp(message.getData(), &data[0]) == 0;
+
+    // Clear the servers queue
+    do {
+        sleep(1);
+    } while (server->getMessage(message));
+
+    // Set teh ach
+    TestACH testAch;
+    server->setAppConnectionHandler(&testAch);
+
+    bool achReceived = false;
+    do {
+        count++;
+        sender.sendTo(serverEnd, &data[0], data.length()+1);
+        sleep(1);
+    } while ((!(achReceived = server->getMessage(message)) && count < MAX_ATTEMPTS));
+
+    test(!achReceived && noAchReceived, "App connection handlers can be used to filter out what gets sent");
+
+    server->setAppConnectionHandler(nullptr);
+
     do {
         sleep(1);
     } while (server->getMessage(message));
@@ -268,6 +309,35 @@ int main() {
         broadcastMessage(broadcastSocket, end, "Hello World!",
                          "Hello Broadcaster!");
     }
+    printf("________________________________\n\n");
+
+    // Test ach
+    {
+        // Create receiving socket
+        int port = 8085;
+        // Bind to 8080
+        thread receiving;
+        UDPSocket *receiver = createThreadedSocket(receiving, port);
+        // Create sending socket
+        UDPSocket sender;
+        sender.init();
+        Endpoint sendLocation;
+        sendLocation.setAddress("127.0.0.1", port);
+
+        // Send a few messages
+        threadedServerWithACHTest(receiver, sender, sendLocation,
+                                        "hello");
+        threadedServerWithACHTest(
+            receiver, sender, sendLocation,
+            "Weird little people are eating the bakery");
+        threadedServerWithACHTest(
+            receiver, sender, sendLocation,
+            "120.1.7.9:80192 Little Node Buffer Size");
+        threadedServerWithACHTest(receiver, sender, sendLocation,
+                                        "INFINITE NUMBER HAHAHA");
+        receiving.~thread();
+    }
+
     printf("________________________________\n\n");
 
     return 0;

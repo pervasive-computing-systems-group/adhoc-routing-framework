@@ -128,7 +128,7 @@ int UDPSocket::receiveFrom(Endpoint &sender, char *buffer, int length) {
   
   sender.resetAddress();
   socklen_t remoteHostLen = sizeof(sender.remoteHost);
-  return recvfrom(sockfd, buffer, length, 0,
+  int n = recvfrom(sockfd, buffer, length, 0,
                   (struct sockaddr *)&sender.remoteHost, &remoteHostLen);
 }
 
@@ -145,10 +145,11 @@ void UDPSocket::receiveFromPort(){
     free(buffer);
     exit(-1);
   } else if (n > 0){
-    buffer[n] = '\0';
-
-    // Collect signal strength put in map
-    messages.push(Message(sender, buffer, n));
+    // Check that the app is connected and continue
+    if(this->isACHConnected(sender.getAddressI())){
+      buffer[n] = '\0';
+      messages.push(Message(sender, buffer, n));
+    }
   }
 
   free(buffer);

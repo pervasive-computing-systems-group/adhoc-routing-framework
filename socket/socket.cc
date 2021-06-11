@@ -27,12 +27,13 @@
 
 using std::memset;
 
-Socket::Socket() : sockfd(-1), m_nPortNum(0), m_pAppPacketHandler(NULL) {}
+Socket::Socket() : sockfd(-1), m_nPortNum(0), m_pAppPacketHandler(NULL), m_pAppConnectionHandler(NULL) {}
 
 Socket::Socket(uint32_t nPortNum, uint32_t nMsgBffrSize)
 		: m_nPortNum(nPortNum),
 		  sockfd(-1),
-		  m_pAppPacketHandler(NULL),
+		  m_pAppPacketHandler(NULL), 
+      m_pAppConnectionHandler(NULL),
 		  messages(nMsgBffrSize)
 {}
 
@@ -131,6 +132,22 @@ void Socket::runAPHSend(int nBytesSent, char* pMsg) {
 // Set an application specific packet handler for this socket
 void Socket::setAppPacketHandler(AppPacketHandler* pAppPacketHandler) {
 	m_pAppPacketHandler = pAppPacketHandler;
+}
+
+
+/*!
+* @brief Run the application connection handler (if one was given to this socket)
+*/
+bool Socket::isACHConnected(uint32_t ip){
+  if(this->m_pAppConnectionHandler != nullptr){
+    return this->m_pAppConnectionHandler->isConnected(ip);
+  }
+  return true;
+}
+
+// Set an application specific packet handler for this socket
+void Socket::setAppConnectionHandler(AppConnectionHandler* pAppConnectionHandler) {
+	m_pAppConnectionHandler = pAppConnectionHandler;
 }
 
 // Gets the next packet, if buffer has one. Returns true if packet was popped

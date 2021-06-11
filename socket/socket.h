@@ -45,6 +45,7 @@
 #include "app_packet_handler.h"
 #include "message.h"
 #include "../data_structures/safe_circular_queue.h"
+#include "app_connection_handler.h"
 
 using namespace std;
 // TimeInterval class prototype
@@ -133,6 +134,18 @@ public:
   void setAppPacketHandler(AppPacketHandler *pAppPacketHandler);
 
   /*!
+   * @brief Run the application packet send handler (if one was given to this socket)
+   */
+  bool isACHConnected(uint32_t ip);
+
+  /*!
+   * @brief Set an application specific connection handler for this socket. DO
+   * NOT pass in dynamically allocated memory! There is nothing that frees
+   * old AppPacketHanlders.
+   */
+  void setAppConnectionHandler(AppConnectionHandler *pAppPacketHandler);
+
+  /*!
    * @brief Get one message from the socket
    *
    * @param message will get set to the first message on the queue
@@ -147,12 +160,12 @@ public:
 	*/
 	bool areThereMessages();
 
-	  /*!
-	   * @brief Get the sockfd object
-	   *
-	   * @return int
-	   */
-	  int getSockfd() const;
+  /*!
+    * @brief Get the sockfd object
+    *
+    * @return int
+    */
+  int getSockfd() const;
 
 protected:
   bool initSocket(int type);
@@ -172,4 +185,5 @@ protected:
 
 private:
   AppPacketHandler *m_pAppPacketHandler;
+  AppConnectionHandler *m_pAppConnectionHandler;
 };
