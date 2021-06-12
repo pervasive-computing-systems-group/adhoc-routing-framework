@@ -58,6 +58,8 @@ void HardwareSHAP::_hardwareSHAP(uint32_t nDataPortNum, AppPacketHandler* pDataA
 	TCPAPSocket *listeningSocket = new TCPAPSocket(nDataPortNum);
 	// Add application handler
 	listeningSocket->setAppPacketHandler(pDataAPH);
+	// Add application connection handler
+	listeningSocket->setAppConnectionHandler(this->m_pAppConnectionHandler);
 	// Add listener to socket map
 	m_mSockets.insert(std::pair<uint32_t, Socket*>(nDataPortNum, listeningSocket));
 

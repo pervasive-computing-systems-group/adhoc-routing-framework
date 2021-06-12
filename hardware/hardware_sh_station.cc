@@ -81,6 +81,8 @@ void HardwareSHStation::_hardwareSHAP(uint32_t nDataPortNum, AppPacketHandler* p
 	TCPStationSocket *sendSocket = new TCPStationSocket(nDataPortNum);
 	// Add application handler
 	sendSocket->setAppPacketHandler(pDataAPH);
+	// Add application connection handler
+	sendSocket->setAppConnectionHandler(this->m_pAppConnectionHandler);
 	// Add listener to socket map
 	m_mSockets.insert(std::pair<uint32_t, Socket*>(nDataPortNum, sendSocket));
 }

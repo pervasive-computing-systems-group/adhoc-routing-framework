@@ -20,6 +20,8 @@ void HardwareAODV::_hardwareAODV(){
         exit(-1);
     }
 
+    aodvSocket->setAppConnectionHandler(this->m_pAppConnectionHandler);
+
     // create thread
     aodving = thread(&UDPSocket::receiveFromPortThread, aodvSocket);
     aodving.detach();
@@ -76,6 +78,17 @@ int HardwareAODV::handlePackets(){
     return count;
 }
 
+void HardwareAODV::setAppConnectionHandler(AppConnectionHandler* pAppConnectionHandler){
+	this->m_pAppConnectionHandler = pAppConnectionHandler;
+
+	// Iterate over sockets and set their app connection handlers
+	for(auto socket: this->portSockets){
+		socket.second->setAppConnectionHandler(this->m_pAppConnectionHandler);
+	}
+
+    aodvSocket->setAppConnectionHandler(this->m_pAppConnectionHandler);
+}
+
 // Private Functions
 int HardwareAODV::_socketSendPacket(int portId, char *buffer, int length, IP_ADDR dest){
     if(portId == ROUTING_PORT){
@@ -120,6 +133,8 @@ void HardwareAODV::_buildPort(Port* p){
         fprintf(stderr, "[HARDWARE]:[ERROR]:Could not set the aodv port socket to broadcasting\n");
         exit(-1);
     }
+
+    portSocket->setAppConnectionHandler(this->m_pAppConnectionHandler);
     
     portSockets[p->getPortId()] = portSocket;
 

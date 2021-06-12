@@ -40,6 +40,15 @@ public:
 
     virtual int handlePackets() override;
 
+    /**
+     * @brief Set the App Connection Handler object, 
+     * routing protocol will not free this memory ever (thats on the user)
+     * 
+     * @param pAppConnectionHandler 
+     */
+    virtual void setAppConnectionHandler(AppConnectionHandler* pAppConnectionHandler);
+
+
 protected:
     int _socketSendPacket(int portId, char *buffer, int length, IP_ADDR dest) override;
     // Depreciating

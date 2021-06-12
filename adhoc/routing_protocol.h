@@ -128,7 +128,7 @@ public:
      * 
      * @param pAppConnectionHandler 
      */
-    void setAppConnectionHandler(AppConnectionHandler* pAppConnectionHandler);
+    virtual void setAppConnectionHandler(AppConnectionHandler* pAppConnectionHandler);
 
 	/**
      * @brief Send a packet to a given ip address using a specified port

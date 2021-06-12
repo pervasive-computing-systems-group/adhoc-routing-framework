@@ -143,6 +143,11 @@ void RoutingProtocol::removePort(Port* p){
 
 void RoutingProtocol::setAppConnectionHandler(AppConnectionHandler* pAppConnectionHandler){
 	this->m_pAppConnectionHandler = pAppConnectionHandler;
+
+	// Iterate over sockets and set their app connection handlers
+	for(auto socket: this->m_mSockets){
+		socket.second->setAppConnectionHandler(this->m_pAppConnectionHandler);
+	}
 }
 
 int RoutingProtocol::sendPacket(Port* p, char* data, int length, IP_ADDR dest, IP_ADDR origIP){
