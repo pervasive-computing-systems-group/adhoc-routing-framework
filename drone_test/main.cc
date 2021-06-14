@@ -96,8 +96,8 @@ int main(){
 		routingPrtcl->setAppConnectionHandler(&losConnectionHandler);
 
         // TODO: Create data loging port
-		Port* logPort = new LogPort(DATA_PORT, "test_logs/aodv_test_1_received.txt", 10);
-		routingPrtcl->addPort(logPort);
+		LogPort logPort = new LogPort(DATA_PORT, "test_logs/aodv_test_1_received.txt", 10);
+		routingPrtcl->addPort(&logPort);
 
 		// Network
 		std::chrono::milliseconds last_send_time = std::chrono::duration_cast< std::chrono::milliseconds >(std::chrono::system_clock::now().time_since_epoch());
@@ -120,9 +120,6 @@ int main(){
 			// Handle packets
 			int handleCount = routingPrtcl->handlePackets();
 		}
-
-		// Clean memory up
-		delete logPort;
 	}
 	delete routingPrtcl;
 }
