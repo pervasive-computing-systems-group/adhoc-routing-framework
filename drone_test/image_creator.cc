@@ -1,11 +1,11 @@
 #include "image_creator.h"
 
-ImageCreator::ImageCreator(){
+ImageCreator::ImageCreator(string filename):filename(filename){
 
 }
 
 string ImageCreator::getData(){
-    ifstream myfile ("image1.jpg", ios_base::binary);
+    ifstream myfile (this->filename, ios_base::binary);
     string image;
 
     if(myfile.is_open()){

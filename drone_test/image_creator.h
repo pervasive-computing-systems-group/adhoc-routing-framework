@@ -7,8 +7,11 @@
 
 class ImageCreator: public DataCreator{
 public:
-    ImageCreator();
+    ImageCreator(string filename);
     string getData() override;
+
+protected:
+    string filename;
 };
 
 #endif

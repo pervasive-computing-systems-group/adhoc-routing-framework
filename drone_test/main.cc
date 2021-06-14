@@ -27,7 +27,7 @@ int main(){
 	DataManager* dataManager = new RandomDataManager();
 	
 	// Add data creators
-	ImageCreator imageCreator;
+	ImageCreator imageCreator("image1.txt");
 	GPSCreator gpsCreator;
 	dataManager->addDataCreator(&imageCreator);
 	dataManager->addDataCreator(&gpsCreator);
