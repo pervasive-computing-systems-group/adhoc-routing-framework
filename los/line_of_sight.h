@@ -30,6 +30,7 @@ public:
 	double asteroidRadius = 1;					// asteroid radius [km] using spherical approximation (mean radius obtained from wikipedia)
 
 	// Declare Constructor
+	LineOfSight();
 	LineOfSight(int ID, string orbitFileName);			// declare constructor. define it in defineLOS.cpp
 
 	// Declare functions

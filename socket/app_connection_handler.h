@@ -32,7 +32,9 @@
 #ifndef _APP_CONNECTION_HANDLER_H
 #define _APP_CONNECTION_HANDLER_H
 
-#include "message.h"
+#include "defines.h"
+
+using namespace std;
 
 class AppConnectionHandler {
 public:

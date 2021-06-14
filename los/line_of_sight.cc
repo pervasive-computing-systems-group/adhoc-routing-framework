@@ -5,6 +5,9 @@
 
 using namespace std;
 
+LineOfSight::LineOfSight(){
+}
+
 // constructor
 LineOfSight::LineOfSight(int id, string orbitFileName)
 {
@@ -64,6 +67,9 @@ void LineOfSight::pullOrbitData() {
 
 bool LineOfSight::isThereLOS(int other_sc_ID, double current_time)
 {
+	// TODO: Add shortcut if other id is our id
+	// TODO: Add error checking for id
+
 	// This function needs "sc_orbits.txt" to run
 
 	// Steps of how to determine line of sight.
@@ -231,6 +237,7 @@ void LineOfSight::scalePositions(float scaleFactor)
 
 void LineOfSight::distanceBetweenSC(int other_sc_ID, double current_time, double relativePositionInfo[])
 {
+	// TODO: Add shortcut if other id is our id
 	// Step 1 -------------------------------------------------------------------------------------------------------------
 		// The time passed to this function will not be exactly equal to one of the timesteps. It will always fall somewhere in between two timesteps
 		// Because of this, linear interpolation is used to estimate the position between the timesteps

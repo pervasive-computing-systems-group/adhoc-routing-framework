@@ -14,6 +14,7 @@
 #include "hardware_sh_ap.h"
 #include "hardware_sh_station.h"
 #include "log_port.h"
+#include "los_connection_handler.h"
 
 using namespace std;
 
@@ -27,10 +28,17 @@ int main(){
 	DataManager* dataManager = new RandomDataManager();
 	
 	// Add data creators
-	ImageCreator imageCreator("image1.txt");
+	ImageCreator imageCreator("image1.jpg");
 	GPSCreator gpsCreator;
 	dataManager->addDataCreator(&imageCreator);
 	dataManager->addDataCreator(&gpsCreator);
+
+	cout << "[TEST ADHOC]: Data creators initialized" << endl;
+
+	// App connection handler
+	LOSConnectionHandler losConnectionHandler(getIpFromString(MY_IP_ADDR), "test_data/test1/ac_flight_data.txt", "test_data/test1/ip_map.txt");
+
+	cout << "[TEST ADHOC]: App connection handler initialized" << endl;
 
 	// Logging
 
@@ -44,6 +52,7 @@ int main(){
 			printf("as access point!\n");
 			// Create routing protocol using LED_APH_SHData app
 			routingPrtcl = new HardwareSHAP(MY_IP_ADDR, DATA_PORT, nullptr);
+			routingPrtcl->setAppConnectionHandler(&losConnectionHandler);
 
 			/// Main loop to read/send packets
 			while(true) {
@@ -55,6 +64,7 @@ int main(){
 			printf("as station!\n");
 			// TODO: Create data port packet handler
 			routingPrtcl = new HardwareSHStation(MY_IP_ADDR, DATA_PORT, nullptr);
+			routingPrtcl->setAppConnectionHandler(&losConnectionHandler);
 
 			/// main loop to read/send packets
 			std::chrono::milliseconds last_send_time = std::chrono::duration_cast< std::chrono::milliseconds >(std::chrono::system_clock::now().time_since_epoch());
@@ -83,6 +93,8 @@ int main(){
 		/// Setup
 		printf("[TEST ADHOC]: Using AODV\n");
 		routingPrtcl = new HardwareHelloAODV(MY_IP_ADDR);
+		routingPrtcl->setAppConnectionHandler(&losConnectionHandler);
+
         // TODO: Create data loging port
 		Port* logPort = new LogPort(DATA_PORT, "test_logs/aodv_test_1_received.txt", 10);
 		routingPrtcl->addPort(logPort);

@@ -11,7 +11,7 @@
 CXX = g++
 LD = g++
 LIB = ar
-INC_DIRS = -I../aodv/ -I../socket/ -I../adhoc/ -I../single_hop/ -I../hello_monitor/ -I../ -I../data_structures/ -I../hardware/rssi/ -I../hardware/
+INC_DIRS = -I../aodv/ -I../socket/ -I../adhoc/ -I../single_hop/ -I../hello_monitor/ -I../ -I../data_structures/ -I../hardware/rssi/ -I../hardware/ -I../los
 
 CXXFLAGS = -g -fPIC -pthread -std=c++17 -DBOOST_LOG_DYN_LINK -O2 -g -Wall -Wundef -Wno-trigraphs -fno-strict-aliasing -fno-common ${INC_DIRS}
 LDFLAGS = -g -pthread -Wall -O2 -g -Wall -Wundef -Wno-trigraphs -fno-strict-aliasing -fno-common ${INC_DIRS}
@@ -21,14 +21,14 @@ LIBFLAGS = -cvq
 # You should be able to add object files here without changing anything else
 #
 TARGET = main
-OBJ_FILES = data_creator.o data_manager.o image_creator.o random_data_manager.o gps_creator.o log_port.o
-OBJ_LIB_FILES = ${OBJ_FILES} ../aodv/*.o ../socket/*.o ../adhoc/*.o ../single_hop/*.o ../hello_monitor/*.o ../hardware/*.o ../hardware/rssi/*.o
+OBJ_FILES = data_creator.o data_manager.o image_creator.o random_data_manager.o gps_creator.o log_port.o los_connection_handler.o
+OBJ_LIB_FILES = ${OBJ_FILES} ../data_structures/*.o ../aodv/*.o ../socket/*.o ../adhoc/*.o ../single_hop/*.o ../hello_monitor/*.o ../hardware/*.o ../hardware/rssi/*.o ../los/*.o
 OBJ_INCLUDE_FILES = ${TARGET}.o ${OBJ_LIB_FILES}
 OBJ_BUILD_FILES = ${TARGET}.o ${OBJ_FILES}
 
-INC_FILES = data_creator.h data_manager.h image_creator.h random_data_manager.h gps_creator.h log_port.h
+INC_FILES = data_creator.h data_manager.h image_creator.h random_data_manager.h gps_creator.h log_port.h drone_defines.h los_connection_handler.h
 
-SUBDIRS = ../aodv ../socket ../adhoc ../single_hop ../hello_monitor ../hardware
+SUBDIRS = ../aodv ../socket ../adhoc ../single_hop ../hello_monitor ../hardware ../los
 
 #
 # Any libraries we might need.
