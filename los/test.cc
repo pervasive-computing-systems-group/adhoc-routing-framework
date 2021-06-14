@@ -63,6 +63,8 @@ int main() {
 	test(-74.71733893500000079, relativePositionInfo[0], "relative x position is correctly calculated between two drones");
 	test(32.59819314500000331,  relativePositionInfo[1], "relative y position is correctly calculated between two drones");
 	test(-29.97862988500000014,  relativePositionInfo[2], "relative z position is correctly calculated between two drones");
-	
+
+	printf("________________________________\n\n");
+
 	return 0;
 }

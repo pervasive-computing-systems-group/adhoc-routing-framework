@@ -290,7 +290,7 @@ void RoutingProtocol::addLink(IP_ADDR node)
 	if (!exists)
 	{
 		m_neighbors.push_back(node);
-		// TODO: ADD AS ONE HOP NEIGHBOR TO ROUTING TABLE
+		// Add as one hop neigbor to routing table
 		m_pRoutingTable->updateTableEntry(node, node);
 		if (ROUTING_DEBUG)
 			cout << "[ROUTING]:[INFO]: One hop neighbor: " << getStringFromIp(node) << " added to routing table." << endl; 

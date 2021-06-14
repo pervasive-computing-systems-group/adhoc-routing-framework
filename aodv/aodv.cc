@@ -115,7 +115,7 @@ int AODV::protocolSendPacket(int portId, char* packet, int length, IP_ADDR dest,
             }
             _broadcastRREQBuffer(rreq);
 
-            // TODO: determine if we should return something more here (# bytes sent?)
+            // return -1 since the link did not exist
             return -1;
         }
         else if (AODV_DEBUG)
