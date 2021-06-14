@@ -18,14 +18,14 @@ LIBFLAGS = -cvq
 
 # You should be able to add object files here without changing anything else
 TARGET = do-adhoc
-OBJ_LIB_FILES = hardware/hardware_aodv.o
+OBJ_LIB_FILES = 
 
-STATIC_LIBRARIES = hardware/libhardware.a adhoc/libadhoc.a socket/libsocket.a  data_structures/libdatastructures.a
+STATIC_LIBRARIES = hardware/libhardware.a adhoc/libadhoc.a socket/libsocket.a  data_structures/libdatastructures.a los/liblos.a
 
 OBJ_FILES = ${OBJ_LIB_FILES} 
 INC_FILES = 
 
-SUBDIRS = aodv socket hardware adhoc hello_monitor data_structures single_hop
+SUBDIRS = aodv socket hardware adhoc hello_monitor data_structures single_hop los
 
 ${TARGET}: #${OBJ_FILES}
 	${CXX} -c ${CXXFLAGS} ${TARGET}.cc -o ${TARGET}.o
