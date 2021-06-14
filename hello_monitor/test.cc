@@ -33,6 +33,7 @@ int main (int argc, char *argv[])
 	test_hello();
 
 	cout << "[TESTS]: TESTS COMPLETE." << endl;
+	printf("________________________________\n\n");
 
 	return 0;
 }
@@ -94,4 +95,5 @@ void test_hello()
 	test(aodv2.isNeighbor(&aodv1) == false, "Nodes are NOT neighbors because monitoring!");
 	test(aodv1.isNeighbor(&aodv2) == false, "Nodes are NOT neighbors because monitoring!");
 	globalMux.unlock();
+	
 }

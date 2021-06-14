@@ -39,9 +39,13 @@ int main (int argc, char *argv[])
 	cout << "[TESTS]: Running tests..." << endl;	
 
 	test_test();
+	printf("________________________________\n\n");
 	test_inet_addr();
+	printf("________________________________\n\n");
 	test_routing_table();
+	printf("________________________________\n\n");
 	test_aodv();
+	printf("________________________________\n\n");
 
 	cout << "[TESTS]: TESTS COMPLETE." << endl;
 
