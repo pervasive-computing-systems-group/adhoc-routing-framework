@@ -17,7 +17,7 @@
 #include "buffered_packet.h"
 #include "defines.h"
 
-#define PB_DEBUG	1
+#define PB_DEBUG	1 && DEBUG
 
 class PacketBuffer
 {
