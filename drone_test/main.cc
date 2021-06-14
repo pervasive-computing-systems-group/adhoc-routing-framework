@@ -23,21 +23,21 @@ int main(){
 	srand(time(0));
 
 	/// Networking Settings
-	vector<string> ips = { "192.168.1.1" };
+	vector<string> ips = { "192.168.1.1" }; // Who to send data to
 	RoutingProtocol* routingPrtcl;
 	DataManager* dataManager = new RandomDataManager();
+	std::chrono::milliseconds dataLapse = std::chrono::milliseconds(1000); // how long to wait between sending data
+	std::chrono::milliseconds bufferLapse = std::chrono::milliseconds(100); // how long to wait between sending buffered data
 	
 	// Add data creators
 	ImageCreator imageCreator("image1.jpg");
 	GPSCreator gpsCreator;
 	dataManager->addDataCreator(&imageCreator);
 	dataManager->addDataCreator(&gpsCreator);
-
 	cout << "[TEST ADHOC]: Data creators initialized" << endl;
 
 	// App connection handler
 	LOSConnectionHandler losConnectionHandler(getIpFromString(MY_IP_ADDR), "test_data/test1/ac_flight_data.txt", "test_data/test1/ip_map.txt");
-
 	cout << "[TEST ADHOC]: App connection handler initialized" << endl;
 
 	// Logging
@@ -67,22 +67,31 @@ int main(){
 			routingPrtcl->setAppConnectionHandler(&losConnectionHandler);
 
 			/// main loop to read/send packets
-			std::chrono::milliseconds last_send_time = std::chrono::duration_cast< std::chrono::milliseconds >(std::chrono::system_clock::now().time_since_epoch());
+			std::chrono::milliseconds lastSendTime = std::chrono::duration_cast< std::chrono::milliseconds >(std::chrono::system_clock::now().time_since_epoch());
+			std::chrono::milliseconds lastBuffTime = lastSendTime;
+			int last_sent = 0;
+
 			while(true) {
 				// Send a packet every second
-				std::chrono::milliseconds current_time = std::chrono::duration_cast< std::chrono::milliseconds >(std::chrono::system_clock::now().time_since_epoch());
+				std::chrono::milliseconds currentTime = std::chrono::duration_cast< std::chrono::milliseconds >(std::chrono::system_clock::now().time_since_epoch());
 
-				if((current_time - last_send_time).count() > 1000) {
-					last_send_time = current_time;
+				if((currentTime - lastSendTime) > dataLapse) {
+					lastSendTime += dataLapse;
 					for(auto ip : ips) {
 						uint32_t dest = getIpFromString(ip);
 						string message = dataManager->getData();
 						char* msg = strdup(message.c_str());
-						if(routingPrtcl->sendPacket(DATA_PORT, msg, message.length() + 1, dest) == -1){
-							fprintf(stderr, "[TEST ADHOC]:[ERROR]: Unable to send packet\n");
-						}
+						
+						routingPrtcl->sendPacket(DATA_PORT, msg, message.length() + 1, dest);
+						
 						free(msg);
 					}
+				}
+
+				// Periodically check packet buffer
+				if(((currentTime - lastBuffTime) > bufferLapse) || (last_sent)) {
+					lastBuffTime = currentTime;
+					last_sent = routingPrtcl->emptyBuffer();
 				}
 
 				routingPrtcl->handlePackets();
@@ -95,30 +104,42 @@ int main(){
 		routingPrtcl = new HardwareHelloAODV(MY_IP_ADDR);
 		routingPrtcl->setAppConnectionHandler(&losConnectionHandler);
 
-        // TODO: Create data loging port
-		LogPort logPort = new LogPort(DATA_PORT, "test_logs/aodv_test_1_received.txt", 10);
+        // Create data loging port
+		LogPort logPort(DATA_PORT, "test_logs/aodv_test_1_received.txt", 10);
 		routingPrtcl->addPort(&logPort);
 
 		// Network
-		std::chrono::milliseconds last_send_time = std::chrono::duration_cast< std::chrono::milliseconds >(std::chrono::system_clock::now().time_since_epoch());
-		while(true) {
-			std::chrono::milliseconds current_time = std::chrono::duration_cast< std::chrono::milliseconds >(std::chrono::system_clock::now().time_since_epoch());
+		std::chrono::milliseconds lastSendTime = std::chrono::duration_cast< std::chrono::milliseconds >(std::chrono::system_clock::now().time_since_epoch());
+		std::chrono::milliseconds lastBuffTime = lastSendTime;
+		int last_sent = 0;
 
-			if((current_time - last_send_time).count() > 1000){
-				last_send_time = current_time;
+		while(true) {
+			std::chrono::milliseconds currentTime = std::chrono::duration_cast< std::chrono::milliseconds >(std::chrono::system_clock::now().time_since_epoch());
+
+			if((currentTime - lastSendTime) > dataLapse) {
+				lastSendTime += dataLapse;
 				for(auto ip : ips){
 					uint32_t dest = getIpFromString(ip);
 					string message = dataManager->getData();
 					char* msg = strdup(message.c_str());
-					if(routingPrtcl->sendPacket(logPort->getPortId(), msg, message.length()+1, dest) == -1){
+
+					if(routingPrtcl->sendPacket(logPort.getPortId(), msg, message.length()+1, dest) == -1){
 						printf("[TEST ADHOC]:[DEBUG]: Unable to send packet (not connected or an error)\n");
 					}
+
 					free(msg);
 				}
 			}
 
+			// Periodically check packet buffer
+			if(((currentTime - lastBuffTime) > bufferLapse) || (last_sent)) {
+				lastBuffTime = currentTime;
+				last_sent = routingPrtcl->emptyBuffer();
+			}
+
 			// Handle packets
 			int handleCount = routingPrtcl->handlePackets();
+			//printf("[TEST ADHOC]:[DEBUG]: handled %d messages\n", handleCount);
 		}
 	}
 	delete routingPrtcl;

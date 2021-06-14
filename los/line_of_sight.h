@@ -35,9 +35,9 @@ public:
 
 	// Declare functions
 	void pullOrbitData();									// open the file with orbit info
-	bool isThereLOS(int other_sc_ID, double current_time);	// returns true if there is no Line of Sight (LOS) and false if not
+	bool isThereLOS(int otherScID, double currentTime);	// returns true if there is no Line of Sight (LOS) and false if not
 	void scalePositions(float scaleFactor);					// scales all of the positions by scaleFactor input argument. Use for testbed adaptation
-	void distanceBetweenSC(int other_sc_ID, double current_time, double relativePositionInfo[]);  // returns the distance [km] between s/c 1 (homeID) and s/c 2 (other_sc_ID) at a particular time. Note this is not a position vector
+	void distanceBetweenSC(int otherScID, double currentTime, double relativePositionInfo[]);  // returns the distance [km] between s/c 1 (homeID) and s/c 2 (otherScID) at a particular time. Note this is not a position vector
 };
 
 #endif

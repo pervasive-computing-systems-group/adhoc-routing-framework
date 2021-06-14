@@ -65,9 +65,11 @@ void LineOfSight::pullOrbitData() {
 }
 
 
-bool LineOfSight::isThereLOS(int other_sc_ID, double current_time)
+bool LineOfSight::isThereLOS(int otherScID, double currentTime)
 {
 	// TODO: Add shortcut if other id is our id
+	if(otherScID == this->homeID)
+		return true;
 	// TODO: Add error checking for id
 
 	// This function needs "sc_orbits.txt" to run
@@ -87,7 +89,7 @@ bool LineOfSight::isThereLOS(int other_sc_ID, double current_time)
 		// Because of this, linear interpolation is used to estimate the position between the timesteps
 		// To clarify, let t=time input to function. Let t_1 be the time less than t and t_2 be the time greater than t such that t_1 <= t < t_2
 		// Knowing the size of the timestep (i.e. how "big" the step is), the timestep (or iteration or entry) corresponding to t_1 can be found:
-		int timeStep_Below = current_time / timestepSize;		// timestep corresponding to t_1
+		int timeStep_Below = currentTime / timestepSize;		// timestep corresponding to t_1
 		int timeStep_Above = timeStep_Below + 1;				// timestep corresponding to t_2
 		double t_1 = timeStep_Below * timestepSize*1.0;			// t_1
 		double t_2 = timeStep_Above * timestepSize*1.0;			// t_2
@@ -116,30 +118,30 @@ bool LineOfSight::isThereLOS(int other_sc_ID, double current_time)
 
 		// linearly interpolate between t_1 and t_2 for x, y, and z coordinates
 		// X coordinate
-		r1[0] = positionBelow[0] + (current_time - t_1) * (positionAbove[0] - positionBelow[0]) / (t_2 - t_1);
+		r1[0] = positionBelow[0] + (currentTime - t_1) * (positionAbove[0] - positionBelow[0]) / (t_2 - t_1);
 		// Y coordinate
-		r1[1] = positionBelow[1] + (current_time - t_1) * (positionAbove[1] - positionBelow[1]) / (t_2 - t_1);
+		r1[1] = positionBelow[1] + (currentTime - t_1) * (positionAbove[1] - positionBelow[1]) / (t_2 - t_1);
 		// Z coordinate
-		r1[2] = positionBelow[2] + (current_time - t_1) * (positionAbove[2] - positionBelow[2]) / (t_2 - t_1);
+		r1[2] = positionBelow[2] + (currentTime - t_1) * (positionAbove[2] - positionBelow[2]) / (t_2 - t_1);
 
 		if(LOS_DEBUG)
 			cout << "Position r1 is: " << r1[0] << "   " << r1[1] << "   " << r1[2] << endl << endl;
 
 		// Repeat process for finding the posiion vector of S/C 2
-		positionBelow[0] = orbitData[other_sc_ID][timeStep_Below].xpos;
-		positionBelow[1] = orbitData[other_sc_ID][timeStep_Below].ypos;
-		positionBelow[2] = orbitData[other_sc_ID][timeStep_Below].zpos;
-		positionAbove[0] = orbitData[other_sc_ID][timeStep_Above].xpos;
-		positionAbove[1] = orbitData[other_sc_ID][timeStep_Above].ypos;
-		positionAbove[2] = orbitData[other_sc_ID][timeStep_Above].zpos;
+		positionBelow[0] = orbitData[otherScID][timeStep_Below].xpos;
+		positionBelow[1] = orbitData[otherScID][timeStep_Below].ypos;
+		positionBelow[2] = orbitData[otherScID][timeStep_Below].zpos;
+		positionAbove[0] = orbitData[otherScID][timeStep_Above].xpos;
+		positionAbove[1] = orbitData[otherScID][timeStep_Above].ypos;
+		positionAbove[2] = orbitData[otherScID][timeStep_Above].zpos;
 
 		// linearly interpolate between t_1 and t_2 for x, y, and z coordinates
 		// X coordinate
-		r2[0] = positionBelow[0] + (current_time - t_1) * (positionAbove[0] - positionBelow[0]) / (t_2 - t_1);
+		r2[0] = positionBelow[0] + (currentTime - t_1) * (positionAbove[0] - positionBelow[0]) / (t_2 - t_1);
 		// Y coordinate
-		r2[1] = positionBelow[1] + (current_time - t_1) * (positionAbove[1] - positionBelow[1]) / (t_2 - t_1);
+		r2[1] = positionBelow[1] + (currentTime - t_1) * (positionAbove[1] - positionBelow[1]) / (t_2 - t_1);
 		// Z coordinate
-		r2[2] = positionBelow[2] + (current_time - t_1) * (positionAbove[2] - positionBelow[2]) / (t_2 - t_1);
+		r2[2] = positionBelow[2] + (currentTime - t_1) * (positionAbove[2] - positionBelow[2]) / (t_2 - t_1);
 		
 		if(LOS_DEBUG)
 			cout << "Position r2 is: " << r2[0] << "   " << r2[1] << "   " << r2[2] << endl << endl;
@@ -235,7 +237,7 @@ void LineOfSight::scalePositions(float scaleFactor)
 }
 
 
-void LineOfSight::distanceBetweenSC(int other_sc_ID, double current_time, double relativePositionInfo[])
+void LineOfSight::distanceBetweenSC(int otherScID, double currentTime, double relativePositionInfo[])
 {
 	// TODO: Add shortcut if other id is our id
 	// Step 1 -------------------------------------------------------------------------------------------------------------
@@ -243,7 +245,7 @@ void LineOfSight::distanceBetweenSC(int other_sc_ID, double current_time, double
 		// Because of this, linear interpolation is used to estimate the position between the timesteps
 		// To clarify, let t=time input to function. Let t_1 be the time less than t and t_2 be the time greater than t such that t_1 <= t < t_2
 		// Knowing the size of the timestep (i.e. how "big" the step is), the timestep (or iteration or entry) corresponding to t_1 can be found:
-	int timeStep_Below = current_time / timestepSize;		// timestep corresponding to t_1
+	int timeStep_Below = currentTime / timestepSize;		// timestep corresponding to t_1
 	int timeStep_Above = timeStep_Below + 1;				// timestep corresponding to t_2
 	double t_1 = timeStep_Below * timestepSize * 1.0;			// t_1
 	double t_2 = timeStep_Above * timestepSize * 1.0;			// t_2
@@ -272,30 +274,30 @@ void LineOfSight::distanceBetweenSC(int other_sc_ID, double current_time, double
 
 	// linearly interpolate between t_1 and t_2 for x, y, and z coordinates
 	// X coordinate
-	r1[0] = positionBelow[0] + (current_time - t_1) * (positionAbove[0] - positionBelow[0]) / (t_2 - t_1);
+	r1[0] = positionBelow[0] + (currentTime - t_1) * (positionAbove[0] - positionBelow[0]) / (t_2 - t_1);
 	// Y coordinate
-	r1[1] = positionBelow[1] + (current_time - t_1) * (positionAbove[1] - positionBelow[1]) / (t_2 - t_1);
+	r1[1] = positionBelow[1] + (currentTime - t_1) * (positionAbove[1] - positionBelow[1]) / (t_2 - t_1);
 	// Z coordinate
-	r1[2] = positionBelow[2] + (current_time - t_1) * (positionAbove[2] - positionBelow[2]) / (t_2 - t_1);
+	r1[2] = positionBelow[2] + (currentTime - t_1) * (positionAbove[2] - positionBelow[2]) / (t_2 - t_1);
 	
 	if(LOS_DEBUG)
 		cout << "Position r1 is: " << r1[0] << "   " << r1[1] << "   " << r1[2] << endl << endl;
 
 	// Repeat process for finding the posiion vector of S/C 2
-	positionBelow[0] = orbitData[other_sc_ID][timeStep_Below].xpos;
-	positionBelow[1] = orbitData[other_sc_ID][timeStep_Below].ypos;
-	positionBelow[2] = orbitData[other_sc_ID][timeStep_Below].zpos;
-	positionAbove[0] = orbitData[other_sc_ID][timeStep_Above].xpos;
-	positionAbove[1] = orbitData[other_sc_ID][timeStep_Above].ypos;
-	positionAbove[2] = orbitData[other_sc_ID][timeStep_Above].zpos;
+	positionBelow[0] = orbitData[otherScID][timeStep_Below].xpos;
+	positionBelow[1] = orbitData[otherScID][timeStep_Below].ypos;
+	positionBelow[2] = orbitData[otherScID][timeStep_Below].zpos;
+	positionAbove[0] = orbitData[otherScID][timeStep_Above].xpos;
+	positionAbove[1] = orbitData[otherScID][timeStep_Above].ypos;
+	positionAbove[2] = orbitData[otherScID][timeStep_Above].zpos;
 
 	// linearly interpolate between t_1 and t_2 for x, y, and z coordinates
 	// X coordinate
-	r2[0] = positionBelow[0] + (current_time - t_1) * (positionAbove[0] - positionBelow[0]) / (t_2 - t_1);
+	r2[0] = positionBelow[0] + (currentTime - t_1) * (positionAbove[0] - positionBelow[0]) / (t_2 - t_1);
 	// Y coordinate
-	r2[1] = positionBelow[1] + (current_time - t_1) * (positionAbove[1] - positionBelow[1]) / (t_2 - t_1);
+	r2[1] = positionBelow[1] + (currentTime - t_1) * (positionAbove[1] - positionBelow[1]) / (t_2 - t_1);
 	// Z coordinate
-	r2[2] = positionBelow[2] + (current_time - t_1) * (positionAbove[2] - positionBelow[2]) / (t_2 - t_1);
+	r2[2] = positionBelow[2] + (currentTime - t_1) * (positionAbove[2] - positionBelow[2]) / (t_2 - t_1);
 
 	if(LOS_DEBUG)
 		cout << "Position r2 is: " << r2[0] << "   " << r2[1] << "   " << r2[2] << endl << endl;

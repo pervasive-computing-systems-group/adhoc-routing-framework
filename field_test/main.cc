@@ -19,6 +19,8 @@ int main(){
 	char* msg = strdup(message.c_str());
 	vector<string> ips = { "192.168.1.2" };
 	RoutingProtocol* routingPrtcl;
+	std::chrono::milliseconds dataLapse = std::chrono::milliseconds(1000);
+	std::chrono::milliseconds bufferLapse = std::chrono::milliseconds(100);
 
 	// Light up all LEDs to avoid random lighting
 	printf("[TEST ADHOC]:[DEBUG]: Cleaning LED pins...\n");
@@ -52,16 +54,15 @@ int main(){
 			int last_sent = 0;
 
 			/// main loop to read/send packets
-			std::chrono::milliseconds last_send_time = std::chrono::duration_cast< std::chrono::milliseconds >(std::chrono::system_clock::now().time_since_epoch());
-			std::chrono::milliseconds last_buff_time = last_send_time;
-			std::chrono::milliseconds lapse_1s = std::chrono::milliseconds(1000);
+			std::chrono::milliseconds lastSendTime = std::chrono::duration_cast< std::chrono::milliseconds >(std::chrono::system_clock::now().time_since_epoch());
+			std::chrono::milliseconds lastBuffTime = lastSendTime;
 			while(true) {
-				std::chrono::milliseconds current_time = std::chrono::duration_cast< std::chrono::milliseconds >(std::chrono::system_clock::now().time_since_epoch());
+				std::chrono::milliseconds currentTime = std::chrono::duration_cast< std::chrono::milliseconds >(std::chrono::system_clock::now().time_since_epoch());
 
 				// Send a packet every second
-				if((current_time - last_send_time).count() > 1000) {
+				if((currentTime - lastSendTime) > dataLapse) {
 					// Update time. Ensure we send a packet once every second and the time doesn't drift
-					last_send_time += lapse_1s;
+					lastSendTime += dataLapse;
 					for(auto ip : ips) {
 						uint32_t dest = getIpFromString(ip);
 						routingPrtcl->sendPacket(DATA_PORT, msg, message.length() + 1, dest);
@@ -69,8 +70,8 @@ int main(){
 				}
 
 				// Periodically check packet buffer
-				if(((current_time - last_buff_time).count() > 100) || (last_sent)) {
-					last_buff_time = current_time;
+				if(((currentTime - lastBuffTime) > bufferLapse) || (last_sent)) {
+					lastBuffTime = currentTime;
 					last_sent = routingPrtcl->emptyBuffer();
 				}
 
@@ -88,15 +89,14 @@ int main(){
 		routingPrtcl->addPort(printPort);
 
 		/// main loop to read/send packets
-		std::chrono::milliseconds last_send_time = std::chrono::duration_cast< std::chrono::milliseconds >(std::chrono::system_clock::now().time_since_epoch());
-		std::chrono::milliseconds last_buff_time = last_send_time;
-		std::chrono::milliseconds lapse_1s = std::chrono::milliseconds(1000);
+		std::chrono::milliseconds lastSendTime = std::chrono::duration_cast< std::chrono::milliseconds >(std::chrono::system_clock::now().time_since_epoch());
+		std::chrono::milliseconds lastBuffTime = lastSendTime;
 		while(true) {
-			std::chrono::milliseconds current_time = std::chrono::duration_cast< std::chrono::milliseconds >(std::chrono::system_clock::now().time_since_epoch());
+			std::chrono::milliseconds currentTime = std::chrono::duration_cast< std::chrono::milliseconds >(std::chrono::system_clock::now().time_since_epoch());
 
 			// Send packets to all ips every second
-			if((current_time - last_send_time).count() > 1000){
-				last_send_time += lapse_1s;
+			if((currentTime - lastSendTime) > dataLapse){
+				lastSendTime += dataLapse;
 				for(auto ip : ips){
 					uint32_t dest = getIpFromString(ip);
 					if(routingPrtcl->sendPacket(printPort->getPortId(), msg, message.length()+1, dest) == -1){
@@ -110,8 +110,8 @@ int main(){
 			}
 
 			// Periodically check packet buffer
-			if(((current_time - last_buff_time).count() > 100) || (last_sent)) {
-				last_buff_time = current_time;
+			if(((currentTime - lastBuffTime) > bufferLapse) || (last_sent)) {
+				lastBuffTime = currentTime;
 				last_sent = routingPrtcl->emptyBuffer();
 			}
 
