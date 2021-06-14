@@ -130,6 +130,8 @@ int UDPSocket::receiveFrom(Endpoint &sender, char *buffer, int length) {
   socklen_t remoteHostLen = sizeof(sender.remoteHost);
   int n = recvfrom(sockfd, buffer, length, 0,
                   (struct sockaddr *)&sender.remoteHost, &remoteHostLen);
+
+  return n;
 }
 
 
