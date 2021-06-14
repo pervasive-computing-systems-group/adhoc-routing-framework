@@ -101,10 +101,11 @@ int main(){
 					uint32_t dest = getIpFromString(ip);
 					if(routingPrtcl->sendPacket(printPort->getPortId(), msg, message.length()+1, dest) == -1){
 						printf("[TEST ADHOC]:[DEBUG]: Unable to send packet (not connected or an error)\n");
+					}else{
+						printf("[TEST ADHOC]:[DEBUG]: Sent ");
+						printPacket(stdout, msg, message.length()+1);
+						printf(" to %s\n", ip.c_str());
 					}
-					printf("[TEST ADHOC]:[DEBUG]: Sent ");
-					printPacket(stdout, msg, message.length()+1);
-					printf(" to %s\n", ip.c_str());
 				}
 			}
 
