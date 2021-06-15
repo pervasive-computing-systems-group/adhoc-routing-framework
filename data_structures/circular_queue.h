@@ -67,6 +67,10 @@ public:
      * @param elem the data to place
      */
     void push(T elem) {
+        if(maxSize == 0){
+            return;
+        }
+        
         storage[rear] = elem;
         // Move rear along queue and looped back around if neccessary
         rear++;

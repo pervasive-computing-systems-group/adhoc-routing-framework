@@ -14,6 +14,7 @@
 // TODO: Pull routing table out of RoutingProtocol.h
 #include "routing_protocol.h"
 #include "aodv_packets.h"
+#include "aodv_defines.h"
 
 class AODVInfo : public TableInfo
 {

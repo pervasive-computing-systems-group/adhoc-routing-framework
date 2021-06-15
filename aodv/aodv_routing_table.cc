@@ -220,21 +220,24 @@ void AODVRoutingTable::removeTableEntry(const IP_ADDR dest)
 
 int AODVRoutingTable::getCostOfDest(const IP_ADDR dest)
 {	
-	printf("[TABLE]:[WARNING]: getCostOfDest is currently using hopcount\n");
+	if(AODV_WARNING)
+		printf("[TABLE]:[WARNING]: getCostOfDest is currently using hopcount\n");
 	// currently using hopcount...
 	return getDestHopCount(dest);
 }
 
 int AODVRoutingTable::getCostOfRREQ(const rreqPacket rreq)
 {	
-	printf("[TABLE]:[WARNING]: getCostOfRREQ is currently using hopcount\n");
+	if(AODV_WARNING)
+		printf("[TABLE]:[WARNING]: getCostOfRREQ is currently using hopcount\n");
 	// currently using hopcount...
 	return rreq.hopCount;
 }
 
 int AODVRoutingTable::getCostOfRREP(const rrepPacket rrep)
 {
-	printf("[TABLE]:[WARNING]: getCostOfRREP is currently using hopcount\n");
+	if(AODV_WARNING)
+		printf("[TABLE]:[WARNING]: getCostOfRREP is currently using hopcount\n");
 	// currently using hopcount...
 	return rrep.hopCount;
 }
