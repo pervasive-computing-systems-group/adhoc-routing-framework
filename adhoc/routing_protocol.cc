@@ -151,10 +151,18 @@ void RoutingProtocol::setAppConnectionHandler(AppConnectionHandler* pAppConnecti
 }
 
 int RoutingProtocol::sendPacket(Port* p, char* data, int length, IP_ADDR dest, IP_ADDR origIP){
+	if(signed(origIP) == -1){
+		origIP = this->ipAddress;
+	}
+
 	return sendPacket(p->getPortId(), data, length, dest, origIP);
 }
 
 int RoutingProtocol::sendPacket(int portId, char* data, int length, IP_ADDR dest, IP_ADDR origIP) {
+	if(signed(origIP) == -1){
+		origIP = this->ipAddress;
+	}
+
 	int bytesSent = protocolSendPacket(portId, data, length, dest, origIP);
 
 	if(bytesSent < 0) {

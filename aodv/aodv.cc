@@ -55,6 +55,10 @@ AODV::~AODV() {
  * Public Functions
  ******************************/
 int AODV::protocolSendPacket(int portId, char* packet, int length, IP_ADDR dest, IP_ADDR origIP) {
+    // by default this node is the originator
+    if (-1 == signed(origIP))
+        origIP = getIp();
+
     // by default the next hop is the final destination in case this is a broadcast 
     IP_ADDR nextHop = dest;
     int bytesSent = -1;
@@ -63,10 +67,6 @@ int AODV::protocolSendPacket(int portId, char* packet, int length, IP_ADDR dest,
     {
         if (AODV_DEBUG)
             cout << "[AODV]:[INFO]: Next hop: " << getStringFromIp(this->getTable()->getNextHop(origIP)) << endl;
-
-        // by default this node is the originator
-        if (-1 == signed(origIP))
-            origIP = getIp();
 
         if (length < 0)
             cerr << "[AODV]:[ERROR]: Negative packet length." << endl;

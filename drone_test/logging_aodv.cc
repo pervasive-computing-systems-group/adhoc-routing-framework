@@ -11,9 +11,13 @@ LoggingAODV::LoggingAODV(const char* ip, string logFile, uint32_t loggingRate)
 
 
 int LoggingAODV::protocolSendPacket(int portId, char* packet, int length, IP_ADDR dest, IP_ADDR origIP){
+    // by default this node is the originator
+    if (-1 == signed(origIP))
+        origIP = getIp();
+
     int nBytesSent = HardwareHelloAODV::protocolSendPacket(portId, packet, length, dest, origIP);
     
-    if( nBytesSent > 0 && portId == DATA_PORT && (origIP == this->ipAddress || signed(origIP) == -1)){
+    if( nBytesSent > 0 && portId == DATA_PORT && (origIP == this->ipAddress)){
         receiveLogger.addData(packet, nBytesSent);
     }
 
