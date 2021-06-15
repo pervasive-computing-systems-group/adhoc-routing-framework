@@ -71,4 +71,6 @@ void LOSConnectionHandler::_pullIpMap(string ipMapFilename){
             this->m_mIpToId[intIp] = id;
         }
     }
+
+    file.close();
 }
