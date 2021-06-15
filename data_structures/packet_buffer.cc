@@ -13,8 +13,8 @@ PacketBuffer::~PacketBuffer()
  * Public Functions
  ******************************/
 
-void PacketBuffer::storePacket(IP_ADDR destination, int portId, char* buffer, int length) {
-	BufferedPacket packet(destination, portId, buffer, length);
+void PacketBuffer::storePacket(IP_ADDR destination, int portId, char* buffer, int length, IP_ADDR origin) {
+	BufferedPacket packet(destination, portId, buffer, length, origin);
 	storePacket(&packet);
 }
 

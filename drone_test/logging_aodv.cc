@@ -13,7 +13,7 @@ LoggingAODV::LoggingAODV(const char* ip, string logFile, uint32_t loggingRate)
 int LoggingAODV::protocolSendPacket(int portId, char* packet, int length, IP_ADDR dest, IP_ADDR origIP){
     int nBytesSent = HardwareHelloAODV::protocolSendPacket(portId, packet, length, dest, origIP);
     
-    if(nBytesSent > 0 && portId == DATA_PORT && origIP == this->ipAddress){
+    if( nBytesSent > 0 && portId == DATA_PORT && (origIP == this->ipAddress || signed(origIP) == -1)){
         receiveLogger.addData(packet, nBytesSent);
     }
 

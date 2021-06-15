@@ -4,8 +4,10 @@ DataLogger::DataLogger(string fileName, uint32_t logRate): numData(0), sizeData(
     lastLogTime = chrono::duration_cast< std::chrono::milliseconds >(std::chrono::system_clock::now().time_since_epoch());
 }
     
-void DataLogger::addData(char* data, uint32_t length){
-    addData(string(data, length));
+void DataLogger::addData(char* data, int length){
+    if(length > 0){
+        addData(string(data, length));
+    }
 }
 
 void DataLogger::addData(string data){

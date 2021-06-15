@@ -35,7 +35,7 @@ public:
 	 * @param length: The length of the data buffer
      * @return void
 	 */
-	void storePacket(IP_ADDR destination, int portId, char* buffer, int length);
+	void storePacket(IP_ADDR destination, int portId, char* buffer, int length, IP_ADDR origin);
 
 	/**
 	 * @brief Stores packets in buffer

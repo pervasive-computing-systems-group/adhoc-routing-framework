@@ -11,7 +11,7 @@ class DataLogger{
 public:
     DataLogger(string fileName, uint32_t logRate);
     
-    void addData(char* data, uint32_t length);
+    void addData(char* data, int length);
     void addData(string data);
 
 protected:

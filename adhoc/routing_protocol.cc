@@ -162,7 +162,7 @@ int RoutingProtocol::sendPacket(int portId, char* data, int length, IP_ADDR dest
 			printf("[ROUTING]:[PB_DEBUG]: Buffering packet for %s\n", getStringFromIp(dest).c_str());
 		}
 
-		m_oPacketBuffer.storePacket(dest, portId, data, length);
+		m_oPacketBuffer.storePacket(dest, portId, data, length, origIP);
 	}
 
 	auto soc = m_mSockets.find(portId);
@@ -187,14 +187,18 @@ int RoutingProtocol::emptyBuffer() {
 		m_oPacketBuffer.getReceiverList(&list);
 
 		// Pop-off one packet for each destination and attempt to send it
+		// TOOD: Fix orig ip issue
 		for(std::deque<int>::iterator it = list.begin(); it != list.end(); it++) {
 			BufferedPacket bufferedPacket;
 			m_oPacketBuffer.getPacket(*it, &bufferedPacket);
-			int bytesSent = protocolSendPacket(bufferedPacket.getPortId(), bufferedPacket.getBuffer(), bufferedPacket.getLength(), bufferedPacket.getDestination());
+			char* buffer = bufferedPacket.getBuffer();
+			int bytesSent = protocolSendPacket(bufferedPacket.getPortId(), buffer, bufferedPacket.getLength(), 
+												bufferedPacket.getDestination(), bufferedPacket.getOrigin());
 
 			// TODO: This will put the packet at the back, we should change this so that it isn't rotating packets through the internal buffer queue
 			if(bytesSent < 0) {
-				m_oPacketBuffer.storePacket(bufferedPacket.getDestination(), bufferedPacket.getPortId(), bufferedPacket.getBuffer(), bufferedPacket.getLength());
+				m_oPacketBuffer.storePacket(bufferedPacket.getDestination(), bufferedPacket.getPortId(), buffer, 
+											bufferedPacket.getLength(), bufferedPacket.getOrigin());
 			}
 			else {
 				if(PB_DEBUG) {
@@ -204,10 +208,11 @@ int RoutingProtocol::emptyBuffer() {
 				// Run app packet handler only if we sent the packet
 				auto soc = m_mSockets.find(bufferedPacket.getPortId());
 				if(soc != m_mSockets.end()) {
-					soc->second->runAPHSend(bytesSent, bufferedPacket.getBuffer());
+					soc->second->runAPHSend(bytesSent, buffer);
 				}
 				packsSent++;
 			}
+			free(buffer);
 		}
 	}
 
