@@ -11,6 +11,7 @@
 #include "random_data_manager.h"
 #include "image_creator.h"
 #include "gps_creator.h"
+#include "string_creator.h"
 #include "hardware_sh_ap.h"
 #include "hardware_sh_station.h"
 #include "log_port.h"
@@ -19,29 +20,32 @@
 using namespace std;
 
 int main(){
-	// Seed random
-	srand(time(0));
+	// Seed random the same
+	srand(0);
 
 	/// Networking Settings
 	vector<string> ips = { "192.168.1.1" }; // Who to send data to
-	RoutingProtocol* routingPrtcl;
-	DataManager* dataManager = new RandomDataManager();
 	std::chrono::milliseconds dataLapse = std::chrono::milliseconds(1000); // how long to wait between sending data
 	std::chrono::milliseconds bufferLapse = std::chrono::milliseconds(100); // how long to wait between sending buffered data
+	RoutingProtocol* routingPrtcl;
+	DataManager* dataManager = new RandomDataManager();
+	
 	
 	// Add data creators
 	ImageCreator imageCreator("image1.jpg");
 	GPSCreator gpsCreator;
+	StringCreator strCreator(MAXLINE - HEADER_SIZE - 1);
+
 	dataManager->addDataCreator(&imageCreator);
 	dataManager->addDataCreator(&gpsCreator);
+	dataManager->addDataCreator(&strCreator);
 	cout << "[TEST ADHOC]: Data creators initialized" << endl;
 
 	// App connection handler
-	LOSConnectionHandler losConnectionHandler(getIpFromString(MY_IP_ADDR), "test_data/test1/ac_flight_data.txt", "test_data/test1/ip_map.txt");
+	LOSConnectionHandler losConnectionHandler(getIpFromString(MY_IP_ADDR), "test_data/test1/ac_flight_data.orb", "test_data/test1/ip_map.txt");
 	cout << "[TEST ADHOC]: App connection handler initialized" << endl;
 
 	// Logging
-
 
 	if(RT_PROTOCOL == USE_SINGLE_HOP) {
 		printf("[TEST ADHOC]: Using SINGLE-HOP, ");
