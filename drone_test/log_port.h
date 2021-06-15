@@ -6,6 +6,7 @@
 #include <chrono>
 
 #include "port.h"
+#include "data_logger.h"
 
 class LogPort : public Port{
 public:
@@ -14,15 +15,7 @@ public:
     void handlePacket(char* data, int length, IP_ADDR source);
 
 private:
-    long unsigned int numDataReceived;
-    long unsigned int sizeDataReceived;
-
-    string logFile;
-    uint32_t loggingRate;
-    std::chrono::milliseconds lastLogTime;
-
-    void _logData();
-
+    DataLogger dataLogger;
    
 };
 

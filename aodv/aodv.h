@@ -76,7 +76,6 @@ protected:
 	void _handleRERR(char* buffer, int length, IP_ADDR source);
 
 	// Send a packet to a given ip address using a specified port
-	//TODO: Actually make this return false on a failure, currently is a silent failure
     virtual int protocolSendPacket(int portId, char* packet, int length, IP_ADDR dest, IP_ADDR origIP = -1) override;
 
 	// Functions

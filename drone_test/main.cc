@@ -16,6 +16,8 @@
 #include "hardware_sh_station.h"
 #include "log_port.h"
 #include "los_connection_handler.h"
+#include "logging_packet_handler.h"
+#include "logging_aodv.h"
 
 using namespace std;
 int main(){
@@ -37,12 +39,12 @@ int main(){
 	DataManager* dataManager = new SequentialLoggingDataManager(dataCapturedFileName, loggingRate);	
 	
 	// Add data creators
-	ImageCreator imageCreator("image1.jpg");
-	GPSCreator gpsCreator;
+	//ImageCreator imageCreator("image1.jpg");
+	//GPSCreator gpsCreator;
 	StringCreator strCreator(MAXLINE - HEADER_SIZE - 1);
 
-	dataManager->addDataCreator(&imageCreator);
-	dataManager->addDataCreator(&gpsCreator);
+	//dataManager->addDataCreator(&imageCreator);
+	//dataManager->addDataCreator(&gpsCreator);
 	dataManager->addDataCreator(&strCreator);
 	cout << "[TEST ADHOC]: Data creators initialized" << endl;
 
@@ -50,18 +52,16 @@ int main(){
 	LOSConnectionHandler losConnectionHandler(getIpFromString(MY_IP_ADDR), "test_data/test1/ac_flight_data.orb", "test_data/test1/ip_map.txt");
 	cout << "[TEST ADHOC]: App connection handler initialized" << endl;
 
-	// Logging
-
-
 	if(RT_PROTOCOL == USE_SINGLE_HOP) {
 		printf("[TEST ADHOC]: Using SINGLE-HOP, ");
 		/// Setup routing protocol
 		// TODO: Create data port packet handler
+		LoggingAppPacketHandler loggingPacketHandler(dataSentFileName, dataReceivedFileName, loggingRate);
 
 		if(SH_NODE_TYPE == AP_NODE) {
 			printf("as access point!\n");
 			// Create routing protocol using LED_APH_SHData app
-			routingPrtcl = new HardwareSHAP(MY_IP_ADDR, DATA_PORT, nullptr);
+			routingPrtcl = new HardwareSHAP(MY_IP_ADDR, DATA_PORT, &loggingPacketHandler);
 			routingPrtcl->setAppConnectionHandler(&losConnectionHandler);
 
 			/// Main loop to read/send packets
@@ -73,7 +73,7 @@ int main(){
 		else if(SH_NODE_TYPE == STATION_NODE) {
 			printf("as station!\n");
 			// TODO: Create data port packet handler
-			routingPrtcl = new HardwareSHStation(MY_IP_ADDR, DATA_PORT, nullptr);
+			routingPrtcl = new HardwareSHStation(MY_IP_ADDR, DATA_PORT, &loggingPacketHandler);
 			routingPrtcl->setAppConnectionHandler(&losConnectionHandler);
 
 			/// main loop to read/send packets
@@ -111,11 +111,11 @@ int main(){
 	else if(RT_PROTOCOL == USE_AODV) {
 		/// Setup
 		printf("[TEST ADHOC]: Using AODV\n");
-		routingPrtcl = new HardwareHelloAODV(MY_IP_ADDR);
+		routingPrtcl = new LoggingAODV(MY_IP_ADDR, dataSentFileName, loggingRate);
 		routingPrtcl->setAppConnectionHandler(&losConnectionHandler);
 
         // Create data loging port
-		LogPort logPort(DATA_PORT, "test_logs/aodv_test_1_received.txt", 10);
+		LogPort logPort(DATA_PORT, dataReceivedFileName, 10);
 		routingPrtcl->addPort(&logPort);
 
 		// Network

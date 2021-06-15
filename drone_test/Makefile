@@ -21,12 +21,12 @@ LIBFLAGS = -cvq
 # You should be able to add object files here without changing anything else
 #
 TARGET = main
-OBJ_FILES = data_creator.o data_manager.o logging_manager.o image_creator.o random_data_manager.o sequential_logging_manager.o gps_creator.o string_creator.o log_port.o los_connection_handler.o 
+OBJ_FILES = data_logger.o data_manager.o logging_manager.o image_creator.o random_data_manager.o sequential_logging_manager.o gps_creator.o string_creator.o log_port.o los_connection_handler.o logging_packet_handler.o logging_aodv.o
 OBJ_LIB_FILES = ${OBJ_FILES} ../data_structures/*.o ../aodv/*.o ../socket/*.o ../adhoc/*.o ../single_hop/*.o ../hello_monitor/*.o ../hardware/*.o ../hardware/rssi/*.o ../los/*.o
 OBJ_INCLUDE_FILES = ${TARGET}.o ${OBJ_LIB_FILES}
 OBJ_BUILD_FILES = ${TARGET}.o ${OBJ_FILES}
 
-INC_FILES = data_creator.h data_manager.h logging_manager.h image_creator.h random_data_manager.h sequential_logging_manager.h gps_creator.h string_creator.h log_port.h drone_defines.h los_connection_handler.h
+INC_FILES = data_logger.h data_creator.h data_manager.h logging_manager.h image_creator.h random_data_manager.h sequential_logging_manager.h gps_creator.h string_creator.h log_port.h drone_defines.h los_connection_handler.h logging_packet_handler.h logging_aodv.h
 
 SUBDIRS = ../aodv ../socket ../adhoc ../single_hop ../hello_monitor ../hardware ../los
 

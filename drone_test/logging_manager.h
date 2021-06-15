@@ -6,6 +6,7 @@
 #include <chrono>
 
 #include "data_manager.h"
+#include "data_logger.h"
 
 using namespace std;
 
@@ -19,6 +20,7 @@ public:
      * @param loggingRate milliseconds between logging data
      */
     LoggingDataManager(string logFile, uint32_t loggingRate);
+    
     /**
      * @brief Construct a new Logging Data Manager object
      * 
@@ -36,18 +38,7 @@ public:
     virtual string getData() override;
 
 protected:
-    long unsigned int numDataGenerated;
-    long unsigned int sizeDataGenerated;
-
-    string logFile;
-    uint32_t loggingRate;
-    std::chrono::milliseconds lastLogTime;
-
-    /**
-     * @brief logs current time, and the number of data points and total size of data points generated
-     * 
-     */
-    void _logData();
+    DataLogger dataLogger;
 
     /**
      * @brief Returns the actual data from data generators, called by getData 

@@ -97,7 +97,7 @@ int HardwareAODV::_socketSendPacket(int portId, char *buffer, int length, IP_ADD
             printPacket(stdout, buffer, length);
             printf("' through AODV\n");
         }
-        return ((Socket*)aodvSocket)->sendTo(buffer, length, dest, portId) > 0;
+        return ((Socket*)aodvSocket)->sendTo(buffer, length, dest, portId);
     }
     if(ports.count(portId)){
         if(HARDWARE_DEBUG){
@@ -105,7 +105,7 @@ int HardwareAODV::_socketSendPacket(int portId, char *buffer, int length, IP_ADD
             printPacket(stdout, buffer, length);
             printf("' through port %d\n", portId);
         }
-        return portSockets[portId]->sendTo(buffer, length, dest, portId) > 0;
+        return portSockets[portId]->sendTo(buffer, length, dest, portId);
     }
     fprintf(stderr, "[HARDWARE]:[ERROR]: Tried to send packet '");
     printPacket(stderr, buffer, length);
