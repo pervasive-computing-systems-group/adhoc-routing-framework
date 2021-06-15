@@ -3,6 +3,8 @@
 
 #include <string>
 #include <fstream>
+#include <chrono>
+
 #include "port.h"
 
 class LogPort : public Port{
@@ -12,11 +14,16 @@ public:
     void handlePacket(char* data, int length, IP_ADDR source);
 
 private:
-    void _logNumPackets();
+    long unsigned int numDataReceived;
+    long unsigned int sizeDataReceived;
 
-    int logRate;
-    int counter;
     string logFile;
+    uint32_t loggingRate;
+    std::chrono::milliseconds lastLogTime;
+
+    void _logData();
+
+   
 };
 
 #endif

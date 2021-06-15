@@ -1,31 +1,34 @@
 #include "log_port.h"
 
-LogPort::LogPort(int portId, string fileName, uint32_t logRate): Port(portId), counter(0), logFile(fileName){
-    // Set and check log rate
-    if (logRate > 0){
-        this->logRate = logRate;
-    }else{
-        fprintf(stderr, "[LOG PORT]:[ERROR]: cannot set log rate to zero");
-        exit(-1);
-    }
+LogPort::LogPort(int portId, string fileName, uint32_t logRate): Port(portId), numDataReceived(0), sizeDataReceived(0), logFile(fileName), loggingRate(logRate){
+    lastLogTime = std::chrono::duration_cast< std::chrono::milliseconds >(std::chrono::system_clock::now().time_since_epoch());
 }
 
 void LogPort::handlePacket(char* data, int length, IP_ADDR source){
-    // Increment number of packets received
-    this->counter ++;
-    // If we have received enoug packets to log, log the packer
-    if (this->counter % this->logRate){
-        this->_logNumPackets();
+    // Increment information
+    this->numDataReceived ++;
+    this->sizeDataReceived += length;
+
+    // Log the data every loggingRate milliseconds
+    chrono::milliseconds currentTime = std::chrono::duration_cast< std::chrono::milliseconds >(std::chrono::system_clock::now().time_since_epoch());
+    if((currentTime - lastLogTime).count() > this->loggingRate){
+        this->lastLogTime = this->lastLogTime + chrono::milliseconds(this->loggingRate);
+
+        this->_logData();
     }
 }
 
-void LogPort::_logNumPackets(){
-    // Open the file
-    ofstream of(this->logFile);
-    if(of.is_open()){
-        of << this->counter;
-    }else{
-        fprintf(stderr, "[LOG PORT]:[ERROR]: Could not open file to log num packets");
+void LogPort::_logData(){
+    // Open the file (append)
+    ofstream fout(this->logFile, ios::app);
+    if(!fout.is_open()){
+        fprintf(stderr, "[LOGGING DATA MANAGER]:[ERROR]: Unable to open file for logging\n");
     }
-    of.close();
+    
+    // Log info
+    chrono::milliseconds currentTime = std::chrono::duration_cast< std::chrono::milliseconds >(std::chrono::system_clock::now().time_since_epoch());
+    fout << currentTime.count() << " " << this->numDataReceived << " " << this->sizeDataReceived << endl;
+    
+    // Close
+    fout.close();
 }

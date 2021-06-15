@@ -9,5 +9,6 @@ RandomDataManager::RandomDataManager(vector<DataCreator*> dataCreators) : DataMa
 }
 
 string RandomDataManager::getData(){
-    return this->dataCreators.at(rand()%this->dataCreators.size())->getData();
+    if(this->dataCreators.empty()) return "";
+    else return this->dataCreators.at(rand()%this->dataCreators.size())->getData();
 }

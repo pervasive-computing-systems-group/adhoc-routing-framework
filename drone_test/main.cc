@@ -8,7 +8,7 @@
 #include "routing_protocol.h"
 #include "hardware_hello_aodv.h"
 #include "data_manager.h"
-#include "random_data_manager.h"
+#include "sequential_logging_manager.h"
 #include "image_creator.h"
 #include "gps_creator.h"
 #include "string_creator.h"
@@ -18,18 +18,23 @@
 #include "los_connection_handler.h"
 
 using namespace std;
-
 int main(){
 	// Seed random the same
 	srand(0);
+
+	// Logging Settings			 
+	// File names (pattern: test_logs/test<test_num>/<routing_protocol>_<ip>_data_<metric>.txt)
+	string dataCapturedFileName = "test_logs/test1/aodv_1_data_captured.txt";
+	string dataReceivedFileName = "test_logs/test1/aodv_1_data_received.txt";
+	string dataSentFileName = "test_logs/test1/aodv_1_data_sent.txt";
+	uint32_t loggingRate = 2000; // milliseconds between logging data
 
 	/// Networking Settings
 	vector<string> ips = { "192.168.1.1" }; // Who to send data to
 	std::chrono::milliseconds dataLapse = std::chrono::milliseconds(1000); // how long to wait between sending data
 	std::chrono::milliseconds bufferLapse = std::chrono::milliseconds(100); // how long to wait between sending buffered data
 	RoutingProtocol* routingPrtcl;
-	DataManager* dataManager = new RandomDataManager();
-	
+	DataManager* dataManager = new SequentialLoggingDataManager(dataCapturedFileName, loggingRate);	
 	
 	// Add data creators
 	ImageCreator imageCreator("image1.jpg");
@@ -46,6 +51,7 @@ int main(){
 	cout << "[TEST ADHOC]: App connection handler initialized" << endl;
 
 	// Logging
+
 
 	if(RT_PROTOCOL == USE_SINGLE_HOP) {
 		printf("[TEST ADHOC]: Using SINGLE-HOP, ");
