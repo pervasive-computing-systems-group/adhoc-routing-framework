@@ -133,12 +133,9 @@ void TCPAPSocket::checkListeningPort() {
 
 			// Verify we received data
 			if (nBytesRead > 0) {
-				// Check that the application states we are connected
-				if(this->isACHConnected(sender.getAddressI())){
-					// Add message to ring-buffer
-					buffer[nBytesRead] = '\0';
-					messages.push(Message(sender, buffer, nBytesRead));
-				}
+				// Add message to ring-buffer
+				buffer[nBytesRead] = '\0';
+				messages.push(Message(sender, buffer, nBytesRead));
 			}
 			else if (nBytesRead < 0) {
 				// Something went wrong receiving packet...

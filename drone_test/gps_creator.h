@@ -7,7 +7,12 @@ class GPSCreator: public DataCreator{
 public:
     GPSCreator();
 
-    string getData() override;
+protected:
+	/*
+	 * Generates GPS data. Returns a pointer to the data and stores size of data in
+	 *  data_size.
+	 */
+    char* getData(int* data_size) override;
 };
 
 #endif

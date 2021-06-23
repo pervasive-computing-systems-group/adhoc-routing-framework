@@ -147,12 +147,11 @@ void UDPSocket::receiveFromPort(){
     free(buffer);
     exit(-1);
   } else if (n > 0){
-    // Check that the app is connected and continue
-    printf(sender.getAddressC());
-    if(this->isACHConnected(sender.getAddressI())){
-      buffer[n] = '\0';
-      messages.push(Message(sender, buffer, n));
+    if(UDP_DEBUG){
+      printf("%s\n", sender.getAddressC());
     }
+    buffer[n] = '\0';
+    messages.push(Message(sender, buffer, n));
   }
 
   free(buffer);

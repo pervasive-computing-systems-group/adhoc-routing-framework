@@ -20,13 +20,9 @@
  */
 
 /*
- * app_packet_handler.h
+ * app_connection_handler.h
  *
- * Created by: Jonathan Diller
- * Date: 05/25/2021
- *
- * Description: This abstract class enables application specific features when
- * handling packets.
+ * Created by: Zach
  */
 
 #ifndef _APP_CONNECTION_HANDLER_H

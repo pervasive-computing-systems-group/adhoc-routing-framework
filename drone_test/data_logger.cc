@@ -10,6 +10,7 @@ void DataLogger::addData(char* data, int length){
     }
 }
 
+// TODO: pelo amor de deus: STOP PASSING AROUND STRING OBJECTS!!!
 void DataLogger::addData(string data){
     // Increment information
     this->numData ++;

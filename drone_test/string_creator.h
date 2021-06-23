@@ -3,14 +3,21 @@
 
 #include <iostream>
 #include <fstream>
+
 #include "data_creator.h"
 
 class StringCreator: public DataCreator{
 public:
     StringCreator(int size);
-    string getData() override;
 
 protected:
+	/*
+	 * Generates a string. Returns a pointer to the data and stores size of data in
+	 *  data_size.
+	 */
+    char* getData(int* data_size) override;
+
+private:
     int size;
 };
 

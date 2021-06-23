@@ -85,11 +85,11 @@ void RoutingTable::updateTableEntry(const IP_ADDR dest, const IP_ADDR nextHop)
 }
 
 RoutingProtocol::RoutingProtocol(){
-	this->m_pAppConnectionHandler = nullptr;
+	m_pAppConnectionHandler = nullptr;
 }
 
 RoutingProtocol::RoutingProtocol(IP_ADDR nIP) : ipAddress(nIP) { 
-	this->m_pAppConnectionHandler = nullptr;
+	m_pAppConnectionHandler = nullptr;
 }
 
 RoutingProtocol::~RoutingProtocol(){
@@ -142,11 +142,11 @@ void RoutingProtocol::removePort(Port* p){
 }
 
 void RoutingProtocol::setAppConnectionHandler(AppConnectionHandler* pAppConnectionHandler){
-	this->m_pAppConnectionHandler = pAppConnectionHandler;
+	m_pAppConnectionHandler = pAppConnectionHandler;
 
 	// Iterate over sockets and set their app connection handlers
-	for(auto socket: this->m_mSockets){
-		socket.second->setAppConnectionHandler(this->m_pAppConnectionHandler);
+	for(auto socket: m_mSockets) {
+		socket.second->setAppConnectionHandler(m_pAppConnectionHandler);
 	}
 }
 
@@ -303,7 +303,7 @@ void RoutingProtocol::addLink(IP_ADDR node)
 	if (!exists)
 	{
 		m_neighbors.push_back(node);
-		// Add as one hop neigbor to routing table
+		// Add as one hop neighbor to routing table
 		m_pRoutingTable->updateTableEntry(node, node);
 		if (ROUTING_DEBUG)
 			cout << "[ROUTING]:[INFO]: One hop neighbor: " << getStringFromIp(node) << " added to routing table." << endl; 
@@ -311,8 +311,8 @@ void RoutingProtocol::addLink(IP_ADDR node)
 }
 
 bool RoutingProtocol::_isAppConnected(IP_ADDR ip){
-	if(this->m_pAppConnectionHandler != nullptr){
-		return this->m_pAppConnectionHandler->isConnected(ip);
+	if(m_pAppConnectionHandler != nullptr){
+		return m_pAppConnectionHandler->isConnected(ip);
 	}
 	return true;
 }

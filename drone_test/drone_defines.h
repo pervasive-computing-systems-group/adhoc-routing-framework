@@ -3,6 +3,7 @@
 
 #include "defines.h"
 
-#define LOS_CONNECTION_DEBUG 1 & DEBUG
+#define DRONE_TEST_DEBUG		1
+#define LOS_CONNECTION_DEBUG	1 & DEBUG
 
 #endif

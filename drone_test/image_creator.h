@@ -8,9 +8,15 @@
 class ImageCreator: public DataCreator{
 public:
     ImageCreator(string filename);
-    string getData() override;
 
 protected:
+	/*
+	 * "Generates" an image. Returns a pointer to the data and stores size of data in
+	 *  data_size.
+	 */
+    char* getData(int* data_size) override;
+
+private:
     string filename;
 };
 

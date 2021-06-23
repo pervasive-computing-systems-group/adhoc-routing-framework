@@ -106,7 +106,15 @@ bool Socket::setTransmissionPower(int txPwr){
 
 // Send a packet to a remote endpoint
 int Socket::sendTo(Endpoint &remote, const char *packet, int length) {
-	return typeSendTo(remote, packet, length);
+	int ret_val = -1;
+	if(isACHConnected(remote.getAddressI())) {
+		ret_val = typeSendTo(remote, packet, length);
+	}
+	else {
+		ret_val = -1;
+	}
+
+	return ret_val;
 }
 
 int Socket::sendTo(char *buffer, int length, uint32_t dest, int port) {
@@ -139,8 +147,8 @@ void Socket::setAppPacketHandler(AppPacketHandler* pAppPacketHandler) {
 * @brief Run the application connection handler (if one was given to this socket)
 */
 bool Socket::isACHConnected(uint32_t ip){
-  if(this->m_pAppConnectionHandler != nullptr){
-    return this->m_pAppConnectionHandler->isConnected(ip);
+  if(m_pAppConnectionHandler != nullptr){
+    return m_pAppConnectionHandler->isConnected(ip);
   }
   return true;
 }
