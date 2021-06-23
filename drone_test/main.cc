@@ -19,6 +19,7 @@
 #include "logging_aodv.h"
 
 using namespace std;
+
 int main() {
 	// Seed random the same
 	srand(0);
@@ -32,6 +33,9 @@ int main() {
 	vector<string> ips = SENDTO_LIST; // Who to send data to
 	std::chrono::milliseconds dataLapse = std::chrono::milliseconds(DATA_RATE); // how long to wait between sending data
 	std::chrono::milliseconds bufferLapse = std::chrono::milliseconds(BUFF_CHECK_RATE); // how long to wait between sending buffered data
+	/// main loop to read/send packets
+	std::chrono::milliseconds startTime
+		= std::chrono::duration_cast< std::chrono::milliseconds >(std::chrono::system_clock::now().time_since_epoch());
 
 	RoutingProtocol* routingPrtcl;
 	
@@ -65,7 +69,7 @@ int main() {
 			routingPrtcl = new HardwareSHAP(MY_IP_ADDR, DATA_PORT, &loggingPacketHandler);
 			routingPrtcl->setAppConnectionHandler(&losConnectionHandler);
 
-			/// Main loop to read/send packets
+			/// Main loop to receive packets. The AP runs continuously.
 			while(true) {
 				// Read packets, access point doesn't send anything
 				routingPrtcl->handlePackets();
@@ -82,11 +86,10 @@ int main() {
 			std::chrono::milliseconds lastBuffTime = lastSendTime;
 			int last_sent = 0;
 
-			while(true) {
-				// Send a packet every second
-				std::chrono::milliseconds currentTime
-					= std::chrono::duration_cast< std::chrono::milliseconds >(std::chrono::system_clock::now().time_since_epoch());
-
+			// Send a packet every second
+			std::chrono::milliseconds currentTime
+				= std::chrono::duration_cast< std::chrono::milliseconds >(std::chrono::system_clock::now().time_since_epoch());
+			while((currentTime - startTime).count() >= MISSION_DURATION) {
 				if((currentTime - lastSendTime) > dataLapse) {
 					lastSendTime += dataLapse;
 					for(auto ip : ips) {
@@ -111,6 +114,18 @@ int main() {
 				}
 
 				routingPrtcl->handlePackets();
+
+				currentTime = std::chrono::duration_cast< std::chrono::milliseconds >(std::chrono::system_clock::now().time_since_epoch());
+			}
+
+			// Verify that all iterations of data generation are complete, but don't send anything
+			while((currentTime - lastSendTime) > dataLapse) {
+				lastSendTime += dataLapse;
+				for(auto ip : ips) {
+					int msg_length = 0;
+					char* msg = dataCreator->generateData(&msg_length);
+					free(msg);
+				}
 			}
 		}
 	}
@@ -131,9 +146,9 @@ int main() {
 		std::chrono::milliseconds lastBuffTime = lastSendTime;
 		int last_sent = 0;
 
-		while(true) {
-			std::chrono::milliseconds currentTime = std::chrono::duration_cast< std::chrono::milliseconds >(std::chrono::system_clock::now().time_since_epoch());
-
+		// Periodically send data packets
+		std::chrono::milliseconds currentTime = std::chrono::duration_cast< std::chrono::milliseconds >(std::chrono::system_clock::now().time_since_epoch());
+		while((currentTime - startTime).count() >= MISSION_DURATION) {
 			if((currentTime - lastSendTime) > dataLapse) {
 				lastSendTime += dataLapse;
 				for(auto ip : ips){
@@ -165,6 +180,18 @@ int main() {
 			int handleCount = routingPrtcl->handlePackets();
 			if(DRONE_TEST_DEBUG) {
 				printf("[DRONE TEST]:[DEBUG]: handled %d messages\n", handleCount);
+			}
+
+			currentTime = std::chrono::duration_cast< std::chrono::milliseconds >(std::chrono::system_clock::now().time_since_epoch());
+		}
+
+		// Verify that all iterations of data generation are complete, but don't send anything
+		while((currentTime - lastSendTime) > dataLapse) {
+			lastSendTime += dataLapse;
+			for(auto ip : ips) {
+				int msg_length = 0;
+				char* msg = dataCreator->generateData(&msg_length);
+				free(msg);
 			}
 		}
 	}

@@ -34,6 +34,8 @@
 /*
  * The following macros define the behavior of the routing protocol
  */
+// Duration of drone test-bed mission, in ms
+#define MISSION_DURATION		10 /* minutes */ * 60 /* seconds */ * 1000
 // The routing protocol to use in field test (select from above)
 #define RT_PROTOCOL			USE_AODV
 // This node's single-hop type
